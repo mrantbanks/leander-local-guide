@@ -1,8 +1,6 @@
- import { TagLabel } from '@/data/listings';
-                                                                                                                        
   interface TagProps {
-    label: TagLabel | string;                                                                                           
-  }               
+    label: string;
+  }
 
   const tagStyles: Record<string, string> = {
     'Not a Chain':
