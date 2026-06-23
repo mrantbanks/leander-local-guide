@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSpot } from '@/lib/spots';
+import { getSpot, getTips } from '@/lib/spots';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
 import SiteFooter from '@/components/SiteFooter';
 import UserPhotoUploader from '@/components/UserPhotoUploader';
+import TipForm from '@/components/TipForm';
 import { auth, signIn } from '@/auth';
 import type { Metadata } from 'next';
 
@@ -35,6 +36,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const session = await auth();
   const user = session?.user as { name?: string } | undefined;
   const siteKey = process.env.TURNSTILE_SITE_KEY || '';
+  const tips = await getTips(slug);
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${spot.name} ${spot.addressLine}`)}&output=embed`;
@@ -157,6 +159,27 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               <p className="font-ui text-sm text-ink">{spot.gotcha}</p>
             </div>
           )}
+
+          {/* Locals say */}
+          <div className="mt-8 border-t border-rule pt-6">
+            <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-3">Locals say</h3>
+            {tips.length > 0 ? (
+              <ul className="space-y-3 mb-5">
+                {tips.map((t, i) => (
+                  <li key={i} className="font-ui text-sm text-ink border-l-2 border-rule pl-3">{t.body}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="font-ui text-sm text-ink-soft mb-4">No tips yet. Be the first to call it.</p>
+            )}
+            {user ? (
+              <TipForm slug={slug} siteKey={siteKey} />
+            ) : (
+              <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
+                <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in to leave a tip →</button>
+              </form>
+            )}
+          </div>
 
           {/* Map */}
           <div className="mt-8 border-t border-rule pt-6">

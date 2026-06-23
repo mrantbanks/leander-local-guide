@@ -44,7 +44,7 @@ export default async function AdminPage() {
      order by (editorial->>'verdict' is null) desc, name`
   );
   const visited = rows.filter((r) => r.visited).length;
-  const pend = await pool.query("select count(*)::int n from photos where status = 'pending'");
+  const pend = await pool.query("select ((select count(*) from photos where status='pending') + (select count(*) from tips where status='pending'))::int n");
   const pending = pend.rows[0].n as number;
 
   return (

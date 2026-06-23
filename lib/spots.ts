@@ -151,6 +151,15 @@ export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
   const { rows } = await pool.query(`select *, ${PHOTOS} from restaurants where slug = $1`, [slug]);
   return rows[0] ? mapRow(rows[0]) : null;
 });
+
+export async function getTips(slug: string): Promise<{ body: string }[]> {
+  const { rows } = await pool.query(
+    `select t.body from tips t join restaurants r on r.id = t.place_id
+     where r.slug = $1 and t.status = 'approved' order by t.created_at desc limit 20`,
+    [slug]
+  );
+  return rows.map((r) => ({ body: clean(r.body) || r.body }));
+}
 export async function getHiddenGems(): Promise<Spot[]> {
   const { rows } = await pool.query(
     `select *, ${PHOTOS} from restaurants

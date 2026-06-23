@@ -96,3 +96,15 @@ export async function rejectPhoto(id: number) {
   await pool.query("update photos set status = 'removed' where id = $1", [id]);
   revalidatePath('/admin/moderation');
 }
+
+// Moderation: approve / reject a pending user tip.
+export async function approveTip(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update tips set status = 'approved' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
+export async function rejectTip(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update tips set status = 'removed' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
