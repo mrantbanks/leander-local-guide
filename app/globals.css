@@ -1,25 +1,43 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fafaf9;
-  --foreground: #111827;
-}
+/* ── Design tokens (Leander Local Guide — "Anthony's column you can eat from") ── */
+@theme {
+  --color-paper:        #F4EFE6;
+  --color-paper-raised: #FBF7EF;
+  --color-paper-sunk:   #EAE0CE;
+  --color-ink:          #16130F;
+  --color-ink-soft:     #4A4239;
+  --color-rule:         #D8CDB8;
+  --color-chile:        #E03A1E;
+  --color-oxblood:      #7C1D12;
+  --color-amber:        #F2A516;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-ui:      var(--font-hanken), system-ui, sans-serif;
+  --font-hand:    var(--font-caveat), cursive;
+  --font-stamp:   var(--font-bebas), Impact, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* faint paper grain — texture, not decoration */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+::selection { background: var(--color-chile); color: var(--color-paper); }
+
+*:focus-visible { outline: 2px solid var(--color-chile); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

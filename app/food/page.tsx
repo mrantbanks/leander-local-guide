@@ -1,53 +1,31 @@
-import Link from 'next/link';
-import { listings } from '@/data/listings';
-import ListingCard from '@/components/ListingCard';
+import { getAllSpots } from '@/lib/spots';
+import SpotCard from '@/components/SpotCard';
+import PageHero from '@/components/PageHero';
+import SiteFooter from '@/components/SiteFooter';
 
-const foodSpots = listings.filter((l) => l.category === 'Food');
+export const dynamic = 'force-dynamic';
 
-export default function FoodPage() {
+export const metadata = {
+  title: 'Food in Leander',
+  description: "Where the locals actually eat in Leander, Texas. Restaurants and food trucks worth the drive, with Anthony's honest take on each.",
+};
+
+export default async function FoodPage() {
+  const all = await getAllSpots();
+  const spots = all.filter((s) => ['Restaurant', 'Food Truck'].includes(s.category));
   return (
-    <main className="min-h-screen">
-
-      {/* Hero */}
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-5xl mx-auto px-6 py-7">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-emerald-700 transition-colors mb-4"
-          >
-            ← Back to all spots
-          </Link>
-          <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-2">
-            Leander, Texas
-          </p>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-            🌮 Food
-          </h1>
-          <p className="mt-1.5 text-sm text-gray-500 max-w-sm leading-relaxed">
-            Where the locals actually eat. {foodSpots.length} spots worth the drive.
-          </p>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        {foodSpots.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {foodSpots.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
+    <main>
+      <PageHero emoji="🌮" title="Food" subtitle={`Where the locals actually eat. ${spots.length} spots worth the drive.`} />
+      <section className="max-w-6xl mx-auto px-5 py-12">
+        {spots.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-12">
+            {spots.map((s) => <SpotCard key={s.id} spot={s} />)}
           </div>
         ) : (
-          <p className="text-sm text-gray-400">No food spots found yet — check back soon.</p>
+          <p className="font-hand text-2xl text-oxblood">Nothing here yet, check back soon.</p>
         )}
-      </div>
-
-      <footer className="border-t border-stone-200 bg-white mt-2">
-        <div className="max-w-5xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-400">
-          <span className="font-semibold text-gray-600">Leander Local Guide</span>
-          <span>Made by a local · No ads · No affiliates · No chains</span>
-        </div>
-      </footer>
-
+      </section>
+      <SiteFooter />
     </main>
   );
 }

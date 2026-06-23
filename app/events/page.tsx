@@ -1,184 +1,91 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
+import SiteFooter from '@/components/SiteFooter';
 import { listings } from '@/data/listings';
 
 type FilterType = 'All' | 'Open Now' | 'Hidden Gems' | 'Food Trucks';
 
-function getTodayKey() {
-  const days = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ] as const;
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
-  return days[new Date().getDay()];
-}
-
-function isOpenNow(hoursDetail?: {
-  sunday?: { open: string; close: string };
-  monday?: { open: string; close: string };
-  tuesday?: { open: string; close: string };
-  wednesday?: { open: string; close: string };
-  thursday?: { open: string; close: string };
-  friday?: { open: string; close: string };
-  saturday?: { open: string; close: string };
-}) {
+function isOpenNow(hoursDetail?: Record<string, { open: string; close: string } | undefined>) {
   if (!hoursDetail) return false;
-
-  const today = getTodayKey();
-  const todayHours = hoursDetail[today];
-
-  if (!todayHours) return false;
-
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  const [openH, openM] = todayHours.open.split(':').map(Number);
-  const [closeH, closeM] = todayHours.close.split(':').map(Number);
-
-  const open = openH * 60 + openM;
-  const close = closeH * 60 + closeM;
-
-  return currentMinutes >= open && currentMinutes < close;
+  const today = hoursDetail[days[new Date().getDay()]];
+  if (!today) return false;
+  const now = new Date().getHours() * 60 + new Date().getMinutes();
+  const [oh, om] = today.open.split(':').map(Number);
+  const [ch, cm] = today.close.split(':').map(Number);
+  return now >= oh * 60 + om && now < ch * 60 + cm;
 }
 
-export default function HomePage() {
-  const [activeFilter, setActiveFilter] = useState<FilterType>('All');
-
-  const filteredListings = useMemo(() => {
-    const sorted = [...listings].sort((a, b) => b.rating - a.rating);
-
-    if (activeFilter === 'Open Now') {
-      return sorted.filter((listing) => isOpenNow(listing.hoursDetail));
-    }
-
-    if (activeFilter === 'Hidden Gems') {
-      return sorted.filter((listing) => listing.tags.includes('Hidden Gem'));
-    }
-
-    if (activeFilter === 'Food Trucks') {
-      return sorted.filter((listing) => listing.tags.includes('Food Truck'));
-    }
-
-    return sorted;
-  }, [activeFilter]);
-
-  const topPicks = [...listings].sort((a, b) => b.rating - a.rating).slice(0, 3);
-  const hiddenGemsPreview = listings
-    .filter((listing) => listing.tags.includes('Hidden Gem'))
-    .slice(0, 2);
-
+export default function BrowsePage() {
+  const [active, setActive] = useState<FilterType>('All');
   const filters: FilterType[] = ['All', 'Open Now', 'Hidden Gems', 'Food Trucks'];
 
+  const results = useMemo(() => {
+    const sorted = [...listings].sort((a, b) => b.rating - a.rating);
+    if (active === 'Open Now') return sorted.filter((l) => isOpenNow(l.hoursDetail));
+    if (active === 'Hidden Gems') return sorted.filter((l) => l.tags.includes('Hidden Gem'));
+    if (active === 'Food Trucks') return sorted.filter((l) => l.tags.includes('Food Truck'));
+    return sorted;
+  }, [active]);
+
   return (
-    <main className="min-h-screen bg-stone-50">
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">
-            Leander, Texas
-          </p>
-          <h1 className="text-4xl font-bold text-gray-900 leading-tight">
-            The Leander Local Guide
+    <main>
+      <header className="border-b-2 border-ink">
+        <div className="max-w-6xl mx-auto px-5 pt-8 pb-5">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft hover:text-chile transition-colors mb-4"
+          >
+            ← Back to the guide
+          </Link>
+          <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">Leander, Texas</p>
+          <h1
+            className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]"
+            style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}
+          >
+            Find Your Spot
           </h1>
-          <p className="mt-3 text-gray-500 text-base max-w-2xl">
-            Find the best food, drinks, hidden gems, and local hangouts in Leander.
+          <p className="mt-3 font-ui text-ink-soft max-w-xl">
+            What are you in the mood for? Filter the whole guide down to tonight.
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            <span className="rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-sm font-medium">
-              Local Favorites
-            </span>
-            <span className="rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-sm font-medium">
-              Hidden Gems
-            </span>
-            <span className="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm font-medium">
-              Not a Chain
-            </span>
-          </div>
         </div>
-      </section>
+      </header>
 
-      <section className="max-w-4xl mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-          {filters.map((filter) => {
-            const isActive = activeFilter === filter;
-
+      <section className="max-w-6xl mx-auto px-5 py-10">
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          {filters.map((f) => {
+            const on = active === f;
             return (
               <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                key={f}
+                onClick={() => setActive(f)}
+                aria-pressed={on}
+                className={`font-stamp uppercase tracking-[0.08em] text-sm px-4 py-1.5 border-2 rounded-[2px] -rotate-1 transition-colors ${
+                  on ? 'bg-chile text-paper border-chile' : 'text-ink border-rule hover:border-ink'
                 }`}
               >
-                {filter}
+                {f}
               </button>
             );
           })}
         </div>
 
-        <div className="mb-8">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-            {activeFilter}
-          </p>
-          {filteredListings.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {filteredListings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">
-              No spots match this filter right now.
-            </p>
-          )}
-        </div>
+        {results.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-12">
+            {results.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
+          </div>
+        ) : (
+          <p className="font-hand text-2xl text-oxblood">Nothing open on that filter right now. Try another.</p>
+        )}
       </section>
 
-      {activeFilter === 'All' && (
-        <>
-          <section className="max-w-4xl mx-auto px-6 pb-10">
-            <div className="mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-                Top Picks This Week
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {topPicks.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="max-w-4xl mx-auto px-6 pb-12">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Hidden Gems
-              </p>
-              <a
-                href="/hidden-gems"
-                className="text-sm font-medium text-emerald-700 hover:text-emerald-800"
-              >
-                View all
-              </a>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {hiddenGemsPreview.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
-            </div>
-          </section>
-        </>
-      )}
+      <SiteFooter />
     </main>
   );
 }

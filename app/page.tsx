@@ -1,137 +1,91 @@
-import Link from 'next/link';
-import { listings } from '@/data/listings';
-import ListingCard from '@/components/ListingCard';
+import { getAllSpots, countSpots, getFreshInk } from '@/lib/spots';
+import FilterableGrid from '@/components/FilterableGrid';
+import FreshInk from '@/components/FreshInk';
+import FeedMe from '@/components/FeedMe';
+import VerdictStamp from '@/components/VerdictStamp';
+import SiteFooter from '@/components/SiteFooter';
 
-// ── Derived data ──────────────────────────────────────────────────────────────
-const topPicks = [...listings]
-  .sort((a, b) => b.rating - a.rating)
-  .slice(0, 3);
+export const dynamic = 'force-dynamic';
 
-const stats = [
-  { value: listings.length,                                                         label: 'Local Spots'    },
-  { value: listings.filter(l => l.tags.includes('Hidden Gem')).length,             label: 'Hidden Gems'    },
-  { value: listings.filter(l => l.tags.includes('Not a Chain')).length,            label: 'Not a Chain'    },
-];
+export default async function Home() {
+  const [spots, counts, ink] = await Promise.all([getAllSpots(), countSpots(), getFreshInk()]);
+  const dateline = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date());
+  const pick = spots[0];
+  const feed = spots.map((s) => ({
+    slug: s.slug, name: s.name, category: s.category, hook: s.hook, rating: s.ratingGoogle, priceTier: s.priceTier,
+  }));
+  // trim heavy prose for the client grid payload (explicit pick = small + lint-clean)
+  const cards = spots.map((s) => ({
+    id: s.id, slug: s.slug, name: s.name, category: s.category, cuisines: s.cuisines,
+    ratingGoogle: s.ratingGoogle, priceTier: s.priceTier, addressLine: s.addressLine,
+    hoursToday: s.hoursToday, openNow: s.openNow, photo: s.photo, photoCredit: s.photoCredit,
+    verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities,
+    chainStatus: s.chainStatus, beenHere: s.beenHere, worthIt: s.worthIt, itsFine: s.itsFine,
+    skipIt: s.skipIt, wantToGo: s.wantToGo, happyHour: s.happyHour, localPhotos: s.localPhotos,
+  }));
 
-const filterPills = [
-  { label: 'Hidden Gems', href: '/hidden-gems', emoji: '💎' },
-  { label: 'Food',         href: '/food',         emoji: '🌮' },
-  { label: 'Events',       href: '/events',       emoji: '📅' },
-];
-
-// ── Page ──────────────────────────────────────────────────────────────────────
-export default function Home() {
   return (
-    <main className="min-h-screen">
-
-      {/* ─── Hero ──────────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-5xl mx-auto px-6 py-7">
-
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
-
-            {/* Title block */}
-            <div>
-              <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-2">
-                Leander, Texas
-              </p>
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-                The Leander Local Guide
-              </h1>
-              <p className="mt-2 text-sm text-gray-500 max-w-xs leading-relaxed">
-                Skip the chains. Find the spots that actually make Leander worth staying in.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="flex gap-4 sm:flex-col sm:items-end sm:gap-2">
-              {stats.map(({ value, label }) => (
-                <div key={label} className="flex items-baseline gap-1.5">
-                  <span className="text-xl font-bold text-gray-900 leading-none">{value}</span>
-                  <span className="text-xs text-gray-400">{label}</span>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-          {/* Filter pills */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            {filterPills.map(({ label, href, emoji }) => (
-              <Link
-                key={href}
-                href={href}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-stone-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 border border-transparent hover:border-emerald-100 transition-all duration-150"
-              >
-                <span>{emoji}</span>
-                {label}
-              </Link>
-            ))}
-          </div>
-
+    <main>
+      {/* Masthead */}
+      <header className="border-b-2 border-ink">
+        <div className="max-w-6xl mx-auto px-5 pt-9 pb-5">
+          <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">
+            Leander, Texas · Local-First · No Nonsense
+          </p>
+          <h1 className="font-display font-black text-ink leading-[0.9] tracking-[-0.03em]" style={{ fontSize: 'clamp(2.75rem, 8vw, 7rem)' }}>
+            The Leander
+            <br />
+            Local Guide
+          </h1>
+          <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
+            {counts.total} Spots · {counts.local} Local · {counts.chain} Chains (sorted to the back) · Eat where Leander actually eats
+          </p>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-10">
+      <FreshInk items={ink} dateline={dateline} />
 
-        {/* ─── Top Picks ─────────────────────────────────────────────────── */}
-        <section>
-          <SectionHeader
-            eyebrow="This Week"
-            title="Top Picks"
-            subtitle="Highest-rated spots in Leander right now"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topPicks.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
+      {/* Tonight's Pick + FEED ME (on ink) */}
+      <section className="bg-ink text-paper">
+        <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
+          <p className="font-stamp uppercase tracking-[0.22em] text-amber text-sm mb-4">Tonight&apos;s Pick</p>
+          {pick && (
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-7">
+              <div className="max-w-2xl">
+                <h2 className="font-display font-black leading-[0.95] tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+                  {pick.name}
+                </h2>
+                {pick.hook ? (
+                  <p className="mt-4 font-hand text-2xl text-amber">“{pick.hook}”</p>
+                ) : (
+                  <p className="mt-4 font-hand text-2xl text-amber/80">{pick.cuisines[0] || pick.category} · {pick.addressLine}</p>
+                )}
+                <p className="mt-5 font-ui text-sm text-paper/70">
+                  {[pick.category, pick.ratingGoogle ? `${pick.ratingGoogle}★ Google` : null, pick.hoursToday].filter(Boolean).join(' · ')}
+                </p>
+              </div>
+              <div className="flex md:flex-col items-center md:items-end gap-4 shrink-0">
+                {pick.ratingGoogle && <span className="font-hand text-6xl text-amber leading-none">{pick.ratingGoogle}</span>}
+                <VerdictStamp rating={pick.ratingGoogle} light className="text-lg" />
+              </div>
+            </div>
+          )}
+          <div className="mt-10">
+            <FeedMe spots={feed} />
           </div>
-        </section>
-
-        {/* ─── All Spots ─────────────────────────────────────────────────── */}
-        <section>
-          <SectionHeader
-            title="All Local Spots"
-            subtitle={`${listings.length} places worth knowing about in Leander`}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        </section>
-
-      </div>
-
-      {/* ─── Footer ────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-stone-200 bg-white mt-2">
-        <div className="max-w-5xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-400">
-          <span className="font-semibold text-gray-600">Leander Local Guide</span>
-          <span>Made by a local · No ads · No affiliates · No chains</span>
         </div>
-      </footer>
+      </section>
 
+      {/* The directory */}
+      <section className="max-w-6xl mx-auto px-5 py-12">
+        <div className="flex items-baseline justify-between mb-8 border-b border-rule pb-2">
+          <h2 className="font-display font-bold text-3xl text-ink">Every Spot in Leander</h2>
+          <span className="font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">{counts.total} and counting</span>
+        </div>
+        <FilterableGrid spots={cards} />
+      </section>
+
+      <SiteFooter />
     </main>
-  );
-}
-
-// ── Section header ─────────────────────────────────────────────────────────────
-function SectionHeader({
-  eyebrow,
-  title,
-  subtitle,
-}: {
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
-}) {
-  return (
-    <div className="mb-5">
-      {eyebrow && (
-        <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-1">{eyebrow}</p>
-      )}
-      <h2 className="text-base font-bold text-gray-900">{title}</h2>
-      {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
-    </div>
   );
 }

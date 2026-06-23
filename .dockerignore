@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.git
+*.log
+DESIGN.md
+PLAN.md
+data/leander-places-raw.json
+data/restaurants-enriched-raw.json
+google.txt

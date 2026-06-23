@@ -1,110 +1,64 @@
 import Tag from '@/components/Tag';
+import VerdictStamp from '@/components/VerdictStamp';
 import { Listing } from '@/data/listings';
 
-interface ListingCardProps {
-  listing: Listing;
-}
-
 const categoryIcons: Record<string, string> = {
-  Food:    '🌮',
-  Drink:   '🍹',
-  Coffee:  '☕',
-  Bar:     '🥃',
-  Brewery: '🍺',
+  Food: '🌮', Drink: '🍹', Coffee: '☕', Bar: '🥃', Brewery: '🍺',
 };
 
-function getTodayKey() {
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-  return days[new Date().getDay()];
-}
-
-function isOpenNow(hoursDetail: any): boolean | null {
-  if (!hoursDetail) return null;
-  const today = getTodayKey();
-  const todayHours = hoursDetail[today];
-  if (!todayHours) return false;
-  const now = new Date();
-  const curr = now.getHours() * 60 + now.getMinutes();
-  const [oh, om] = todayHours.open.split(':').map(Number);
-  const [ch, cm] = todayHours.close.split(':').map(Number);
-  return curr >= oh * 60 + om && curr < ch * 60 + cm;
-}
-
-export default function ListingCard({ listing }: ListingCardProps) {
+export default function ListingCard({ listing }: { listing: Listing }) {
   const icon = listing.tags.includes('Food Truck')
     ? '🚚'
-    : (categoryIcons[listing.category] ?? '📍');
-
-  const openNow = isOpenNow(listing.hoursDetail);
+    : categoryIcons[listing.category] ?? '📍';
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 hover:border-stone-300 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden group">
-
-      {/* Body */}
-      <div className="p-4 flex-1">
-
-        {/* Header row: icon + name + rating */}
-        <div className="flex items-start gap-2.5 mb-2.5">
-          <span className="text-xl leading-none mt-0.5 flex-shrink-0">{icon}</span>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-bold text-gray-900 leading-snug group-hover:text-emerald-700 transition-colors">
-              {listing.name}
-            </h2>
-            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mt-0.5">
-              {listing.category}
-            </p>
-          </div>
-          {listing.rating != null && (
-            <span className="flex-shrink-0 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded leading-none">
-              ★ {listing.rating}
-            </span>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">
-          {listing.description}
-        </p>
-
-        {/* Status chips */}
-        {(openNow !== null || listing.happyHour) && (
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {openNow !== null && (
-              <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${
-                openNow
-                  ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-stone-100 text-gray-500'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${openNow ? 'bg-green-500' : 'bg-gray-400'}`} />
-                {openNow ? 'Open Now' : 'Closed'}
-              </span>
-            )}
-            {listing.happyHour && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-50 text-amber-700 border border-amber-100">
-                🍻 {listing.happyHour}
-              </span>
-            )}
-          </div>
-        )}
+    <article className="group relative flex flex-col">
+      {/* Photo well, duotone newsprint block (real photos arrive with the live data) */}
+      <div className="relative aspect-[5/4] bg-paper-sunk border border-rule overflow-hidden transition-colors duration-150 group-hover:border-ink">
+        <span aria-hidden className="absolute inset-0 grid place-items-center text-6xl opacity-25 grayscale">
+          {icon}
+        </span>
+        <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft">
+          {listing.category}
+        </span>
+        <VerdictStamp rating={listing.rating} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
       </div>
 
-      {/* Tags */}
+      {/* Name, overlaps the well, on a paper sliver */}
+      <div className="relative -mt-5 mx-3 z-10">
+        <h3 className="inline-block bg-paper px-2 py-1 font-display font-semibold leading-[1.05] text-ink text-[1.55rem]">
+          {listing.name}
+        </h3>
+        <span className="block h-[2px] w-0 bg-chile transition-all duration-300 ease-out group-hover:w-16 ml-2 mt-1" />
+      </div>
+
+      {/* Anthony's one-liner (his hand) */}
+      <p className="px-3 mt-2 font-hand text-[1.15rem] leading-snug text-oxblood line-clamp-2">
+        “{listing.description}”
+      </p>
+
+      {/* Hand-inked rating numeral */}
+      <div className="px-3 mt-3 flex items-baseline gap-1.5">
+        {listing.rating != null && (
+          <span className="font-hand text-3xl text-chile leading-none">{listing.rating}</span>
+        )}
+        <span className="font-stamp uppercase tracking-[0.1em] text-[12px] text-ink-soft">· Anthony's call</span>
+      </div>
+
+      {/* Badges */}
       {listing.tags.length > 0 && (
-        <div className="px-4 pb-3 flex flex-wrap gap-1">
-          {listing.tags.map((tag) => (
-            <Tag key={tag} label={tag} />
+        <div className="px-3 mt-3 flex flex-wrap gap-1.5">
+          {listing.tags.slice(0, 4).map((t) => (
+            <Tag key={t} label={t} />
           ))}
         </div>
       )}
 
-      {/* Footer */}
-      <div className="px-4 py-2.5 border-t border-stone-100 flex items-center justify-between gap-3 text-xs text-gray-400">
-        <span className="truncate">📍 {listing.address}</span>
-        {listing.hours && (
-          <span className="flex-shrink-0 text-gray-400">{listing.hours}</span>
-        )}
+      {/* Footer hairline */}
+      <div className="mt-3 mx-3 pt-2 border-t border-rule flex items-center justify-between gap-3 font-ui text-xs text-ink-soft">
+        <span className="truncate">{listing.address}</span>
+        {listing.hours && <span className="flex-shrink-0">{listing.hours}</span>}
       </div>
-
-    </div>
+    </article>
   );
 }

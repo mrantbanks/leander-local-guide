@@ -1,0 +1,84 @@
+import Link from 'next/link';
+import Tag from '@/components/Tag';
+import VerdictStamp from '@/components/VerdictStamp';
+import SignalBar from '@/components/SignalBar';
+import type { CardSpot } from '@/lib/spots';
+
+const categoryIcons: Record<string, string> = {
+  Restaurant: '🍽️', 'Food Truck': '🚚', Cafe: '☕', Bakery: '🥐', Bar: '🍸', Brewery: '🍺', Dessert: '🍦',
+};
+
+export default function SpotCard({ spot }: { spot: CardSpot }) {
+  const icon = categoryIcons[spot.category] ?? '📍';
+  return (
+    <div className="group relative flex flex-col">
+      <Link href={`/r/${spot.slug}`} className="flex flex-col focus-visible:outline-none">
+        <div className="relative aspect-[5/4] bg-paper-sunk border border-rule overflow-hidden transition-colors duration-150 group-hover:border-ink">
+          {spot.localPhotos.length > 0 ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={`/uploads/${spot.localPhotos[0].filename}`}
+              alt={spot.name}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover grayscale-[0.12] contrast-110 transition-[filter] duration-200 ease-out group-hover:grayscale-0"
+            />
+          ) : spot.photo ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/img?n=${encodeURIComponent(spot.photo)}&w=800`}
+                alt={spot.name}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover grayscale-[0.18] contrast-125 sepia-[0.08] transition-[filter] duration-200 ease-out group-hover:grayscale-0 group-hover:sepia-0"
+              />
+              {spot.photoCredit && (
+                <span className="absolute left-1.5 bottom-1 text-[9px] text-paper/80 bg-ink/45 px-1 rounded-sm">📷 {spot.photoCredit}</span>
+              )}
+            </>
+          ) : (
+            <span aria-hidden className="absolute inset-0 grid place-items-center text-6xl opacity-25 grayscale">{icon}</span>
+          )}
+          <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
+          <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
+          {spot.openNow === true && (
+            <span className="absolute right-2 bottom-2 font-stamp uppercase tracking-[0.08em] text-[11px] text-ink bg-amber px-1.5 py-0.5 rounded-sm">Open Now</span>
+          )}
+        </div>
+
+        <div className="relative -mt-5 mx-3 z-10">
+          <h3 className="inline-block bg-paper px-2 py-1 font-display font-semibold leading-[1.05] text-ink text-[1.5rem] group-hover:text-oxblood transition-colors">
+            {spot.name}
+          </h3>
+          <span className="block h-[2px] w-0 bg-chile transition-all duration-300 ease-out group-hover:w-16 ml-2 mt-1" />
+        </div>
+
+        {spot.hook && (
+          <p className="px-3 mt-2 font-hand text-[1.18rem] leading-snug text-oxblood line-clamp-2">“{spot.hook}”</p>
+        )}
+
+        <div className="px-3 mt-3 flex items-center gap-3 flex-wrap">
+          {spot.ratingGoogle != null && <span className="font-ui text-xs text-ink-soft">{spot.ratingGoogle}★ <span className="opacity-60">Google</span></span>}
+          {spot.priceTier ? <span className="font-ui text-xs text-ink-soft">{'$'.repeat(spot.priceTier)}</span> : null}
+          {spot.beenHere > 0 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
+        </div>
+
+        {(spot.badges.length > 0 || spot.cuisines.length > 0) && (
+          <div className="px-3 mt-3 flex flex-wrap gap-1.5">
+            {spot.badges.slice(0, 3).map((b) => <Tag key={b} label={b} />)}
+            {spot.cuisines.slice(0, 2).map((c) => <Tag key={`c-${c}`} label={c} />)}
+          </div>
+        )}
+
+        <div className="mt-3 mx-3 pt-2 border-t border-rule flex items-center justify-between gap-3 font-ui text-xs text-ink-soft">
+          <span className="truncate">{spot.addressLine}</span>
+          {spot.hoursToday && <span className="flex-shrink-0 truncate max-w-[45%]">{spot.hoursToday.replace(/^[A-Za-z]+:\s*/, '')}</span>}
+        </div>
+      </Link>
+
+      {/* one-tap verdict (outside the link so taps don't navigate) */}
+      <div className="px-3 mt-3">
+        <SignalBar placeId={spot.id} compact initial={{ worthIt: spot.worthIt, itsFine: spot.itsFine, skipIt: spot.skipIt, beenHere: spot.beenHere, wantToGo: spot.wantToGo }} />
+      </div>
+    </div>
+  );
+}

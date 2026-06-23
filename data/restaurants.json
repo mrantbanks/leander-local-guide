@@ -1,0 +1,6191 @@
+[
+  {
+    "id": "ChIJQ82UND0rW4YRmWju9jJ2cAU",
+    "slug": "blue-corn-harvest-bar-and-grill-leander",
+    "name": "Blue Corn Harvest Bar and Grill Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "11840 Hero Way W Bldg A, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5781723,
+      "lng": -97.8689728
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=391943128844495001&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJxzw4bBMrW4YRUSFshr1xboo",
+    "slug": "conejos-tex-mex-cantina-leander",
+    "name": "Conejos Tex-Mex Cantina Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "2082 N US Hwy 183 Ste 150, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6268298,
+      "lng": -97.8656991
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9975035283490218321&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJze0APgAtW4YRuLABzsq3Wq8",
+    "slug": "willie-s-grill-icehouse",
+    "name": "Willie's Grill & Icehouse",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Seafood"
+    ],
+    "googleType": "American Restaurant",
+    "address": {
+      "formatted": "1412 Bright Lane, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.561515099999998,
+      "lng": -97.822561
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12635613786208841912&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJlUn7HHsrW4YRmueaCE_KzMg",
+    "slug": "zeytun-mediterranean-grill",
+    "name": "Zeytun Mediterranean Grill",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "11880 Hero Way W Ste 201, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.577970800000003,
+      "lng": -97.8697986
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14469162143630157722&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJZQ-6jgtW4YRvSGH7B1Ji74",
+    "slug": "house-of-chettinad",
+    "name": "House of Chettinad",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "15241 Ronald Reagan Blvd Ste 114, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.558877000000003,
+      "lng": -97.79973299999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13730148281840247229&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ__9P_m4sW4YR0GgD6wlPT4A",
+    "slug": "bella-sera-of-leander",
+    "name": "Bella Sera of Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Italian Restaurant",
+    "address": {
+      "formatted": "1913 S Hwy 183 #301a, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.553218599999997,
+      "lng": -97.84224909999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9245695464031086800&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJmQvLwxAtW4YRCsecrrc3HaA",
+    "slug": "jack-s-modern-artisan-deli",
+    "name": "Jack's Modern Artisan Deli",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "2403 S Hwy 183 Unit 104, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.547192,
+      "lng": -97.8421049
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11537439082441131786&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJWWOxh-MrW4YRP9OHAUktlZ4",
+    "slug": "little-beijing-restaurant",
+    "name": "Little Beijing Restaurant",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Chinese Restaurant",
+    "address": {
+      "formatted": "12621 Hero Way W B106, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5733344,
+      "lng": -97.88046879999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11427089421104042815&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJR59_JkcrW4YRTKB44c-P9eI",
+    "slug": "obsidian-brewery",
+    "name": "Obsidian Brewery",
+    "primaryCategory": "Brewery",
+    "cuisines": [
+      "Pizza"
+    ],
+    "googleType": "Brewpub",
+    "address": {
+      "formatted": "11880 Hero Way W Ste 208, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.577987399999994,
+      "lng": -97.8692995
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16354135744869605452&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJFWme63otW4YR2IhYi9GM1oc",
+    "slug": "nick-s-breakfast-and-coffee",
+    "name": "Nick's Breakfast and Coffee",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Breakfast Restaurant",
+    "address": {
+      "formatted": "901 Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.553517900000003,
+      "lng": -97.8553238
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9788165671750240472&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJKR90t2crW4YRHyVnibch-68",
+    "slug": "crust-pizza-co-leander",
+    "name": "Crust Pizza Co. - Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "145 S Brook Dr #180, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.590511199999998,
+      "lng": -97.85902159999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12680766247959733535&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ1cXPAwArW4YRpzIJrE1mpIw",
+    "slug": "layne-s-chicken-fingers-leander",
+    "name": "Layne's Chicken Fingers - Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "Chicken Restaurant",
+    "address": {
+      "formatted": "11312 Hero Way W #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5807187,
+      "lng": -97.8607629
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10134337545275257511&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJFZmS6_YrW4YR5tAFm4UUAH8",
+    "slug": "veranda-bar-restaurant",
+    "name": "Veranda Bar & Restaurant",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "109 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5792422,
+      "lng": -97.8534967
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9151337006880903398&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ6bVRo9ItW4YR2Gu6HOpKCME",
+    "slug": "bawarchi-indian-cuisine-bar-leander",
+    "name": "Bawarchi Indian Cuisine & Bar Leander",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "15881 Ronald Reagan Blvd #5, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.568044699999998,
+      "lng": -97.80293739999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13909449818498558936&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJGQKGbmktW4YRoFNCtr-rgbE",
+    "slug": "est-ncia-brazilian-steakhouse",
+    "name": "Est\u00e2ncia Brazilian Steakhouse",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "BBQ",
+      "Steakhouse"
+    ],
+    "googleType": "Steak House",
+    "address": {
+      "formatted": "2132 Raider Way, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5592278,
+      "lng": -97.82052859999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12790693256593822624&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ3S4COvctW4YRLJ_9vrFAGwg",
+    "slug": "the-brass-tap",
+    "name": "The Brass Tap",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "15181 Ronald Reagan Blvd Ste 300, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.558153800000003,
+      "lng": -97.7991122
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=584131708832292652&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJk1de4IUvW4YR5iVifcuEt_g",
+    "slug": "texas-roadhouse",
+    "name": "Texas Roadhouse",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Steakhouse"
+    ],
+    "googleType": "Steak House",
+    "address": {
+      "formatted": "1416 Sparkle Ln, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5624088,
+      "lng": -97.82293770000001
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17921939251660989926&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJU5EjGkYtW4YR-Wg6b-xGQW8",
+    "slug": "game-on-bar-grill",
+    "name": "Game On Bar & Grill",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Bar & Grill",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd A100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.563125599999996,
+      "lng": -97.80068659999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8016766792988518649&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJbVXi4corW4YRK5a7DJjti9U",
+    "slug": "dau-sushi",
+    "name": "Dau Sushi",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "2082 N US Hwy 183 Ste 115, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.626310399999998,
+      "lng": -97.8651246
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15387653789145863723&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJQUiPcbQtW4YRVwQyBugUPIg",
+    "slug": "the-boss-cheesesteak",
+    "name": "The Boss Cheesesteak",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "American Restaurant",
+    "address": {
+      "formatted": "203 N Brushy St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.579818099999997,
+      "lng": -97.8547243
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9816744274529748055&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJiZaebQAtW4YRpVrEQqePuTI",
+    "slug": "southside-market-barbeque-leander",
+    "name": "Southside Market & Barbeque - Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "BBQ"
+    ],
+    "googleType": "Barbecue Restaurant",
+    "address": {
+      "formatted": "1420 Shimmering Lane, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5601529,
+      "lng": -97.8217761
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3655110521130343077&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ8VAyGUotW4YRCq2hv4ZJfuI",
+    "slug": "red-horn-brewery-roastery",
+    "name": "Red Horn Brewery & Roastery",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "1615 Scottsdale Dr Bldg 1 Suite 110, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.550379999999997,
+      "lng": -97.815232
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16320562942726745354&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJy4pt-LIrW4YRvTOJ2ypp578",
+    "slug": "antena-indian-fine-dine-and-bar",
+    "name": "Antena Indian Fine Dine and Bar",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Fine Dining Restaurant",
+    "address": {
+      "formatted": "2082 N US Hwy 183 #130, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6263712,
+      "lng": -97.8654627
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13828136813657142205&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNReoaBgsW4YRTO5L9hvLdv0",
+    "slug": "brooklyn-heights-pizzeria",
+    "name": "Brooklyn Heights Pizzeria",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "3550 N Lakeline Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.544854899999997,
+      "lng": -97.8634022
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18264008659804352076&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_aU94-0rW4YRjFGIQ5xaWQY",
+    "slug": "casa-costa-bake-shop",
+    "name": "Casa Costa Bake Shop",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "201 Bagdad St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.579101200000004,
+      "lng": -97.8556131
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=457496464349221260&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ6Z0qkqMrW4YRiP0yfl-ra6A",
+    "slug": "wayback-burgers",
+    "name": "Wayback Burgers",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Burgers"
+    ],
+    "googleType": "Hamburger Restaurant",
+    "address": {
+      "formatted": "3651 N US Hwy 183 Ste #195, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.602075899999996,
+      "lng": -97.8605762
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11559521295204023688&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ54lk2oorW4YRABcbB6qYg7g",
+    "slug": "jardin-del-rey-mexican-restaurant",
+    "name": "Jardin Del Rey Mexican Restaurant",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Mexican Restaurant",
+    "address": {
+      "formatted": "703 US-183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.569606099999998,
+      "lng": -97.8496605
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13295638380958914304&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJp_zXNU0tW4YR5SIcXhn833k",
+    "slug": "sushi-to-the-moon",
+    "name": "SUSHI to the MOON",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Japanese"
+    ],
+    "googleType": "Japanese Restaurant",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd b260, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.563131899999995,
+      "lng": -97.8014061
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8782014984279040741&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ1fD6ZxgsW4YRVNuNVvCK1RA",
+    "slug": "umiya-leander",
+    "name": "Umiya Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Japanese",
+      "Sushi"
+    ],
+    "googleType": "Japanese Restaurant",
+    "address": {
+      "formatted": "3550 N Lakeline Blvd #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.544592700000003,
+      "lng": -97.8631492
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1213028439495138132&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ86QOb-ArW4YRegsWb8bIq8k",
+    "slug": "the-thirsty-chicken",
+    "name": "The Thirsty Chicken",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Chicken Wings Restaurant",
+    "address": {
+      "formatted": "104 W Willis St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5792239,
+      "lng": -97.8538567
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14531929377233832826&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJm-it7sQrW4YR5IgidjJ7zjA",
+    "slug": "stubblefield-s",
+    "name": "Stubblefield\u2019s",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "BBQ"
+    ],
+    "googleType": "Barbecue Restaurant",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85564439999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3516883815683492068&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJCSdDWMItW4YRHjdMiIyKWaM",
+    "slug": "the-fieldhouse-at-the-crossover",
+    "name": "The Fieldhouse at the Crossover",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "1717 Scottsdale Dr Suite 160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5472831,
+      "lng": -97.81395719999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11770591437296252702&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJyQ5zt00tW4YRZfL6S8m7hVo",
+    "slug": "sky-asian-fusion",
+    "name": "Sky Asian Fusion",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Asian Restaurant",
+    "address": {
+      "formatted": "1825 Crystal Falls Pkwy #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.545551399999997,
+      "lng": -97.86541869999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6522826108553589349&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNWF5MqArW4YRr-g1wB4wUiQ",
+    "slug": "cava",
+    "name": "CAVA",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Greek",
+      "Mediterranean"
+    ],
+    "googleType": "Mediterranean Restaurant",
+    "address": {
+      "formatted": "128 S Brook Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5884288,
+      "lng": -97.857884
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2617207242087590063&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJO62kmEArW4YR-7n1OFs1JXw",
+    "slug": "brito-s",
+    "name": "Brito's",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Burgers"
+    ],
+    "googleType": "Hamburger Restaurant",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85564439999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8945614900755282427&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ5fPS4SErW4YR7sdwYOHHuWs",
+    "slug": "sabino-s-pizza-pub",
+    "name": "Sabino's Pizza Pub",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Italian",
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "2082 N US Hwy 183 Ste 110, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6263493,
+      "lng": -97.8648769
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7762455203549333486&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJRVcWpnYtW4YRYYJ5kjVSRkY",
+    "slug": "woks-it-2-u",
+    "name": "Woks it 2 U",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Chinese Restaurant",
+    "address": {
+      "formatted": "1101 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.564453500000003,
+      "lng": -97.84747999999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5063825221068882529&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJP6fItektW4YRWFCWdsP9Cfk",
+    "slug": "himalayan-spice-leander",
+    "name": "Himalayan Spice Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "1607 Glass Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5571984,
+      "lng": -97.84759319999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17945153206184464472&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJCTiw2bcrW4YRNx-A2u5UzSA",
+    "slug": "cheba-hut-toasted-subs",
+    "name": "Cheba Hut \"Toasted\" Subs",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "11620 Hero Way W #160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.579339,
+      "lng": -97.8655684
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2363638764284157751&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJcfau6XkrW4YRGOCIH04cBSs",
+    "slug": "atomic-wings",
+    "name": "Atomic Wings",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "144 S Brook Dr Ste 130, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5893797,
+      "lng": -97.8585682
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3099915040376545304&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJX_hVnEUtW4YRntHFswW7FhY",
+    "slug": "pokefit-leander",
+    "name": "Pokefit - Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Japanese",
+      "Korean",
+      "Sushi"
+    ],
+    "googleType": "Asian Fusion Restaurant",
+    "address": {
+      "formatted": "2701 S Hwy 183 Ste A, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5442956,
+      "lng": -97.8407256
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1591665151487365534&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ7_9p7-ctW4YRmpyYvOC6PwA",
+    "slug": "casamigos-mexican-grill",
+    "name": "Casamigos Mexican Grill",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "Tex-Mex Restaurant",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.564305,
+      "lng": -97.80181309999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17938397932330138&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJzYl0A7UtW4YRQVhWd0FaNfc",
+    "slug": "four-seasons-chinese-restaurant",
+    "name": "Four seasons Chinese Restaurant",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Chinese Restaurant",
+    "address": {
+      "formatted": "1906 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5499895,
+      "lng": -97.853149
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17813243138355386433&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJdb582uIrW4YRP9bxV5FbeIs",
+    "slug": "smokey-mo-s-bbq",
+    "name": "Smokey Mo's BBQ",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "BBQ",
+      "Breakfast"
+    ],
+    "googleType": "Barbecue Restaurant",
+    "address": {
+      "formatted": "11880 Hero Way W #101, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.577696800000002,
+      "lng": -97.87024079999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10049883248281114175&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ9U2fnO0rW4YRjeLxhLdCddA",
+    "slug": "la-tapatia-mexican-restaurant-and-bar",
+    "name": "La Tapatia Mexican Restaurant and Bar",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Mexican Restaurant",
+    "address": {
+      "formatted": "651 N US-183 Ste 310, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.583047999999998,
+      "lng": -97.858363
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15020985488141050509&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJLa4kLecrW4YR3-_xcBl8IMY",
+    "slug": "mcalister-s-deli",
+    "name": "McAlister's Deli",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "South Brook Drive &, N US Hwy 183 Suite #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.590127700000004,
+      "lng": -97.8580588
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14276547267475402719&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ5Rr-uWYtW4YRJtrM5ZSn5Mg",
+    "slug": "austin-adhurs",
+    "name": "Austin Adhurs",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "10824 E Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5654949,
+      "lng": -97.8180069
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14475879360228022822&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJE2WE68UtW4YR1JLkt2KKBX0",
+    "slug": "sharks-burger",
+    "name": "Sharks Burger",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Burgers"
+    ],
+    "googleType": "Hamburger Restaurant",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd c100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.564280900000004,
+      "lng": -97.8018506
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9008758786221183700&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJC24bzREtW4YRTgA06h1TokE",
+    "slug": "guaco-taco",
+    "name": "Guaco Taco",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Taco Restaurant",
+    "address": {
+      "formatted": "1840 Crystal Falls Pkwy #430, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.544570800000002,
+      "lng": -97.8661747
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4729433946640875598&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJUWWk2PYvW4YRc5hTBCgDMPQ",
+    "slug": "taco-chango",
+    "name": "Taco Chango",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "12900 Trails End Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5110948,
+      "lng": -97.88614079999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17595567214542690419&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJLSKVD_bLRIYRR9StXfwAnOY",
+    "slug": "culver-s",
+    "name": "Culver\u2019s",
+    "primaryCategory": "Dessert",
+    "cuisines": [
+      "American",
+      "Burgers",
+      "Sandwiches"
+    ],
+    "googleType": "American Restaurant",
+    "address": {
+      "formatted": "1631 Crystal Village Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.564082799999998,
+      "lng": -97.8220298
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16617157808993719367&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJSXLGILkrW4YRKXireK1ZXdY",
+    "slug": "tacos-take-it-easy",
+    "name": "Tacos Take It Easy",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "Tex-Mex Restaurant",
+    "address": {
+      "formatted": "203 N Brushy St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.579770999999997,
+      "lng": -97.85468739999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15446600898539386921&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJr-xT80ErW4YR1Uzt4Wzun6Q",
+    "slug": "firehouse-subs-southbrook-station",
+    "name": "Firehouse Subs Southbrook Station",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "128 S Brook Dr Ste 140, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.588457100000003,
+      "lng": -97.85818069999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11862462094931479765&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJd-1CJQArW4YRTazwJyJnAek",
+    "slug": "desi-hangout",
+    "name": "Desi hangout",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "203 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580448599999997,
+      "lng": -97.8551343
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16789814282210552909&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJCS0k8I4rW4YRa62fB9kawbo",
+    "slug": "5th-element-brewing",
+    "name": "5th Element Brewing",
+    "primaryCategory": "Brewery",
+    "cuisines": [],
+    "googleType": "Brewery",
+    "address": {
+      "formatted": "100 E Evans St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5815794,
+      "lng": -97.852998
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13457066680997883243&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ75Z-BfU1W4YRhhfs4R5bxO8",
+    "slug": "emotion",
+    "name": "Emotion",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "2036 N US Hwy 183 #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.628075400000004,
+      "lng": -97.8659531
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17277034258697557894&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJG0zGvWQrW4YRp0v3EiSFPv8",
+    "slug": "nomadus",
+    "name": "Nomadus",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Food Court",
+    "address": {
+      "formatted": "Inside Valero Gas, 17680 Ronald Reagan Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.597047099999997,
+      "lng": -97.8129515
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18392284318211197863&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ__-rHZMsW4YR3yoJe1yOJIo",
+    "slug": "wagyu-on-wheels-the-fieldhouse-the-crossover",
+    "name": "Wagyu On Wheels - The Fieldhouse @ The Crossover",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.546992799999998,
+      "lng": -97.8141167
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9954237604247972575&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJRYaulrktW4YR_2mCxB0o4FQ",
+    "slug": "pork-booty-atx",
+    "name": "Pork Booty Atx",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5484002,
+      "lng": -97.8148482
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6115932402285177343&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJGy_SaEYrW4YR8fmjYpJzLe0",
+    "slug": "wildfire-park",
+    "name": "Wildfire Park",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Market",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85594479999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17090443233498233329&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJxe_GB5IpW4YRF5TI8UsqXSM",
+    "slug": "leander-quick-stop-indian-and-napali-fast-food",
+    "name": "Leander Quick Stop : Indian And Napali Fast Food",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "12201 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.575926,
+      "lng": -97.8723031
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2548239469828936727&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJV22sl8rW4YRVEunWhPbF9c",
+    "slug": "raahi-foods-llc",
+    "name": "Raahi Foods LLC",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Caterer",
+    "address": {
+      "formatted": "2152 Clarissa Lynn Way, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6036635,
+      "lng": -97.82572619999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15499097518790626132&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJBQFVXecrW4YRgPu62DEeKLM",
+    "slug": "atx-latin-food",
+    "name": "ATX LATIN FOOD",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "207 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5802366,
+      "lng": -97.85382129999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12909601531295890304&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJUUFJ3UoxW4YRomtMhq7SdZ0",
+    "slug": "bkk-thai-street-food",
+    "name": "BKK THAI STREET FOOD",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Thai"
+    ],
+    "googleType": "Thai Restaurant",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85564439999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11346206483249130402&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJq8Njtu0tW4YRz1RZeb2sN4A",
+    "slug": "takavron",
+    "name": "Takavron",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Mexican Restaurant",
+    "address": {
+      "formatted": "G5WP+QC, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.547233499999997,
+      "lng": -97.8127612
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9239043090358555855&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJRYIzuDgrW4YR27B9nWG4ToQ",
+    "slug": "night-owl-bar-leander",
+    "name": "Night Owl Bar Leander",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "203 N Brushy St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5798043,
+      "lng": -97.8547093
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9533760190583517403&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJWT2DrYctW4YR70SZj9sUdu8",
+    "slug": "texana-burger-bbq-catering",
+    "name": "Texana Burger & BBQ Catering",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Caterer",
+    "address": {
+      "formatted": "1500 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5559332,
+      "lng": -97.85856729999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17255001955556213999&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJdTCiCAAtW4YRgT0IalJBjDI",
+    "slug": "qahwah-house-coffee-leander-austin",
+    "name": "Qahwah House Coffee - Leander Austin",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "14300 Ronald Reagan Blvd Suite 305 & 306, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.548434500000003,
+      "lng": -97.7930731
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3642358020857937281&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ2_RuQgArW4YRv9pdhGycs0E",
+    "slug": "summer-moon",
+    "name": "Summer Moon",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "133 Collective Wy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.571704099999998,
+      "lng": -97.8506243
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4734299623187667647&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJoZPAIWQtW4YRMGe3KE4LPLs",
+    "slug": "perky-beans-coffee-pb-cafe",
+    "name": "Perky Beans Coffee & PB Cafe",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "2080 N US Hwy 183 #210, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.627149300000003,
+      "lng": -97.86516209999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13491671014013626160&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJW-FC62IrW4YRcH05j_Y54_s",
+    "slug": "paris-baguette",
+    "name": "Paris Baguette",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "128 S Brook Dr Ste 160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5886736,
+      "lng": -97.85809619999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18150414654360878448&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJj-7rmBYtW4YRIqRH_r2mzZg",
+    "slug": "seven-oaks-coffee",
+    "name": "Seven Oaks Coffee",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "15205 Ronald Reagan Blvd #702, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5587329,
+      "lng": -97.799015
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11010639998935868450&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJOd_JbnIrW4YRjimE4wn-pFI",
+    "slug": "black-rock-coffee-bar",
+    "name": "Black Rock Coffee Bar",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "8481 W State Hwy 29, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.637222400000002,
+      "lng": -97.83106509999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5955163925715888526&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJUWBDzrItW4YRuUomNq7TsnM",
+    "slug": "whipped-bakery-cafe-leander",
+    "name": "Whipped Bakery & Cafe Leander",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd Bldg B220, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.563412199999995,
+      "lng": -97.80151219999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8336958605402458809&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ4zOhH0ctW4YRFGZ6oG4xWUI",
+    "slug": "little-leaps-play-cafe",
+    "name": "Little Leaps Play Cafe",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Indoor Playground",
+    "address": {
+      "formatted": "3550 N Lakeline Blvd Ste 200, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5452287,
+      "lng": -97.8635206
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4780906830639031828&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJAb5U7HcrW4YRRcbNtKe01gw",
+    "slug": "matinee-coffee-concessions",
+    "name": "Matinee! Coffee + Concessions",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Stand",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85564439999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=925125405857138245&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJyZwTBAwrW4YRcw6TnkVLxgA",
+    "slug": "pj-s-coffee",
+    "name": "PJ's Coffee",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "11620 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.579383600000003,
+      "lng": -97.8653794
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=55814807773974131&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJl2N28DstW4YRJ_Doz1loBFA",
+    "slug": "scooter-s-coffee",
+    "name": "Scooter's Coffee",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast",
+      "Brunch"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "1265 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5623035,
+      "lng": -97.8466211
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5765848157890605095&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJvd6uU_EtW4YR-LB-DpZkzP4",
+    "slug": "lava-leander",
+    "name": "Lava Leander",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Mediterranean"
+    ],
+    "googleType": "Hookah Bar",
+    "address": {
+      "formatted": "14300 Ronald Reagan Blvd Unit 901, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5480046,
+      "lng": -97.7925897
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18360160376533725432&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJSwDzVksrW4YRSuZOmfb4H6Q",
+    "slug": "scooter-s-coffee-2",
+    "name": "Scooter's Coffee",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast",
+      "Brunch"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "3625 US-183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6026366,
+      "lng": -97.86023259999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11826444884515939914&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ-3PjFtkrW4YRKIwK5ASPD1U",
+    "slug": "the-sweet-cupf",
+    "name": "The Sweet Cupf\u00e9",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "305 US-183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.575682200000003,
+      "lng": -97.85202
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6129274869043072040&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_amc5ZMtW4YR-6vSFoCsdII",
+    "slug": "the-coffee-pot-tx",
+    "name": "The Coffee Pot Tx",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "7740 183A Toll Rd #1023, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5677291,
+      "lng": -97.8245824
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9400327988367764475&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJXeNedQArW4YRfWY-DDqhsLE",
+    "slug": "starbucks",
+    "name": "Starbucks",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "1892 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.629873000000003,
+      "lng": -97.86656959999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12803911011299911293&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ99Gh4AcsW4YRs1TP0ve8xNY",
+    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard",
+    "name": "Sleeps 8 Modern 3BR Leander | Coffee Bar & Yard",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Lodging",
+    "address": {
+      "formatted": "Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.565086299999997,
+      "lng": -97.8615342
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15475701992131613875&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_5GhPwIrW4YRuyvdHg0ZPhs",
+    "slug": "shipley-do-nuts",
+    "name": "Shipley Do-Nuts",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "144 S Brook Dr #140, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.589168999999995,
+      "lng": -97.8584723
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1963034031723195323&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ99Gh4AcsW4YRMaCyK5dG0oA",
+    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard-2",
+    "name": "Sleeps 8 Modern 3BR Leander | Coffee Bar & Yard",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Lodging",
+    "address": {
+      "formatted": "Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.565086299999997,
+      "lng": -97.8615342
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9282559397051146289&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ99Gh4AcsW4YRqF3UOZvOyyA",
+    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard-3",
+    "name": "Sleeps 8 Modern 3BR Leander Coffee Bar & Yard",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Lodging",
+    "address": {
+      "formatted": "Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.565086299999997,
+      "lng": -97.8615342
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2363209595571428776&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJncIvYAAtW4YRp-gz8gxBN3I",
+    "slug": "starbucks-coffee-company",
+    "name": "Starbucks Coffee Company",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "3501 N Lakeline Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.543121000000003,
+      "lng": -97.86489549999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8230118367901771943&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJZxXL0lstW4YRojJgyPVIy4E",
+    "slug": "lin-s-cafe-ii-asian-cuisine",
+    "name": "Lin's Cafe II Asian Cuisine",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd b230, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.563526399999997,
+      "lng": -97.8015144
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9352649271630901922&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJwmU3nEsW4YR3lpG9MjpfmI",
+    "slug": "starbucks-coffee-company-2",
+    "name": "Starbucks Coffee Company",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "1805 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.55642,
+      "lng": -97.84396
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7097367112083462878&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJr1JyBdMrW4YRwoJfUpkEAgs",
+    "slug": "einstein-bros-bagels",
+    "name": "Einstein Bros. Bagels",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Bagel Shop",
+    "address": {
+      "formatted": "145 S Brook Dr #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.590156500000003,
+      "lng": -97.8588981
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=793201540929127106&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNWhdZQAtW4YRswOqrlr8tDk",
+    "slug": "rinkside-cafe-by-red-horn",
+    "name": "Rinkside Cafe by Red Horn",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5483158,
+      "lng": -97.8138388
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4158225822377444275&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ9xy23QktW4YRx1hAfC3cEio",
+    "slug": "summer-blends-cafe",
+    "name": "Summer Blends Cafe",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5484002,
+      "lng": -97.8148482
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3031727587089995975&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJzUwhWLMtW4YRKM3Gf240C2M",
+    "slug": "drip-society",
+    "name": "Drip Society",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "13920 Ronald Reagan Blvd Ste 201, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5444525,
+      "lng": -97.7914773
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7136855683693464872&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ35mDVQAtW4YRB7-PQUEt50A",
+    "slug": "boba-cucue",
+    "name": "Boba Cucue",
+    "primaryCategory": "Cafe",
+    "cuisines": [],
+    "googleType": "Cafe",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd Ste 200B, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.563617400000002,
+      "lng": -97.8015846
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4676756496343613191&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJm-TTaccrW4YRyc3-5c_ZYog",
+    "slug": "rabbit-hole-neighborhood-bar-leander",
+    "name": "Rabbit Hole Neighborhood Bar Leander",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "2082 N US Hwy 183 Ste 145, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.626423099999997,
+      "lng": -97.8655703
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9827656823815982537&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJdSb_a74tW4YRhVs2u1zEs-0",
+    "slug": "rabbit-hole-neighborhood-bar-cedar-park",
+    "name": "Rabbit Hole Neighborhood Bar Cedar Park",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Cocktail Bar",
+    "address": {
+      "formatted": "13920 Ronald Reagan Blvd Ste 202, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5441301,
+      "lng": -97.7915027
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17128249710377065349&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJpee_NwAvW4YRs0uYH-GAHOE",
+    "slug": "cork-and-barrel-on-the-greens",
+    "name": "Cork and Barrel on the Greens",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Pub",
+    "address": {
+      "formatted": "3400 Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.534900799999996,
+      "lng": -97.8835477
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16220981662267755443&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ-1IRA1AvW4YR_uB2ue-0lU8",
+    "slug": "nameless-saloon",
+    "name": "Nameless Saloon",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "23296 Nameless Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.532574300000004,
+      "lng": -97.9359643
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5734688642227953918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJzUojyu07W4YRil2AyxQ09Rg",
+    "slug": "caddie-shack-sports-bar",
+    "name": "Caddie Shack Sports Bar",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "422 Venture Blvd S, Leander, TX 78645, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.3833268,
+      "lng": -97.9976417
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1798400890122558858&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ6URzke0rW4YRZjjBZb5LmGs",
+    "slug": "leander-beer-market",
+    "name": "Leander Beer Market",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "Bar",
+    "address": {
+      "formatted": "106 W Willis St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5791357,
+      "lng": -97.8539442
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7753030039641340006&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJO3lATmEtW4YReIvskXycTBs",
+    "slug": "the-baked-crust-pizza-taproom-in-leander-tx",
+    "name": "The Baked Crust - Pizza & Taproom in Leander, TX",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "14105 Ronald Reagan Blvd Unit 304, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5459568,
+      "lng": -97.7935948
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1967119196092140408&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJU77Sdi8tW4YRzaYJigdN7po",
+    "slug": "haute-spot",
+    "name": "Haute Spot",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Live Music Venue",
+    "address": {
+      "formatted": "1501 E New Hope Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5363138,
+      "lng": -97.8131284
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11163945221074036429&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJVyCG3_MtW4YRnFNHWnWko2A",
+    "slug": "mockingbird-bakes",
+    "name": "Mockingbird Bakes",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "Mockingbird Ln, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.559254000000003,
+      "lng": -97.8330987
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6963590272777671580&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJserOsgsrW4YRrxDtApLDWZE",
+    "slug": "noble-delights-bakery",
+    "name": "Noble Delights Bakery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "2091 N US Hwy 183 Ste B, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5502395,
+      "lng": -97.8423116
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10473617440308531375&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJkUPBGj4tW4YRIaMOwiYS9uw",
+    "slug": "salgado-s-bakery-leander",
+    "name": "Salgado's Bakery - Leander",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "1909 S Hwy 183 Suite 101, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.553444799999994,
+      "lng": -97.84263
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17074854994895610657&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJHyccl3ctW4YRM4kJRApXbkc",
+    "slug": "torito-bakery-pre-order-only-home-bakery",
+    "name": "Torito Bakery - PRE - ORDER ONLY (Home Bakery)",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Pastry Shop",
+    "address": {
+      "formatted": "Aspen Meadow Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.541727199999993,
+      "lng": -97.853042
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5147147125733820723&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_fw9a2cpW4YRWas070A6Nx0",
+    "slug": "toothsome-treats",
+    "name": "Toothsome Treats",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "1612 Cobblecrest Ln, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.592307599999998,
+      "lng": -97.8856266
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2105215401384520537&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJs_n3O7MrW4YRV28q1pf26KM",
+    "slug": "weikel-s-bakery",
+    "name": "Weikel's Bakery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "11340 183A Toll Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.607938800000003,
+      "lng": -97.8598051
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11810961154772725591&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJA4fVXlQrW4YRADRUTVy6meo",
+    "slug": "tina-s-sweet-treats",
+    "name": "Tina's Sweet Treats",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "802 Rancho Viejo Ln, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5828093,
+      "lng": -97.86871029999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16904747581908988928&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ0fcDSWAtW4YRQSvU5vyDp2Q",
+    "slug": "great-american-cookies",
+    "name": "Great American Cookies",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "3550 N Lakeline Blvd Suite 125, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.544830899999997,
+      "lng": -97.8633213
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7252910847131134785&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJFdBuBskrW4YRIk9I36zufB8",
+    "slug": "d-delicious-cakes",
+    "name": "D\u2019delicious cakes",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "3333 Charade Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.617855300000002,
+      "lng": -97.81097419999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2268950738535730978&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJM_DCyM3TRIYR1tyrlD4SEHM",
+    "slug": "trgf-products",
+    "name": "TRGF Products",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "2441 Roaring River Trail, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.565042199999997,
+      "lng": -97.7759121
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8291146973980646614&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJfacStFMzW4YRzhMLqhv15sg",
+    "slug": "whip-nest",
+    "name": "Whip Nest",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "2608 Palmera Ridge Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.599587,
+      "lng": -97.8164231
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14476527551394812878&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJqVoaQGQrW4YRTvhlta2lDNw",
+    "slug": "the-bitty-bakery",
+    "name": "The Bitty Bakery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "2241 Bobtail Pass, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6220467,
+      "lng": -97.82442669999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15856230553555957838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJn7Ds-xgtW4YRBAvv_OdKx_E",
+    "slug": "ramiis-sweets",
+    "name": "Ramiis Sweets",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "1111 High Chaparral Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.561375199999993,
+      "lng": -97.8520793
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17421976043747478276&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJgxo96INaHgMR339Fb5W_wLw",
+    "slug": "penny-royal-bakery",
+    "name": "Penny Royal Bakery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "208 N Gabriel St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5805635,
+      "lng": -97.85171849999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13601081523196755935&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJgWUjBqQrW4YRw5b9NUkdDgA",
+    "slug": "hteao-leander-hero-broade",
+    "name": "HTeaO - Leander (Hero & Broade)",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Tea House",
+    "address": {
+      "formatted": "11780 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.578734,
+      "lng": -97.867876
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3972849949578947&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJkc0Vqq0rW4YRTxL3JXF7Nhs",
+    "slug": "b-g-s-baked-goods",
+    "name": "B&G\u2019s Baked Goods",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "116 Talon Grasp Trail Apt 12202, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.623863099999998,
+      "lng": -97.86433749999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1960890413664899663&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJSTzKUmsrW4YRJ6reKCeBWRk",
+    "slug": "foodie-s-corner-weikel-s-bakery",
+    "name": "Foodie's Corner/Weikel's Bakery",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Gas Station",
+    "address": {
+      "formatted": "11340 TX-183A Toll Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.607794499999997,
+      "lng": -97.8598432
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1826633129064835623&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJ8KYtF8tW4YR4Kg0wlWjx5g",
+    "slug": "kwality-ice-cream",
+    "name": "KWALITY ICE CREAM",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "7680 183A Toll Rd Ste 205, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.566213200000004,
+      "lng": -97.8248488
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11008947402856245472&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJZ6fQMekrW4YRAz3CniT25gU",
+    "slug": "h-e-b-bakery",
+    "name": "H-E-B Bakery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "651 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.584168700000003,
+      "lng": -97.85795979999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=425297851975875843&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJOervBOwrW4YRSAfbiEIGo9o",
+    "slug": "menchie-s-leander",
+    "name": "Menchie's Leander",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Dessert Shop",
+    "address": {
+      "formatted": "651 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.584543999999998,
+      "lng": -97.8570519
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15754442804305790792&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJg5vsHektW4YRuvhy-Kr1p_I",
+    "slug": "grand-donuts",
+    "name": "Grand Donuts",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "15609 Ronald Reagan Blvd c140, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5642726,
+      "lng": -97.8016689
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17485214192950769850&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJKbOGw4ctW4YRrbkj_RYVQEg",
+    "slug": "monster-donuts",
+    "name": "Monster Donuts",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "1825 Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.545750599999998,
+      "lng": -97.8653999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5206184357720734125&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ0c3ggyIsW4YRNOSRFoXrWXs",
+    "slug": "randalls",
+    "name": "Randalls",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Grocery Store",
+    "address": {
+      "formatted": "3441 N Lakeline Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.543103300000002,
+      "lng": -97.8652078
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8888394296434222132&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJtyNBGQArW4YRiyXXEaXp9aw",
+    "slug": "fooparis-baguette",
+    "name": "Fooparis baguette",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Bakery",
+    "address": {
+      "formatted": "128 S Brook Dr Ste 120, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.588548799999998,
+      "lng": -97.8582582
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12463124438995903883&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJH6JfShcrW4YRP_z0APOoQA4",
+    "slug": "cold-stone-creamery",
+    "name": "Cold Stone Creamery",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "144 S Brook Dr Ste 160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.589397799999997,
+      "lng": -97.8585774
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1027006476687047743&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJQ2N6EYU1W4YRgWP1mRMje78",
+    "slug": "pup-confections",
+    "name": "Pup Confections",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Pet Store",
+    "address": {
+      "formatted": "1301 Low Branch Ln, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.604502999999998,
+      "lng": -97.8849798
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13797660450473993089&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJESHHbQErW4YRqIcRkJhYHso",
+    "slug": "grand-donut",
+    "name": "Grand donut",
+    "primaryCategory": "Bakery",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "11880 Hero Way W #203, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5778916,
+      "lng": -97.8695652
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14564175657238103976&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJnTuvLz8tW4YRxVEScOCBdHk",
+    "slug": "grand-donuts-2",
+    "name": "Grand donuts",
+    "primaryCategory": "Bakery",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "2800 S Bagdad Rd Ste c, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.540417899999998,
+      "lng": -97.8488225
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8751762776840622533&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJmTWLtIUtW4YRDw5JenKT3Hg",
+    "slug": "bar-b-q-boutique",
+    "name": "BAR-B-Q BOUTIQUE",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Food Store",
+    "address": {
+      "formatted": "1156-1182 Co Rd 272, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5431842,
+      "lng": -97.7894396
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8708997899314859535&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJc-FyPastW4YRsK0poND40SY",
+    "slug": "bar-b-q-boutique-halal-meat-market",
+    "name": "BAR-B-Q BOUTIQUE HALAL MEAT MARKET",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Food Store",
+    "address": {
+      "formatted": "13920 Ronald Reagan Blvd #204, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.543882600000003,
+      "lng": -97.7913513
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2797290418497760688&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJT7R391UrW4YRAdbyXk-Sbnw",
+    "slug": "the-boss-tacos-y-mas",
+    "name": "THE BOSS TACOS Y MAS",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580194499999998,
+      "lng": -97.85564439999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8966264777734280705&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNzcOuIYtW4YRLrijuRke82o",
+    "slug": "taco-twist",
+    "name": "Taco Twist",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Taco Restaurant",
+    "address": {
+      "formatted": "13920 Ronald Reagan Blvd Bldg 2 ste 205, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.543882600000003,
+      "lng": -97.7913513
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7706536483198580782&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJmQLQewAtW4YRRyLuer2L0Us",
+    "slug": "adely-s-kitchen",
+    "name": "Adely\u2019s kitchen",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Food",
+    "address": {
+      "formatted": "1500 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5559332,
+      "lng": -97.85856729999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5463301468904628807&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJY9Gl_lcrW4YRWQJGrtfZaEw",
+    "slug": "taqueria-gabrieles",
+    "name": "Taqueria Gabrieles",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Mexican Restaurant",
+    "address": {
+      "formatted": "207 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5802366,
+      "lng": -97.85382129999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5505890064825451097&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJX9sR8NArW4YRY2AhMO9nGog",
+    "slug": "chano-s-tacos-2",
+    "name": "Chano's Tacos #2",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Taco Restaurant",
+    "address": {
+      "formatted": "R097980, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5952581,
+      "lng": -97.81384969999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9807265415555014755&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJAUUdH_MrW4YR3H4yygBAiJg",
+    "slug": "leander-grocery",
+    "name": "LEANDER GROCERY",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Grocery Store",
+    "address": {
+      "formatted": "307 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.575434899999998,
+      "lng": -97.85192190000001
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10991105262734180060&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJfcQTuFEpW4YRDXAFxBovBNo",
+    "slug": "sharks-burger-2",
+    "name": "Sharks Burger",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers"
+    ],
+    "googleType": "Hamburger Restaurant",
+    "address": {
+      "formatted": "12681 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.573330499999994,
+      "lng": -97.8817091
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15709733192179478541&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJF5VrQs0rW4YRkJHGT0YGr_w",
+    "slug": "la-chaparrita-meat-market",
+    "name": "La Chaparrita Meat Market",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Butcher Shop",
+    "address": {
+      "formatted": "1909 S Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.553790699999997,
+      "lng": -97.84279459999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18207778717538095504&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJi8MXFfUrW4YRb2N5XcKBHiI",
+    "slug": "super-valle-meat-market",
+    "name": "Super Valle Meat Market",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Grocery Store",
+    "address": {
+      "formatted": "207 Sonny Dr #101, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.568309700000004,
+      "lng": -97.8517322
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2458545118382744431&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ2ZfLs-IrW4YR6FJ0jiUyykA",
+    "slug": "taco-bell",
+    "name": "Taco Bell",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Mexican"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "11940 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5775382,
+      "lng": -97.8713595
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4668599100608107240&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJF21VlBflQoYRVwK-8FfWJF0",
+    "slug": "chipotle-mexican-grill",
+    "name": "Chipotle Mexican Grill",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "821 US-183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.586527399999998,
+      "lng": -97.8571073
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6711725017878364759&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJPVKgYnEsW4YRO6RSUX0dmHw",
+    "slug": "taco-bell-2",
+    "name": "Taco Bell",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "1545 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.559615299999997,
+      "lng": -97.84548679999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8977958281235571771&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ70EChhQsW4YRoGutK3Ce83w",
+    "slug": "camco-s-country-kitchen",
+    "name": "Camco's Country Kitchen",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers",
+      "Mexican"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "1912 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5491728,
+      "lng": -97.8527797
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9003714284650064800&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJgQsa9MErW4YReu4U0QzBOeY",
+    "slug": "first-watch",
+    "name": "First Watch",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Breakfast",
+      "Brunch"
+    ],
+    "googleType": "Breakfast Restaurant",
+    "address": {
+      "formatted": "19397 Ronald Reagan Blvd #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.6360911,
+      "lng": -97.8293309
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16589502963187510906&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJgY96jnItW4YRphOSYcqCLI8",
+    "slug": "hashtag-india",
+    "name": "HASHTAG INDIA",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "14105 Ronald Reagan Blvd UNIT 400, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5452733,
+      "lng": -97.7932307
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10316764652130931622&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJiTRcDzotW4YRwgugOHFw22I",
+    "slug": "chowrastha-indian-eatery-austin-cedar-park",
+    "name": "Chowrastha - Indian Eatery austin cedar park",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "14420 Ronald Reagan Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.550262699999998,
+      "lng": -97.793591
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7123410867200199618&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJtaQN8BkrW4YRt1r488ZSN3M",
+    "slug": "aspen-creamery",
+    "name": "Aspen Creamery",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "2082 N US Hwy 183 Ste 125, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.626421899999997,
+      "lng": -97.8655702
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8302195452530940599&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJVeuUPqwtW4YRhb6NHRT2hds",
+    "slug": "marble-slab-creamery",
+    "name": "Marble Slab Creamery",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "3550 N Lakeline Blvd Suite 125, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.544830899999997,
+      "lng": -97.8633213
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15818319832464342661&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNaKKSBctW4YRqQMd7_7IYLE",
+    "slug": "loly-s-ice-cream-leander",
+    "name": "Loly's ice cream Leander",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "2403 S Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.547168100000004,
+      "lng": -97.84210739999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12781436739736372137&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_4d08wEtW4YRmQHvc6lUac4",
+    "slug": "ked-s-ice-cream-waffles-crepes",
+    "name": "Ked's Ice Cream, Waffles & Crepes",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "15241 Ronald Reagan Blvd Ste 106, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.559142999999995,
+      "lng": -97.7998018
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14873512331139023257&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJqfkRHHIpW4YRdt7V7HE0w38",
+    "slug": "bahama-buck-s-leander",
+    "name": "Bahama Buck's - Leander",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Dessert Shop",
+    "address": {
+      "formatted": "2906 S Bagdad Rd Ste 400, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5384979,
+      "lng": -97.8480574
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9206259727184813686&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJt4hSLI4rW4YRtMEn4c8lQDY",
+    "slug": "jeremiah-s-italian-ice",
+    "name": "Jeremiah's Italian Ice",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "11620 Hero Way W #110, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5792079,
+      "lng": -97.8659765
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3909166051323527604&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJG7rOfHUsW4YRFbHVI_PByWE",
+    "slug": "golden-chick",
+    "name": "Golden Chick",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "901 US-183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5670108,
+      "lng": -97.8484099
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=7046376342020272405&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJOQF6lF8tW4YRNSfX5COaGFA",
+    "slug": "chick-fil-a",
+    "name": "Chick-fil-A",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "1205 S Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.562825999999998,
+      "lng": -97.846728
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5771532401429129013&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJtXHBhpMrW4YRwjpU0TXkR0c",
+    "slug": "whataburger",
+    "name": "Whataburger",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "140 W Metro Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5871338,
+      "lng": -97.8575188
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5136324819835697858&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJOfvQ0YMtW4YR5V0_xYEZunI",
+    "slug": "popeyes-louisiana-kitchen",
+    "name": "Popeyes Louisiana Kitchen",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "American",
+      "Seafood"
+    ],
+    "googleType": "Chicken Restaurant",
+    "address": {
+      "formatted": "10743 E Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.565062700000002,
+      "lng": -97.8234147
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8266948111142706661&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJeV6OwB8rW4YRxpyENxhl2r4",
+    "slug": "jersey-mike-s-subs",
+    "name": "Jersey Mike's Subs",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "11312 Hero Way W #160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580905299999998,
+      "lng": -97.86033739999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13752415566814289094&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJc-2keAApW4YR87Q_L2utkRQ",
+    "slug": "mcdonald-s",
+    "name": "McDonald's",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers",
+      "Sandwiches"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "541 N Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.577662999999994,
+      "lng": -97.873091
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1482156428247414003&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJIYDjVsstW4YRtNV3mP4zh84",
+    "slug": "wendy-s",
+    "name": "Wendy's",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Breakfast"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "10747 E Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5651378,
+      "lng": -97.8232061
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=14881920662241793460&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJj2o86HMsW4YRUzhhuMM7hRc",
+    "slug": "mcdonald-s-2",
+    "name": "McDonald's",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers",
+      "Sandwiches"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "1445 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.560335899999995,
+      "lng": -97.8457725
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1694826546572900435&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJnQJ8oswrW4YRapxc3LO-HBI",
+    "slug": "dairy-queen",
+    "name": "Dairy Queen",
+    "primaryCategory": "Dessert",
+    "cuisines": [],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "141 W Metro Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.587932899999995,
+      "lng": -97.85773479999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1305127671736081514&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJkXPNnYorW4YRge-qWpEp8jE",
+    "slug": "sonic-drive-in",
+    "name": "Sonic Drive-In",
+    "primaryCategory": "Dessert",
+    "cuisines": [
+      "American",
+      "Breakfast",
+      "Burgers"
+    ],
+    "googleType": "Fast Food Restaurant",
+    "address": {
+      "formatted": "809 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.567405200000003,
+      "lng": -97.84865889999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3598984756490596225&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ82GlRq4rW4YRpeLP0G5NNoI",
+    "slug": "burger-king",
+    "name": "Burger King",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "651 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5818271,
+      "lng": -97.8589203
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=9382772012018033317&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJUr2aBUrW4YR7gejclKHv6Q",
+    "slug": "panda-express",
+    "name": "Panda Express",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Chinese"
+    ],
+    "googleType": "Chinese Restaurant",
+    "address": {
+      "formatted": "132 W Metro Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5868192,
+      "lng": -97.8572758
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=11871355930952271854&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ-drBV0QrW4YRIlnKZ1OGOSE",
+    "slug": "jersey-mike-s-subs-2",
+    "name": "Jersey Mike's Subs",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "19372 Ronald Reagan Blvd Ste 350, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.634508000000004,
+      "lng": -97.82621619999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2394092369705851170&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ95j7P8QsW4YR_noLeF-hPlg",
+    "slug": "leander-quick-mart",
+    "name": "Leander Quick Mart",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Convenience Store",
+    "address": {
+      "formatted": "12201 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5759674,
+      "lng": -97.87235369999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6358697155301702398&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ_U-BPUsrW4YRrdMZTf9H9tM",
+    "slug": "juiceland",
+    "name": "JuiceLand",
+    "primaryCategory": "Restaurant",
+    "cuisines": [],
+    "googleType": "Food",
+    "address": {
+      "formatted": "651 N US Hwy 183 Ste 107, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.583979300000003,
+      "lng": -97.8574086
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15273474348109386669&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJD4796kAsW4YRAMaeS1zd1gY",
+    "slug": "subway",
+    "name": "Subway",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "651 N US Hwy 183 Suite 245, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5847718,
+      "lng": -97.8568908
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=492824597719074304&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJS4f3IAArW4YRKplnFeRxAOk",
+    "slug": "tropical-smoothie-cafe",
+    "name": "Tropical Smoothie Cafe",
+    "primaryCategory": "Cafe",
+    "cuisines": [
+      "Breakfast",
+      "Sandwiches"
+    ],
+    "googleType": "Juice Shop",
+    "address": {
+      "formatted": "11312 Hero Way W, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.580877,
+      "lng": -97.8604168
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16789544635262802218&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJaaGI7XMsW4YRoHUjZVNzWg4",
+    "slug": "subway-2",
+    "name": "Subway",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Sandwiches"
+    ],
+    "googleType": "Sandwich Shop",
+    "address": {
+      "formatted": "1395 N US Hwy 183 Suite 160, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.561141600000003,
+      "lng": -97.84611059999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1034265866451252640&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJAdXGV_UyW4YR825lohmNtPc",
+    "slug": "saccone-s-pizza-subs",
+    "name": "Saccone's Pizza & Subs",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Pizza",
+      "Sandwiches"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "11880 Hero Way W Ste 205, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.577953299999997,
+      "lng": -97.86947119999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17849046364414373619&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJD4796kAsW4YRVi28f1Za9LA",
+    "slug": "marco-s-pizza-leander",
+    "name": "Marco's Pizza - Leander",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "2800 S Bagdad Rd Ste D, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5404329,
+      "lng": -97.8488544
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12750915772549442902&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJJ8DD9msrW4YRRV_V1eKJKfU",
+    "slug": "giovanni-s-pizza-pasta",
+    "name": "Giovanni\u2019s Pizza & Pasta",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Italian",
+      "Pizza"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "2036 Hwy 183 N, #100, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.628041800000002,
+      "lng": -97.86596639999999
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17665802620680625989&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  }
+]
