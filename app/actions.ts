@@ -108,3 +108,27 @@ export async function rejectTip(id: number) {
   await pool.query("update tips set status = 'removed' where id = $1", [id]);
   revalidatePath('/admin/moderation');
 }
+
+// Moderation: approve / reject a pending user review.
+export async function approveReview(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update reviews set status = 'approved' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
+export async function rejectReview(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update reviews set status = 'removed' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
+
+// Owner claims: verify (grants owner-response rights) / reject.
+export async function verifyClaim(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update claims set status = 'verified' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
+export async function rejectClaim(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update claims set status = 'rejected' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}

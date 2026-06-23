@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSpot, getTips } from '@/lib/spots';
+import { getSpot, getTips, getReviews, getOwnerResponses, isVerifiedOwner } from '@/lib/spots';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
 import SiteFooter from '@/components/SiteFooter';
 import UserPhotoUploader from '@/components/UserPhotoUploader';
 import TipForm from '@/components/TipForm';
+import ReviewForm from '@/components/ReviewForm';
+import ClaimForm from '@/components/ClaimForm';
+import OwnerResponseForm from '@/components/OwnerResponseForm';
 import { auth, signIn } from '@/auth';
 import type { Metadata } from 'next';
 
@@ -36,7 +39,10 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const session = await auth();
   const user = session?.user as { name?: string } | undefined;
   const siteKey = process.env.TURNSTILE_SITE_KEY || '';
-  const tips = await getTips(slug);
+  const email = (session?.user as { email?: string } | undefined)?.email;
+  const [tips, reviews, ownerResponses, isOwner] = await Promise.all([
+    getTips(slug), getReviews(slug), getOwnerResponses(slug), isVerifiedOwner(slug, email),
+  ]);
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${spot.name} ${spot.addressLine}`)}&output=embed`;
@@ -181,6 +187,51 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             )}
           </div>
 
+          {/* From the owner */}
+          {ownerResponses.length > 0 && (
+            <div className="mt-8 border-t border-rule pt-6">
+              <h3 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-3">From the owner</h3>
+              {ownerResponses.map((o, i) => (
+                <p key={i} className="font-ui text-sm text-ink border-l-2 border-chile pl-3 mb-2">{o.body}</p>
+              ))}
+            </div>
+          )}
+
+          {/* Local reviews */}
+          <div className="mt-8 border-t border-rule pt-6">
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm">Local reviews</h3>
+              {reviews.avg != null && (
+                <span className="font-ui text-sm text-ink">{reviews.avg}★ <span className="text-ink-soft text-xs">from locals ({reviews.count})</span></span>
+              )}
+            </div>
+            {reviews.list.length > 0 ? (
+              <ul className="space-y-4 mb-5">
+                {reviews.list.map((rv, i) => (
+                  <li key={i} className="border-l-2 border-rule pl-3">
+                    <span className="text-amber text-sm">{'★'.repeat(rv.stars)}<span className="text-rule">{'★'.repeat(5 - rv.stars)}</span></span>
+                    {rv.body && <p className="font-ui text-sm text-ink mt-1">{rv.body}</p>}
+                    <p className="font-ui text-[11px] text-ink-soft mt-0.5">by {rv.who}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="font-ui text-sm text-ink-soft mb-4">No local reviews yet.</p>
+            )}
+            {isOwner ? (
+              <div>
+                <p className="font-stamp uppercase tracking-[0.1em] text-xs text-chile mb-2">You manage this listing. Respond as the owner:</p>
+                <OwnerResponseForm slug={slug} siteKey={siteKey} />
+              </div>
+            ) : email ? (
+              <ReviewForm slug={slug} siteKey={siteKey} />
+            ) : (
+              <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
+                <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in to leave a review →</button>
+              </form>
+            )}
+          </div>
+
           {/* Map */}
           <div className="mt-8 border-t border-rule pt-6">
             <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-3">Where</h3>
@@ -229,6 +280,12 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               🍴 Book a tour
             </Link>
           </div>
+
+          {email && !isOwner && (
+            <div className="mt-6">
+              <ClaimForm slug={slug} siteKey={siteKey} />
+            </div>
+          )}
         </aside>
       </div>
 

@@ -160,6 +160,31 @@ export async function getTips(slug: string): Promise<{ body: string }[]> {
   );
   return rows.map((r) => ({ body: clean(r.body) || r.body }));
 }
+
+export async function getReviews(slug: string): Promise<{ avg: number | null; count: number; list: { stars: number; body: string | null; who: string }[] }> {
+  const { rows } = await pool.query(
+    `select rv.stars, rv.body, rv.user_email from reviews rv join restaurants r on r.id = rv.place_id
+     where r.slug = $1 and rv.status = 'approved' order by rv.created_at desc limit 40`, [slug]);
+  const list = rows.map((r) => ({ stars: r.stars as number, body: clean(r.body), who: (r.user_email || 'a local').split('@')[0] }));
+  const count = list.length;
+  // suppress the headline average until there's enough signal (anti single-fake-star)
+  const avg = count >= 3 ? Math.round((list.reduce((a, b) => a + b.stars, 0) / count) * 10) / 10 : null;
+  return { avg, count, list };
+}
+
+export async function getOwnerResponses(slug: string): Promise<{ body: string }[]> {
+  const { rows } = await pool.query(
+    `select o.body from owner_responses o join restaurants r on r.id = o.place_id where r.slug = $1 order by o.created_at desc`, [slug]);
+  return rows.map((r) => ({ body: clean(r.body) || r.body }));
+}
+
+export async function isVerifiedOwner(slug: string, email?: string | null): Promise<boolean> {
+  if (!email) return false;
+  const { rows } = await pool.query(
+    `select 1 from claims c join restaurants r on r.id = c.place_id
+     where r.slug = $1 and lower(c.user_email) = lower($2) and c.status = 'verified' limit 1`, [slug, email]);
+  return rows.length > 0;
+}
 export async function getHiddenGems(): Promise<Spot[]> {
   const { rows } = await pool.query(
     `select *, ${PHOTOS} from restaurants
