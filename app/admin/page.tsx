@@ -44,6 +44,8 @@ export default async function AdminPage() {
      order by (editorial->>'verdict' is null) desc, name`
   );
   const visited = rows.filter((r) => r.visited).length;
+  const pend = await pool.query("select count(*)::int n from photos where status = 'pending'");
+  const pending = pend.rows[0].n as number;
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-10">
@@ -53,9 +55,14 @@ export default async function AdminPage() {
       </div>
       <div className="flex justify-between items-center mb-6 font-ui text-xs text-ink-soft">
         <span>Signed in as {user.email}</span>
-        <form action={async () => { 'use server'; await signOut({ redirectTo: '/admin' }); }}>
-          <button className="text-chile font-stamp uppercase tracking-[0.08em]">Sign out</button>
-        </form>
+        <span className="flex items-center gap-4">
+          <Link href="/admin/moderation" className={`font-stamp uppercase tracking-[0.08em] ${pending > 0 ? 'text-chile' : 'text-ink-soft'}`}>
+            Moderation{pending > 0 ? ` (${pending})` : ''}
+          </Link>
+          <form action={async () => { 'use server'; await signOut({ redirectTo: '/admin' }); }}>
+            <button className="text-chile font-stamp uppercase tracking-[0.08em]">Sign out</button>
+          </form>
+        </span>
       </div>
       <table className="w-full font-ui text-sm">
         <thead>

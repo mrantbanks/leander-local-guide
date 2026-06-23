@@ -79,3 +79,20 @@ export async function deletePhoto(id: number, slug: string) {
   revalidatePath(`/r/${slug}`);
   revalidatePath(`/admin/r/${slug}`);
 }
+
+async function requireAdmin() {
+  const session = await auth();
+  return !!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
+}
+
+// Moderation: approve / reject a pending user photo.
+export async function approvePhoto(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update photos set status = 'approved' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
+export async function rejectPhoto(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update photos set status = 'removed' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}

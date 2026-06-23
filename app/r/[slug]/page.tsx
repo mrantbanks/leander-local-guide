@@ -5,6 +5,8 @@ import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
 import SiteFooter from '@/components/SiteFooter';
+import UserPhotoUploader from '@/components/UserPhotoUploader';
+import { auth, signIn } from '@/auth';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -30,6 +32,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const spot = await getSpot(slug);
   if (!spot) notFound();
 
+  const session = await auth();
+  const user = session?.user as { name?: string } | undefined;
+  const siteKey = process.env.TURNSTILE_SITE_KEY || '';
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${spot.name} ${spot.addressLine}`)}&output=embed`;
@@ -110,6 +115,19 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           </div>
         </section>
       )}
+
+      <section className="border-b border-rule bg-paper-raised">
+        <div className="max-w-5xl mx-auto px-5 py-4">
+          <h3 className="font-stamp uppercase tracking-[0.12em] text-ink-soft text-xs mb-2">Got a shot of this place?</h3>
+          {user ? (
+            <UserPhotoUploader slug={slug} siteKey={siteKey} />
+          ) : (
+            <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
+              <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in with Google to add photos →</button>
+            </form>
+          )}
+        </div>
+      </section>
 
       <div className="max-w-5xl mx-auto px-5 py-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Review spine */}
