@@ -55,6 +55,15 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <input name="badges" defaultValue={(ed.badges || []).join(', ')} className={field} />
         <p className="font-ui text-xs text-ink-soft mt-1">Hidden Gem / Local Favorite are auto-applied to top-rated local spots; use this to pin them manually.</p>
 
+        <label className={label}>Opening status (shows on the &quot;New in Leander&quot; wire)</label>
+        <select name="openingStatus" defaultValue={ed.openingStatus || ''} className={field}>
+          <option value="">— none —</option>
+          <option value="now_open">🎉 Now Open</option>
+          <option value="coming_soon">🔜 Coming Soon</option>
+          <option value="closed">🪦 Recently Closed</option>
+        </select>
+        <input name="openingNote" defaultValue={ed.openingNote || ''} placeholder="One-line note for the New wire (Anthony's voice)" className={field} />
+
         <label className="flex items-center gap-2 mt-4 font-ui text-sm text-ink">
           <input type="checkbox" name="visited" defaultChecked={!!ed.visited} />
           Anthony has actually been here

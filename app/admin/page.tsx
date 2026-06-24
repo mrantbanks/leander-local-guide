@@ -85,6 +85,8 @@ export default async function AdminPage() {
           desc="The remote AI workers that auto-verify scraped events against each venue's website, so you don't have to. See which machines are connected, what work is waiting, and every decision they've made." />
         <Card href="/whats-on" title="What's On (public)" meta={`${s.live_events} live`}
           desc="The live public events calendar — trivia, karaoke, live music and more for tonight and the week. This is what visitors see." />
+        <Card href="/admin/growth" title="Growth Playbook" meta="the plan"
+          desc="What to do next: the goal (10 real locals using it), the Facebook-group launch checklist, what NOT to waste time on, the money plan, and the hardening gates." />
       </div>
     </main>
   );

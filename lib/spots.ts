@@ -210,6 +210,17 @@ export async function getHiddenGems(): Promise<Spot[]> {
   );
   return rows.map(mapRow);
 }
+export type NewItem = { slug: string; name: string; category: string; status: string; note: string | null; when: Date | null };
+export async function getNewInLeander(): Promise<NewItem[]> {
+  const { rows } = await pool.query(
+    `select slug, name, primary_category cat, editorial->>'openingStatus' status, editorial->>'openingNote' note, updated_at
+     from restaurants
+     where coalesce(editorial->>'openingStatus','') <> ''
+     order by updated_at desc limit 60`
+  );
+  return rows.map((r) => ({ slug: r.slug, name: clean(r.name) || r.name, category: r.cat, status: r.status, note: clean(r.note), when: r.updated_at }));
+}
+
 export type InkItem = { kind: 'new' | 'rave' | 'buzz'; slug: string; name: string; note: string | null };
 
 // FRESH INK: the home heartbeat, assembled from real activity.

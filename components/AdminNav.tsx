@@ -19,6 +19,7 @@ export default async function AdminNav({ active }: { active?: string }) {
       {item('/admin/spots', 'Spots')}
       {item('/admin/moderation', 'Moderation', pending)}
       {item('/admin/workers', 'Workers')}
+      {item('/admin/growth', 'Growth')}
       <form action={async () => { 'use server'; await signOut({ redirectTo: '/admin' }); }} className="ml-auto">
         <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign out</button>
       </form>
