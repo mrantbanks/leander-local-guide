@@ -56,6 +56,7 @@ export default async function AdminPage() {
       <div className="flex justify-between items-center mb-6 font-ui text-xs text-ink-soft">
         <span>Signed in as {user.email}</span>
         <span className="flex items-center gap-4">
+          <Link href="/admin/workers" className="font-stamp uppercase tracking-[0.08em] text-ink-soft hover:text-chile">Workers</Link>
           <Link href="/admin/moderation" className={`font-stamp uppercase tracking-[0.08em] ${pending > 0 ? 'text-chile' : 'text-ink-soft'}`}>
             Moderation{pending > 0 ? ` (${pending})` : ''}
           </Link>

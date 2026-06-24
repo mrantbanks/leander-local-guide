@@ -49,5 +49,15 @@ export async function POST(req: NextRequest) {
   } else {
     await pool.query(`update events set worker_checked_at=now(), worker_note=$2 where id=$1`, [id, note]);
   }
+
+  // activity log + worker liveness
+  if (b.worker_id) {
+    const wid = String(b.worker_id).slice(0, 80);
+    await pool.query(
+      'insert into worker_log (worker_id, event_id, venue, event_type, decision, model, reason) values ($1,$2,$3,$4,$5,$6,$7)',
+      [wid, id, String(b.venue || '').slice(0, 120), String(b.event_type || '').slice(0, 40), String(b.decision).slice(0, 20), String(b.model || '').slice(0, 80), note]
+    );
+    await pool.query('update worker_nodes set last_seen=now() where id=$1', [wid]);
+  }
   return NextResponse.json({ ok: true });
 }
