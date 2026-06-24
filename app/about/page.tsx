@@ -1,15 +1,12 @@
 import PageHero from '@/components/PageHero';
 import SiteFooter from '@/components/SiteFooter';
-import ZoomImage from '@/components/ZoomImage';
 
 export const metadata = {
   title: 'About Anthony Martinez',
   description:
-    'Anthony Martinez is The Leander Local: a site reliability engineer at eBay by day, and the local food critic behind The Leander Local Guide. Honest, first-hand reviews of every spot in Leander, Texas.',
+    'Anthony Martinez lives in Leander, Texas with three kids, a dog, and a permanent appetite. The mission: eat at every restaurant in town and keep the most complete, honest, up-to-date guide to Leander food.',
   alternates: { canonical: '/about' },
 };
-
-const CONTACT_EMAIL = 'Anthony@leanderlocalguide.com';
 
 export default function AboutPage() {
   return (
@@ -37,46 +34,27 @@ export default function AboutPage() {
         </p>
 
         <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm !mt-12 !mb-2">Your guide</h2>
-        <div className="sm:float-right sm:ml-6 sm:mb-3 w-full sm:w-44 max-w-[15rem] mx-auto">
-          <ZoomImage src="/anthony.webp" alt="Anthony Martinez, The Leander Local" width={1280} height={2278} className="w-full h-auto border border-rule grayscale-[0.1]" />
-          <a href="https://www.linkedin.com/in/anthony-m-493b2691/" target="_blank" rel="noopener noreferrer" className="mt-2 block text-center font-stamp uppercase tracking-[0.1em] text-xs text-chile hover:text-oxblood">
-            Anthony on LinkedIn →
-          </a>
-          <p className="mt-1 text-center font-ui text-[11px] text-ink-soft">Tap to enlarge</p>
-        </div>
         <p>
-          I&apos;m Anthony Martinez, and I live here. By day I&apos;m a site reliability engineer and incident
-          commander at eBay, the calm voice on the call when a global marketplace is on fire and a few
-          million transactions are hanging in the balance. By night I point that same relentless,
-          almost unreasonably systematic obsession at a tastier problem: finding every great place to
-          eat in Leander and telling you the truth about it.
+          I&apos;m Anthony Martinez, and I live right here in Leander. I&apos;m not a chef. I&apos;m not a critic
+          parachuted in from some glossy magazine to sneer at your taco truck. I&apos;m a guy with three
+          kids, a dog who is convinced every drive-thru was built for him, a stomach that is always
+          about three minutes from a decision, and a stubborn, full-body belief that this town eats
+          far better than anyone gives it credit for.
         </p>
         <p>
-          I review a taco joint the way I&apos;d run a Sev&nbsp;1: methodically, honestly, and with zero
-          patience for anything that wastes your time. From desi land, Leander&apos;s surprising, glorious
-          run of Indian kitchens, to the gravel-lot food trucks where the best meals in the city
-          happen to be parked, I&apos;ve eaten it, ranked it, and I remember exactly where to send you.
+          So here is the mission, and yeah, it is a little unhinged: eat at every single place in
+          Leander. All of them. The strip-mall pho, the gravel-lot brisket, the bakery only the
+          school-pickup crowd knows about, the bar where the queso is somehow the whole point. Try
+          everything once, go back to what is worth going back to, and keep the most complete, most
+          honest, most up-to-date map of Leander food anybody has bothered to make.
+        </p>
+        <p>
+          I love the first bite of something new almost as much as the tenth bite of something I
+          already know is great. That is the entire job. New things, and the best things, on repeat.
+          If a place earns it, I&apos;ll send you straight there. If it doesn&apos;t, I&apos;ll save you the trip.
         </p>
 
-        {/* Food-tour CTA */}
-        <div className="!mt-12 border-2 border-dashed border-oxblood bg-paper-raised p-7 -rotate-1">
-          <p className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-2">Admit one · The good stuff</p>
-          <h2 className="font-display font-black text-3xl text-ink">Come eat with me</h2>
-          <p className="mt-3 font-ui text-[15px] leading-relaxed text-ink-soft">
-            Want the insider route? I host personalized Leander food tours. Tell me what you&apos;re into
-            and I&apos;ll build the crawl, from desi land to the trucks to that bar where everybody knows
-            your name. New in town, visiting, or just tired of the same three places: this is your
-            shortcut to the real Leander.
-          </p>
-          <a
-            href={`mailto:${CONTACT_EMAIL}?subject=Leander%20Food%20Tour`}
-            className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 font-stamp uppercase tracking-[0.1em] text-base bg-chile text-paper hover:bg-oxblood transition-colors"
-          >
-            🍴 Book a personalized food tour
-          </a>
-        </div>
-
-        <p className="!mt-10 pt-6 font-ui text-xs text-ink-soft leading-relaxed border-t border-rule">
+        <p className="!mt-12 pt-6 font-ui text-xs text-ink-soft leading-relaxed border-t border-rule">
           My reviews are my honest opinion, one local who actually goes. No pay-to-play, the rankings
           are not for sale. Just the good eats, honestly called.
         </p>
