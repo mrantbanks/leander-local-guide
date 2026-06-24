@@ -52,6 +52,7 @@ function clean(s: FormDataEntryValue | null): string | null {
 
 // Admin: edit Anthony's review for a spot.
 export async function updateReview(slug: string, fd: FormData) {
+  if (!(await requireAdmin())) return;
   const ed = {
     hook: clean(fd.get('hook')),
     verdict: String(fd.get('verdict') || 'WORTH IT'),
