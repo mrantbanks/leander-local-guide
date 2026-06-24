@@ -75,6 +75,13 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           {spot.beenHere > 0 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
         </div>
 
+        {spot.happyHour && (
+          <p className="px-3 mt-2 font-ui text-xs text-ink leading-snug line-clamp-2">
+            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[11px]">🍸 Happy Hour </span>
+            {spot.happyHour.replace(/^happy hour[:\s-]*/i, '')}
+          </p>
+        )}
+
         {(spot.badges.length > 0 || spot.cuisines.length > 0) && (
           <div className="px-3 mt-3 flex flex-wrap gap-1.5">
             {spot.badges.slice(0, 3).map((b) => <Tag key={b} label={b} />)}
