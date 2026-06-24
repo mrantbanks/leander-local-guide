@@ -1,5 +1,6 @@
 import PageHero from '@/components/PageHero';
 import SiteFooter from '@/components/SiteFooter';
+import ZoomImage from '@/components/ZoomImage';
 
 export const metadata = {
   title: 'About Anthony Martinez',
@@ -37,11 +38,11 @@ export default function AboutPage() {
 
         <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm !mt-12 !mb-2">Your guide</h2>
         <div className="sm:float-right sm:ml-6 sm:mb-3 w-full sm:w-44 max-w-[15rem] mx-auto">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/anthony.webp" alt="Anthony Martinez, The Leander Local" width={1280} height={2278} className="w-full h-auto border border-rule grayscale-[0.1]" />
+          <ZoomImage src="/anthony.webp" alt="Anthony Martinez, The Leander Local" width={1280} height={2278} className="w-full h-auto border border-rule grayscale-[0.1]" />
           <a href="https://www.linkedin.com/in/anthony-m-493b2691/" target="_blank" rel="noopener noreferrer" className="mt-2 block text-center font-stamp uppercase tracking-[0.1em] text-xs text-chile hover:text-oxblood">
             Anthony on LinkedIn →
           </a>
+          <p className="mt-1 text-center font-ui text-[11px] text-ink-soft">Tap to enlarge</p>
         </div>
         <p>
           I&apos;m Anthony Martinez, and I live here. By day I&apos;m a site reliability engineer and incident

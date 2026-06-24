@@ -4,6 +4,7 @@ import { pool } from '@/lib/db';
 import { updateReview, deletePhoto } from '@/app/actions';
 import { auth } from '@/auth';
 import PhotoUploader from '@/components/PhotoUploader';
+import { uploadUrl } from '@/lib/uploads';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,7 +70,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
             {ph.rows.map((p) => (
               <div key={p.id} className="relative w-28 h-28 border border-rule overflow-hidden bg-paper-sunk">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/uploads/${p.filename}`} alt="" className="w-full h-full object-cover" />
+                <img src={uploadUrl(p.filename)} alt="" className="w-full h-full object-cover" />
                 <form action={deletePhoto.bind(null, p.id as number, slug)}>
                   <button className="absolute top-0 right-0 bg-oxblood/85 text-paper text-xs px-1.5 py-0.5" title="Delete">×</button>
                 </form>

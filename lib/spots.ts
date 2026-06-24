@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { pool } from './db';
+import { uploadUrl } from './uploads';
 
 export type Spot = {
   id: string;
@@ -26,7 +27,7 @@ export type Spot = {
   priceTier: number | null;
   photo: string | null;
   photoCredit: string | null;
-  localPhotos: { id: number; filename: string }[];
+  localPhotos: { id: number; filename: string; url: string }[];
   updatedAt: Date | null;
   hook: string | null;
   verdict: string | null;
@@ -140,7 +141,7 @@ function mapRow(r: any): Spot {
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,
     badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
     photo: r.photos?.[0]?.name || null, photoCredit: r.photos?.[0]?.attribution?.[0] || null,
-    localPhotos: (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename })),
+    localPhotos: (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename, url: uploadUrl(p.filename) })),
     updatedAt: r.updated_at || null,
     hook: clean(ed.hook), verdict: ed.verdict || null, review: clean(ed.review),
     whatToOrder: clean(ed.whatToOrder), gotcha: clean(ed.gotcha),

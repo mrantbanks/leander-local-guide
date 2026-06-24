@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
 import { approvePhoto, rejectPhoto, approveTip, rejectTip, approveReview, rejectReview, verifyClaim, rejectClaim } from '@/app/actions';
+import { uploadUrl } from '@/lib/uploads';
 
 export const dynamic = 'force-dynamic';
 
@@ -98,7 +99,7 @@ export default async function ModerationPage() {
               <div key={p.id} className="border border-rule bg-paper-raised">
                 <div className="aspect-square overflow-hidden bg-paper-sunk">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/uploads/${p.filename}`} alt="" className="w-full h-full object-cover" />
+                  <img src={uploadUrl(p.filename)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="p-2">
                   <Link href={`/r/${p.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood block truncate">{p.name}</Link>

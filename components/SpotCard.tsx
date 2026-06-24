@@ -17,7 +17,7 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           {spot.localPhotos.length > 0 ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              src={`/uploads/${spot.localPhotos[0].filename}`}
+              src={spot.localPhotos[0].url}
               alt={spot.name}
               width={800}
               height={640}

@@ -137,7 +137,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
         <div className="border-b border-rule bg-paper-sunk">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={spot.localPhotos[0] ? `/uploads/${spot.localPhotos[0].filename}` : `/img?n=${encodeURIComponent(spot.photo!)}&w=1200`}
+            src={spot.localPhotos[0] ? spot.localPhotos[0].url : `/img?n=${encodeURIComponent(spot.photo!)}&w=1200`}
             alt={spot.name}
             width={1200}
             height={400}
@@ -153,7 +153,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           <div className="max-w-5xl mx-auto px-5 py-5 flex gap-3 overflow-x-auto no-scrollbar">
             {spot.localPhotos.slice(1).map((p) => (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img key={p.id} src={`/uploads/${p.filename}`} alt={spot.name} loading="lazy" className="h-44 w-auto object-cover border border-rule shrink-0" />
+              <img key={p.id} src={p.url} alt={spot.name} loading="lazy" className="h-44 w-auto object-cover border border-rule shrink-0" />
             ))}
           </div>
         </section>
