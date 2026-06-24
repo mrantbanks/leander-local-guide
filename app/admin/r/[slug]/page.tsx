@@ -39,8 +39,14 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <label className={label}>Hook (card teaser)</label>
         <input name="hook" defaultValue={ed.hook || ''} className={field} maxLength={140} />
 
-        <label className={label}>Review</label>
+        <label className={label}>Review (summary of reviews until you visit; your real take after)</label>
         <textarea name="review" defaultValue={ed.review || ''} rows={10} className={field} />
+
+        <label className={label}>Summary disclosure note (honest &quot;haven&apos;t been yet&quot; line; shown until visited)</label>
+        <input name="summaryNote" defaultValue={ed.summaryNote || ''} className={field} placeholder="e.g. Haven't planted my flag here yet, this is the word from the reviews." />
+
+        <label className={label}>&quot;Can&apos;t wait&quot; closer (shown until visited)</label>
+        <input name="cantWait" defaultValue={ed.cantWait || ''} className={field} placeholder="e.g. This one's circled on my map and the map is hungry." />
 
         <label className={label}>What to order</label>
         <input name="whatToOrder" defaultValue={ed.whatToOrder || ''} className={field} />
@@ -66,8 +72,10 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
 
         <label className="flex items-center gap-2 mt-4 font-ui text-sm text-ink">
           <input type="checkbox" name="visited" defaultChecked={!!ed.visited} />
-          Anthony has actually been here
+          I&apos;ve actually been here (flips the page to my real verdict + the visit date below)
         </label>
+        <label className={label}>Date visited</label>
+        <input name="visitedDate" type="date" defaultValue={ed.visitedDate || ''} className={field} />
 
         <button type="submit" className="mt-6 font-stamp uppercase tracking-[0.12em] text-base bg-chile text-paper px-6 py-2.5 hover:bg-oxblood transition-colors">
           Save

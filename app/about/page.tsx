@@ -53,6 +53,10 @@ export default function AboutPage() {
           already know is great. That is the entire job. New things, and the best things, on repeat.
           If a place earns it, I&apos;ll send you straight there. If it doesn&apos;t, I&apos;ll save you the trip.
         </p>
+        <p className="!mt-2">
+          <a href="https://www.linkedin.com/in/anthony-m-493b2691/" target="_blank" rel="noopener noreferrer" className="font-stamp uppercase tracking-[0.1em] text-xs text-chile hover:text-oxblood">Anthony on LinkedIn →</a>
+          <span className="font-ui text-xs text-ink-soft"> · a real Leander local, not a faceless brand.</span>
+        </p>
 
         <p className="!mt-12 pt-6 font-ui text-xs text-ink-soft leading-relaxed border-t border-rule">
           My reviews are my honest opinion, one local who actually goes. No pay-to-play, the rankings

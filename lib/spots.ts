@@ -34,6 +34,10 @@ export type Spot = {
   review: string | null;
   whatToOrder: string | null;
   gotcha: string | null;
+  summaryNote: string | null;
+  cantWait: string | null;
+  visited: boolean;
+  visitedDate: string | null;
   happyHour: string | null;
   worthIt: number;
   itsFine: number;
@@ -145,6 +149,8 @@ function mapRow(r: any): Spot {
     updatedAt: r.updated_at || null,
     hook: clean(ed.hook), verdict: ed.verdict || null, review: clean(ed.review),
     whatToOrder: clean(ed.whatToOrder), gotcha: clean(ed.gotcha),
+    summaryNote: clean(ed.summaryNote), cantWait: clean(ed.cantWait),
+    visited: !!ed.visited, visitedDate: ed.visitedDate || null,
     happyHour: cleanHappyHour(r.happy_hour),
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
     beenHere: r.been_here_ct || 0, wantToGo: r.want_to_go_ct || 0,

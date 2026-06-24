@@ -131,7 +131,15 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 {spot.priceTier ? <span>{'$'.repeat(spot.priceTier)}</span> : null}
               </div>
             </div>
-            <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="text-lg shrink-0" />
+            {spot.visited ? (
+              <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="text-lg shrink-0" />
+            ) : (
+              <div className="shrink-0 text-right">
+                <div className="font-stamp uppercase tracking-[0.1em] text-[10px] text-ink-soft">Summary of reviews</div>
+                {spot.ratingGoogle && <div className="font-display font-black text-2xl text-ink leading-none mt-0.5">{spot.ratingGoogle}★</div>}
+                <div className="font-stamp uppercase tracking-[0.08em] text-[10px] text-chile mt-0.5">Not yet visited</div>
+              </div>
+            )}
           </div>
           {spot.summary && <p className="mt-4 font-ui text-ink-soft max-w-2xl italic">{spot.summary}</p>}
           {(spot.badges.length > 0 || spot.amenities.length > 0) && (
@@ -182,16 +190,27 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       <div className="max-w-5xl mx-auto px-5 py-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Review spine */}
         <article className="lg:col-span-2">
-          <h2 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-1">Anthony&apos;s take</h2>
-          <p className="font-ui text-xs text-ink-soft mb-4">
-            By <Link href="/about" className="text-chile underline underline-offset-2">Anthony Martinez</Link>, The Leander Local{updated ? ` · Updated ${updated}` : ''}
-          </p>
+          <h2 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-1">{spot.visited ? "Anthony's take" : `The word on ${spot.name}`}</h2>
+          {spot.visited ? (
+            <p className="font-ui text-xs text-ink-soft mb-4">
+              By <Link href="/about" className="text-chile underline underline-offset-2">Anthony Martinez</Link>, The Leander Local{spot.visitedDate ? ` · Visited ${spot.visitedDate}` : ''}{updated ? ` · Updated ${updated}` : ''}
+            </p>
+          ) : (
+            <p className="font-ui text-sm text-ink-soft mb-4 italic border-l-2 border-chile/40 pl-3 leading-relaxed">
+              {spot.summaryNote || "Full disclosure: I haven't made it here myself yet. What follows is my honest read on what Leander reviewers keep saying, "}
+              <Link href="/about" className="text-chile underline underline-offset-2 not-italic">Anthony</Link>.
+            </p>
+          )}
           {reviewParas.length > 0 ? (
             <div className="font-display text-[1.1875rem] leading-[1.7] text-ink space-y-4">
               {reviewParas.map((p, i) => <p key={i}>{p}</p>)}
             </div>
           ) : (
             <p className="font-hand text-2xl text-oxblood">Anthony hasn&apos;t filed this one yet.</p>
+          )}
+
+          {!spot.visited && spot.cantWait && (
+            <p className="font-hand text-2xl text-oxblood leading-snug mt-6">{spot.cantWait}</p>
           )}
 
           {spot.whatToOrder && (

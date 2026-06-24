@@ -62,7 +62,10 @@ export async function updateReview(slug: string, fd: FormData) {
     badges: String(fd.get('badges') || '').split(',').map((s) => s.trim()).filter(Boolean),
     openingStatus: String(fd.get('openingStatus') || ''),
     openingNote: clean(fd.get('openingNote')),
+    summaryNote: clean(fd.get('summaryNote')),
+    cantWait: clean(fd.get('cantWait')),
     visited: fd.get('visited') === 'on',
+    visitedDate: String(fd.get('visitedDate') || ''),
     source: 'editorial',
     edited: '2026-06-24',
   };
