@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSpot, getTips, getReviews, getOwnerResponses } from '@/lib/spots';
+import { getEventsForSpot } from '@/lib/events';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
@@ -41,8 +42,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   if (!spot) notFound();
 
   const siteKey = process.env.TURNSTILE_SITE_KEY || '';
-  const [tips, reviews, ownerResponses] = await Promise.all([
-    getTips(slug), getReviews(slug), getOwnerResponses(slug),
+  const [tips, reviews, ownerResponses, events] = await Promise.all([
+    getTips(slug), getReviews(slug), getOwnerResponses(slug), getEventsForSpot(slug),
   ]);
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -92,11 +93,23 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       { '@type': 'ListItem', position: 3, name: spot.name, item: `https://leanderlocalguide.com/r/${slug}` },
     ],
   };
+  const eventLd = events.map((e) => ({
+    '@context': 'https://schema.org', '@type': 'Event', name: e.title,
+    description: e.description || `${e.label} at ${spot.name}`,
+    ...(e.schedule.freq === 'once' && e.schedule.date
+      ? { startDate: e.schedule.startTime ? `${e.schedule.date}T${e.schedule.startTime}` : e.schedule.date }
+      : { eventSchedule: { '@type': 'Schedule', repeatFrequency: e.schedule.freq === 'weekly' ? 'P1W' : 'P1M', byDay: e.schedule.byDay.length ? e.schedule.byDay : undefined, startTime: e.schedule.startTime || undefined, endTime: e.schedule.endTime || undefined } }),
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: { '@type': 'Place', name: spot.name, address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' } },
+    organizer: { '@type': 'Organization', name: spot.name },
+    url: e.url || `https://leanderlocalguide.com/r/${slug}`,
+  }));
 
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
+      {eventLd.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventLd) }} />}
       {/* Hero */}
       <header className="border-b-2 border-ink">
         <div className="max-w-5xl mx-auto px-5 pt-8 pb-6">
@@ -192,6 +205,26 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             <div className="mt-6 bg-paper-sunk border border-rule p-4">
               <h3 className="font-stamp uppercase tracking-[0.15em] text-oxblood text-sm mb-1">⚠ Gotcha</h3>
               <p className="font-ui text-sm text-ink">{spot.gotcha}</p>
+            </div>
+          )}
+
+          {events.length > 0 && (
+            <div className="mt-8 border-t border-rule pt-6">
+              <h3 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-3">What&apos;s On</h3>
+              <ul className="space-y-3">
+                {events.map((e) => (
+                  <li key={e.id} className="flex items-baseline gap-3">
+                    <span className="text-lg shrink-0">{e.emoji}</span>
+                    <div>
+                      <span className="font-display font-semibold text-ink">{e.title}</span>
+                      <span className="font-ui text-sm text-ink-soft"> · {e.when}</span>
+                      {e.description && <p className="font-ui text-sm text-ink-soft">{e.description}</p>}
+                      {e.confirmedNote && <p className="font-ui text-[11px] text-ink-soft/80 mt-0.5">{e.fresh ? '✓ ' : '⚠ '}{e.confirmedNote}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/whats-on" className="mt-3 inline-flex font-stamp uppercase tracking-[0.08em] text-xs text-chile hover:text-oxblood">All Leander events →</Link>
             </div>
           )}
 

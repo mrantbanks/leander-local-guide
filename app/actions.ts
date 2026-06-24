@@ -133,3 +133,41 @@ export async function rejectClaim(id: number) {
   await pool.query("update claims set status = 'rejected' where id = $1", [id]);
   revalidatePath('/admin/moderation');
 }
+
+// Events: admin add / delete + moderation approve / reject.
+export async function addEvent(slug: string, fd: FormData) {
+  if (!(await requireAdmin())) return;
+  const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
+  if (!rows[0]) return;
+  const title = String(fd.get('title') || '').trim().replace(/[—–]/g, '-').slice(0, 120);
+  if (!title) return;
+  const type = String(fd.get('event_type') || 'other');
+  const freq = String(fd.get('freq') || 'weekly');
+  const days = fd.getAll('dow').map((d) => parseInt(String(d), 10)).filter((n) => n >= 1 && n <= 7);
+  const time = String(fd.get('start_time') || '') || null;
+  const desc = String(fd.get('description') || '').trim().replace(/[—–]/g, '-').slice(0, 500) || null;
+  await pool.query(
+    `insert into events (place_id, event_type, title, description, freq, days_of_week, start_time, source, status, verified, last_confirmed_at)
+     values ($1,$2,$3,$4,$5,$6,$7,'admin','approved',true,now())`,
+    [rows[0].id, type, title, desc, freq, days.length ? days : null, time]
+  );
+  revalidatePath(`/r/${slug}`);
+  revalidatePath('/whats-on');
+}
+export async function deleteEvent(id: number, slug: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query('delete from events where id = $1', [id]);
+  revalidatePath(`/r/${slug}`);
+  revalidatePath('/whats-on');
+}
+export async function approveEvent(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update events set status = 'approved', verified = true, last_confirmed_at = now(), expires_at = null where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+  revalidatePath('/whats-on');
+}
+export async function rejectEvent(id: number) {
+  if (!(await requireAdmin())) return;
+  await pool.query("update events set status = 'removed' where id = $1", [id]);
+  revalidatePath('/admin/moderation');
+}
