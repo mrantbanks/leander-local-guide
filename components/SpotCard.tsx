@@ -44,7 +44,12 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
               )}
             </>
           ) : (
-            <span aria-hidden className="absolute inset-0 grid place-items-center text-6xl opacity-25 grayscale">{icon}</span>
+            <div aria-hidden className="absolute inset-0 grid place-items-center bg-gradient-to-br from-paper-sunk to-rule/40">
+              <div className="text-center px-3">
+                <div className="text-5xl opacity-45">{icon}</div>
+                <div className="font-stamp uppercase tracking-[0.18em] text-[11px] text-ink-soft mt-1.5">{spot.category}</div>
+              </div>
+            </div>
           )}
           <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
           <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
