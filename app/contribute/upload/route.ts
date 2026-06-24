@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
   const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
   if (!rows[0]) return NextResponse.json({ error: 'no such spot' }, { status: 404 });
   const placeId = rows[0].id;
+  const cnt = await pool.query("select count(*)::int n from photos where uploaded_by = $1 and created_at > now() - interval '1 day'", [email]);
+  if (cnt.rows[0].n >= 30) return NextResponse.json({ error: "You've hit today's photo limit, try again tomorrow" }, { status: 429 });
 
   const files = fd.getAll('photos').filter((f): f is File => f instanceof File);
   let saved = 0;

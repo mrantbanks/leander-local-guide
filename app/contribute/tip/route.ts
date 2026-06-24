@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
   // block links from drive-by spam
   if (/https?:\/\//i.test(body)) return NextResponse.json({ error: 'No links, please' }, { status: 400 });
 
+  const cnt = await pool.query("select count(*)::int n from tips where user_email = $1 and created_at > now() - interval '1 day'", [email]);
+  if (cnt.rows[0].n >= 20) return NextResponse.json({ error: "You've hit today's tip limit, try again tomorrow" }, { status: 429 });
   const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
   if (!rows[0]) return NextResponse.json({ error: 'no such spot' }, { status: 404 });
   await pool.query(
