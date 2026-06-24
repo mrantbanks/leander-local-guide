@@ -8,7 +8,7 @@ const categoryIcons: Record<string, string> = {
   Restaurant: '🍽️', 'Food Truck': '🚚', Cafe: '☕', Bakery: '🥐', Bar: '🍸', Brewery: '🍺', Dessert: '🍦',
 };
 
-export default function SpotCard({ spot }: { spot: CardSpot }) {
+export default function SpotCard({ spot, priority = false }: { spot: CardSpot; priority?: boolean }) {
   const icon = categoryIcons[spot.category] ?? '📍';
   return (
     <div className="group relative flex flex-col">
@@ -19,7 +19,10 @@ export default function SpotCard({ spot }: { spot: CardSpot }) {
             <img
               src={`/uploads/${spot.localPhotos[0].filename}`}
               alt={spot.name}
-              loading="lazy"
+              width={800}
+              height={640}
+              loading={priority ? 'eager' : 'lazy'}
+              fetchPriority={priority ? 'high' : undefined}
               className="absolute inset-0 w-full h-full object-cover grayscale-[0.12] contrast-110 transition-[filter] duration-200 ease-out group-hover:grayscale-0"
             />
           ) : spot.photo ? (
@@ -27,8 +30,13 @@ export default function SpotCard({ spot }: { spot: CardSpot }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`/img?n=${encodeURIComponent(spot.photo)}&w=800`}
+                srcSet={`/img?n=${encodeURIComponent(spot.photo)}&w=400 400w, /img?n=${encodeURIComponent(spot.photo)}&w=800 800w, /img?n=${encodeURIComponent(spot.photo)}&w=1200 1200w`}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 alt={spot.name}
-                loading="lazy"
+                width={800}
+                height={640}
+                loading={priority ? 'eager' : 'lazy'}
+                fetchPriority={priority ? 'high' : undefined}
                 className="absolute inset-0 w-full h-full object-cover grayscale-[0.18] contrast-125 sepia-[0.08] transition-[filter] duration-200 ease-out group-hover:grayscale-0 group-hover:sepia-0"
               />
               {spot.photoCredit && (

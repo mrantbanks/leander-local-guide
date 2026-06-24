@@ -101,7 +101,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
 
       {filtered.length > 0 ? (
         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-12">
-          {filtered.map((s) => <SpotCard key={s.id} spot={s} />)}
+          {filtered.map((s, i) => <SpotCard key={s.id} spot={s} priority={i < 4} />)}
         </div>
       ) : (
         <p className="mt-8 font-hand text-2xl text-oxblood">Nothing matches that combo. Loosen it up.</p>

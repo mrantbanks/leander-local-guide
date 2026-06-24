@@ -116,10 +116,8 @@ function mapRow(r: any): Spot {
   const lead: string[] = [];
   const gr = ratings.google?.rating ?? 0;
   const gc = ratings.google?.count ?? 0;
-  if (a.chainStatus === 'local' && gr >= 4.5) {
-    if (gc >= 1 && gc <= 150) lead.push('Hidden Gem');
-    else if (gr >= 4.6 && gc > 150) lead.push('Local Favorite');
-  }
+  if (r.is_hidden_gem) lead.push('Hidden Gem');
+  else if (a.chainStatus === 'local' && gr >= 4.6 && gc > 150) lead.push('Local Favorite');
   if (Array.isArray(ed.badges)) for (const b of ed.badges) if (!lead.includes(b)) lead.push(b);
   const amenities: string[] = [];
   const amen: [string, string][] = [
@@ -154,13 +152,17 @@ function mapRow(r: any): Spot {
 
 const ORDER = `order by (attributes->>'chainStatus' = 'chain'), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
 const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
+// Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
+const GEM_WHERE = `attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
+const GEM_ORDER = `order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last`;
+const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)) as is_hidden_gem`;
 
 export async function getAllSpots(): Promise<Spot[]> {
-  const { rows } = await pool.query(`select *, ${PHOTOS} from restaurants ${ORDER}`);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants ${ORDER}`);
   return rows.map(mapRow);
 }
 export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
-  const { rows } = await pool.query(`select *, ${PHOTOS} from restaurants where slug = $1`, [slug]);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1`, [slug]);
   return rows[0] ? mapRow(rows[0]) : null;
 });
 
@@ -199,11 +201,7 @@ export async function isVerifiedOwner(slug: string, email?: string | null): Prom
 }
 export async function getHiddenGems(): Promise<Spot[]> {
   const { rows } = await pool.query(
-    `select *, ${PHOTOS} from restaurants
-     where attributes->>'chainStatus' = 'local'
-       and (ratings#>>'{google,rating}')::float >= 4.5
-       and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150
-     ${ORDER}`
+    `select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8`
   );
   return rows.map(mapRow);
 }

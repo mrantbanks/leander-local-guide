@@ -41,6 +41,7 @@ const siteLd = {
       name: 'Anthony Martinez',
       url: 'https://leanderlocalguide.com/about',
       jobTitle: 'Local food critic, The Leander Local',
+      image: 'https://leanderlocalguide.com/anthony.webp',
       worksFor: { '@id': 'https://leanderlocalguide.com/#org' },
       sameAs: ['https://www.linkedin.com/in/anthony-m-493b2691/'],
     },

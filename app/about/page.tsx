@@ -2,12 +2,13 @@ import PageHero from '@/components/PageHero';
 import SiteFooter from '@/components/SiteFooter';
 
 export const metadata = {
-  title: 'About, The Leander Local Guide',
+  title: 'About Anthony Martinez',
   description:
-    'A guide to Leander, Texas and its local food scene. By a local, for locals. The hidden gems, the bar where everybody knows your name, the one dish worth the drive.',
+    'Anthony Martinez is The Leander Local: a site reliability engineer at eBay by day, and the local food critic behind The Leander Local Guide. Honest, first-hand reviews of every spot in Leander, Texas.',
+  alternates: { canonical: '/about' },
 };
 
-const CONTACT_EMAIL = 'anthony@leanderlocalguide.com'; // TODO: confirm Anthony's real contact
+const CONTACT_EMAIL = 'Anthony@leanderlocalguide.com';
 
 export default function AboutPage() {
   return (
@@ -35,6 +36,13 @@ export default function AboutPage() {
         </p>
 
         <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm !mt-12 !mb-2">Your guide</h2>
+        <div className="sm:float-right sm:ml-6 sm:mb-3 w-full sm:w-44 max-w-[15rem] mx-auto">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/anthony.webp" alt="Anthony Martinez, The Leander Local" width={1280} height={2278} className="w-full h-auto border border-rule grayscale-[0.1]" />
+          <a href="https://www.linkedin.com/in/anthony-m-493b2691/" target="_blank" rel="noopener noreferrer" className="mt-2 block text-center font-stamp uppercase tracking-[0.1em] text-xs text-chile hover:text-oxblood">
+            Anthony on LinkedIn →
+          </a>
+        </div>
         <p>
           I&apos;m Anthony Martinez, and I live here. By day I&apos;m a site reliability engineer and incident
           commander at eBay, the calm voice on the call when a global marketplace is on fire and a few
