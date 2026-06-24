@@ -12,18 +12,27 @@ function authed(req: NextRequest): boolean {
 // not re-confirmed in 7 days. Each item carries the venue site so the worker can research.
 export async function GET(req: NextRequest) {
   if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  // Atomically CLAIM up to 15 events (FOR UPDATE SKIP LOCKED) so two workers never
+  // grab the same one: lock+stamp worker_checked_at in one statement, then return them.
   const { rows } = await pool.query(`
-    select e.id, e.event_type, e.title, e.description, e.freq, e.days_of_week, e.week_of_month,
-           to_char(e.start_time,'HH24:MI') as start_time, e.event_date, e.source, e.status,
-           e.source_quote, e.source_url,
+    with claimed as (
+      select e.id from events e
+      where (e.status = 'pending'
+             or (e.status = 'approved' and e.source = 'ai_scrape'
+                 and (e.last_confirmed_at is null or e.last_confirmed_at < now() - interval '7 days')))
+        and (e.worker_checked_at is null or e.worker_checked_at < now() - interval '20 hours')
+      order by (e.status = 'pending') desc, e.created_at
+      limit 15
+      for update skip locked
+    ), upd as (
+      update events set worker_checked_at = now() where id in (select id from claimed) returning *
+    )
+    select u.id, u.event_type, u.title, u.description, u.freq, u.days_of_week, u.week_of_month,
+           to_char(u.start_time,'HH24:MI') as start_time, u.event_date, u.source, u.status,
+           u.source_quote, u.source_url,
            r.name as venue, r.slug, r.attributes->>'website' as website, r.address_formatted as address
-    from events e join restaurants r on r.id = e.place_id
-    where (e.status = 'pending'
-           or (e.status = 'approved' and e.source = 'ai_scrape'
-               and (e.last_confirmed_at is null or e.last_confirmed_at < now() - interval '7 days')))
-      and (e.worker_checked_at is null or e.worker_checked_at < now() - interval '20 hours')
-    order by (e.status = 'pending') desc, e.created_at
-    limit 15`);
+    from upd u join restaurants r on r.id = u.place_id
+    order by (u.status = 'pending') desc, u.created_at`);
   return NextResponse.json({ events: rows });
 }
 
