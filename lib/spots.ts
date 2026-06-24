@@ -111,6 +111,16 @@ function mapRow(r: any): Spot {
   if (a.outdoorSeating) badges.push('Patio');
   if (a.allowsDogs) badges.push('Dog-Friendly');
   if (a.servesVegetarianFood) badges.push('Veg');
+  // Lead badges: heuristic Hidden Gem / Local Favorite (same signal as the Hidden Gems page),
+  // plus any editorial.badges the admin has hand-pinned. These render first on cards.
+  const lead: string[] = [];
+  const gr = ratings.google?.rating ?? 0;
+  const gc = ratings.google?.count ?? 0;
+  if (a.chainStatus === 'local' && gr >= 4.5) {
+    if (gc >= 1 && gc <= 150) lead.push('Hidden Gem');
+    else if (gr >= 4.6 && gc > 150) lead.push('Local Favorite');
+  }
+  if (Array.isArray(ed.badges)) for (const b of ed.badges) if (!lead.includes(b)) lead.push(b);
   const amenities: string[] = [];
   const amen: [string, string][] = [
     ['outdoorSeating', 'Patio'], ['allowsDogs', 'Dog-Friendly'], ['goodForChildren', 'Kid-Friendly'],
@@ -130,7 +140,7 @@ function mapRow(r: any): Spot {
     mapsUrl: r.google_maps_url || null, menuUrl: a.menuUrl || null, orderUrl: a.orderUrl || null,
     website: a.website || null, phone: a.phone || null,
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,
-    badges, amenities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
+    badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
     photo: r.photos?.[0]?.name || null, photoCredit: r.photos?.[0]?.attribution?.[0] || null,
     localPhotos: (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename })),
     updatedAt: r.updated_at || null,

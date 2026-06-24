@@ -48,6 +48,10 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <label className={label}>Happy Hour (times/details, optional)</label>
         <input name="happyHour" defaultValue={r.happy_hour || ''} className={field} />
 
+        <label className={label}>Pinned badges (comma-separated, e.g. Hidden Gem, Local Favorite)</label>
+        <input name="badges" defaultValue={(ed.badges || []).join(', ')} className={field} />
+        <p className="font-ui text-xs text-ink-soft mt-1">Hidden Gem / Local Favorite are auto-applied to top-rated local spots; use this to pin them manually.</p>
+
         <label className="flex items-center gap-2 mt-4 font-ui text-sm text-ink">
           <input type="checkbox" name="visited" defaultChecked={!!ed.visited} />
           Anthony has actually been here

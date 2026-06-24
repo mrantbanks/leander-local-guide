@@ -58,9 +58,10 @@ export async function updateReview(slug: string, fd: FormData) {
     review: clean(fd.get('review')),
     whatToOrder: clean(fd.get('whatToOrder')),
     gotcha: clean(fd.get('gotcha')),
+    badges: String(fd.get('badges') || '').split(',').map((s) => s.trim()).filter(Boolean),
     visited: fd.get('visited') === 'on',
     source: 'editorial',
-    edited: '2026-06-23',
+    edited: '2026-06-24',
   };
   const hh = clean(fd.get('happyHour'));
   await pool.query('update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3, updated_at = now() where slug = $1', [
