@@ -53,6 +53,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const ogImg = spot.localPhotos[0]
     ? `https://leanderlocalguide.com/uploads/${spot.localPhotos[0].filename}`
     : spot.photo ? `https://leanderlocalguide.com/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
+  const updated = spot.updatedAt ? new Date(spot.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
+  const updatedISO = spot.updatedAt ? new Date(spot.updatedAt).toISOString().slice(0, 10) : undefined;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -70,6 +72,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           publisher: { '@type': 'Organization', name: 'The Leander Local Guide' },
           name: spot.hook || undefined,
           reviewBody: spot.review,
+          datePublished: updatedISO,
+          dateModified: updatedISO,
         }
       : undefined,
   };
@@ -142,7 +146,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
         <article className="lg:col-span-2">
           <h2 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-1">Anthony&apos;s take</h2>
           <p className="font-ui text-xs text-ink-soft mb-4">
-            By <Link href="/about" className="text-chile underline underline-offset-2">Anthony Martinez</Link>, The Leander Local
+            By <Link href="/about" className="text-chile underline underline-offset-2">Anthony Martinez</Link>, The Leander Local{updated ? ` · Updated ${updated}` : ''}
           </p>
           {reviewParas.length > 0 ? (
             <div className="font-display text-[1.1875rem] leading-[1.7] text-ink space-y-4">
