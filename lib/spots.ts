@@ -200,8 +200,12 @@ export async function isVerifiedOwner(slug: string, email?: string | null): Prom
   return rows.length > 0;
 }
 export async function getHiddenGems(): Promise<Spot[]> {
+  // The auto top 8, plus any spot hand-pinned as a Hidden Gem (e.g. Leander Grocery) -> matches the badged set.
   const { rows } = await pool.query(
-    `select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8`
+    `select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants
+     where slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)
+        or editorial->'badges' ? 'Hidden Gem'
+     ${GEM_ORDER}`
   );
   return rows.map(mapRow);
 }
