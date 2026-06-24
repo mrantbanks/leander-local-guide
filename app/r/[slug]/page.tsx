@@ -196,31 +196,40 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               By <Link href="/about" className="text-chile underline underline-offset-2">Anthony Martinez</Link>, The Leander Local{spot.visitedDate ? ` · Visited ${spot.visitedDate}` : ''}{updated ? ` · Updated ${updated}` : ''}
             </p>
           ) : (
-            <p className="font-ui text-sm text-ink-soft mb-4 italic border-l-2 border-chile/40 pl-3 leading-relaxed">
-              {spot.summaryNote || "Full disclosure: I haven't made it here myself yet. What follows is my honest read on what Leander reviewers keep saying, "}
-              <Link href="/about" className="text-chile underline underline-offset-2 not-italic">Anthony</Link>.
-            </p>
-          )}
-          {reviewParas.length > 0 ? (
-            <div className="font-display text-[1.1875rem] leading-[1.7] text-ink space-y-4">
-              {reviewParas.map((p, i) => <p key={i}>{p}</p>)}
+            <div className="mb-5 border-l-2 border-chile/50 pl-3">
+              {spot.summaryNote && <p className="font-stamp uppercase tracking-[0.1em] text-[11px] text-chile mb-1">Here&apos;s the word going around</p>}
+              <p className="font-ui text-sm text-ink-soft italic leading-relaxed">
+                {spot.summaryNote || "Heads up: I haven't made it here myself yet, so I'm pulling together what Leander reviewers say. Summary coming soon."}
+              </p>
+              <p className="font-ui text-xs text-ink-soft mt-1.5">
+                <Link href="/about" className="text-chile underline underline-offset-2">Anthony</Link>, The Leander Local
+              </p>
             </div>
+          )}
+          {(spot.visited || spot.summaryNote) ? (
+            reviewParas.length > 0 ? (
+              <div className="font-display text-[1.1875rem] leading-[1.7] text-ink space-y-4">
+                {reviewParas.map((p, i) => <p key={i}>{p}</p>)}
+              </div>
+            ) : (
+              <p className="font-hand text-2xl text-oxblood">Anthony hasn&apos;t filed this one yet.</p>
+            )
           ) : (
-            <p className="font-hand text-2xl text-oxblood">Anthony hasn&apos;t filed this one yet.</p>
+            <p className="font-hand text-2xl text-oxblood leading-snug">Still pulling together what the reviews say about this one. Check back soon.</p>
           )}
 
           {!spot.visited && spot.cantWait && (
             <p className="font-hand text-2xl text-oxblood leading-snug mt-6">{spot.cantWait}</p>
           )}
 
-          {spot.whatToOrder && (
+          {(spot.visited || spot.summaryNote) && spot.whatToOrder && (
             <div className="mt-8 border-l-4 border-chile pl-4 py-1">
               <h3 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-1">The Order</h3>
               <p className="font-hand text-2xl text-ink leading-snug">{spot.whatToOrder}</p>
             </div>
           )}
 
-          {spot.gotcha && (
+          {(spot.visited || spot.summaryNote) && spot.gotcha && (
             <div className="mt-6 bg-paper-sunk border border-rule p-4">
               <h3 className="font-stamp uppercase tracking-[0.15em] text-oxblood text-sm mb-1">⚠ Gotcha</h3>
               <p className="font-ui text-sm text-ink">{spot.gotcha}</p>
