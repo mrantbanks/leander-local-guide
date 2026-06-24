@@ -4,7 +4,6 @@ import { auth } from '@/auth';
 import { approvePhoto, rejectPhoto, approveTip, rejectTip, approveReview, rejectReview, verifyClaim, rejectClaim, approveEvent, rejectEvent } from '@/app/actions';
 import { uploadUrl } from '@/lib/uploads';
 import { EVENT_LABELS } from '@/lib/events';
-import AdminNav from '@/components/AdminNav';
 import type { ReactNode } from 'react';
 
 export const dynamic = 'force-dynamic';
@@ -52,7 +51,6 @@ export default async function ModerationPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
-      <AdminNav active="/admin/moderation" />
       <h1 className="font-display font-black text-3xl text-ink">Moderation</h1>
       <p className="font-ui text-sm text-ink-soft mt-1 mb-6 max-w-2xl leading-relaxed">
         <span className="text-ink font-semibold">Nothing on this page is public yet.</span> Each item is something submitted by a visitor, or suggested by the event scraper, waiting for your call. <span className="text-ink">Approve</span> publishes it on the site; <span className="text-ink">Reject</span> discards it (rejected things never come back). Work top to bottom; when it&apos;s empty you&apos;re done.

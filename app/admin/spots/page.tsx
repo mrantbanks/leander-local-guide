@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
-import AdminNav from '@/components/AdminNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +18,6 @@ export default async function AdminSpotsPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
-      <AdminNav active="/admin/spots" />
       <h1 className="font-display font-black text-3xl text-ink">Spots &amp; Reviews</h1>
       <p className="font-ui text-sm text-ink-soft mt-1 mb-5">
         Every spot in the guide. Click <span className="text-chile font-semibold">Edit</span> to change Anthony&apos;s verdict, review, what-to-order, gotcha, happy hour, badges, photos, and recurring events for that place. Saves go live immediately.

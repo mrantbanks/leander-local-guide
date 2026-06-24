@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth, signIn, signOut } from '@/auth';
-import AdminNav from '@/components/AdminNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +64,6 @@ export default async function AdminPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
-      <AdminNav active="/admin" />
       <p className="font-ui text-xs text-ink-soft mb-5">Signed in as {user.email}. This is the control room for The Leander Local Guide — everything the public sees, plus the machines that keep it fresh.</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">

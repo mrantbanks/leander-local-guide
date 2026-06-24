@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
-import AdminNav from '@/components/AdminNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +27,6 @@ export default async function GrowthPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-5 py-8">
-      <AdminNav active="/admin/growth" />
       <h1 className="font-display font-black text-3xl text-ink">Growth Playbook</h1>
       <p className="font-ui text-sm text-ink-soft mt-1 mb-6 max-w-2xl leading-relaxed">
         The product is built. The job now is <span className="text-ink font-semibold">distribution + trust</span>, not more features. This is the plan a committee converged on. Work it top to bottom.

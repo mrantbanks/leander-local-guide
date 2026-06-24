@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
-import AdminNav from '@/components/AdminNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +47,6 @@ export default async function WorkersPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
-      <AdminNav active="/admin/workers" />
       <h1 className="font-display font-black text-3xl text-ink">Workers — the verification pipeline</h1>
       <p className="font-ui text-sm text-ink-soft mt-1 mb-6 max-w-2xl leading-relaxed">Remote AI workers pull unverified event suggestions, open each venue&apos;s website, and decide whether the event is real, fixing the day/time or rejecting it, so you don&apos;t have to. Below: which machines are connected, how much work is waiting, and every decision they&apos;ve made.</p>
 
