@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import Providers from '@/components/Providers';
 import type { Metadata } from 'next';
 import { fraunces, hanken, caveat, bebas } from './fonts';
 import './globals.css';
@@ -57,7 +58,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-full flex flex-col">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }} />
         <Navbar />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

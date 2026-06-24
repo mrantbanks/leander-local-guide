@@ -1,19 +1,23 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSpot, getTips, getReviews, getOwnerResponses, isVerifiedOwner } from '@/lib/spots';
+import { getSpot, getTips, getReviews, getOwnerResponses } from '@/lib/spots';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
 import SiteFooter from '@/components/SiteFooter';
-import UserPhotoUploader from '@/components/UserPhotoUploader';
-import TipForm from '@/components/TipForm';
-import ReviewForm from '@/components/ReviewForm';
-import ClaimForm from '@/components/ClaimForm';
-import OwnerResponseForm from '@/components/OwnerResponseForm';
-import { auth, signIn } from '@/auth';
+import PhotoContribute from '@/components/PhotoContribute';
+import TipContribute from '@/components/TipContribute';
+import ReviewContribute from '@/components/ReviewContribute';
+import ClaimContribute from '@/components/ClaimContribute';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+// ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
+// the logged-in/owner UI is handled by client islands (Photo/Tip/Review/Claim Contribute).
+export const revalidate = 60;
+export const dynamicParams = true;
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -36,12 +40,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const spot = await getSpot(slug);
   if (!spot) notFound();
 
-  const session = await auth();
-  const user = session?.user as { name?: string } | undefined;
   const siteKey = process.env.TURNSTILE_SITE_KEY || '';
-  const email = (session?.user as { email?: string } | undefined)?.email;
-  const [tips, reviews, ownerResponses, isOwner] = await Promise.all([
-    getTips(slug), getReviews(slug), getOwnerResponses(slug), isVerifiedOwner(slug, email),
+  const [tips, reviews, ownerResponses] = await Promise.all([
+    getTips(slug), getReviews(slug), getOwnerResponses(slug),
   ]);
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -161,13 +162,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       <section className="border-b border-rule bg-paper-raised">
         <div className="max-w-5xl mx-auto px-5 py-4">
           <h3 className="font-stamp uppercase tracking-[0.12em] text-ink-soft text-xs mb-2">Got a shot of this place?</h3>
-          {user ? (
-            <UserPhotoUploader slug={slug} siteKey={siteKey} />
-          ) : (
-            <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
-              <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in with Google to add photos →</button>
-            </form>
-          )}
+          <PhotoContribute slug={slug} siteKey={siteKey} />
         </div>
       </section>
 
@@ -210,13 +205,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 ))}
               </ul>
             )}
-            {user ? (
-              <TipForm slug={slug} siteKey={siteKey} />
-            ) : (
-              <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
-                <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in to leave a tip →</button>
-              </form>
-            )}
+            <TipContribute slug={slug} siteKey={siteKey} />
           </div>
 
           {/* From the owner */}
@@ -248,18 +237,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 ))}
               </ul>
             )}
-            {isOwner ? (
-              <div>
-                <p className="font-stamp uppercase tracking-[0.1em] text-xs text-chile mb-2">You manage this listing. Respond as the owner:</p>
-                <OwnerResponseForm slug={slug} siteKey={siteKey} />
-              </div>
-            ) : email ? (
-              <ReviewForm slug={slug} siteKey={siteKey} />
-            ) : (
-              <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/r/${slug}` }); }}>
-                <button className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood">Sign in to leave a review →</button>
-              </form>
-            )}
+            <ReviewContribute slug={slug} siteKey={siteKey} />
           </div>
 
           {/* Map */}
@@ -311,11 +289,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             </Link>
           </div>
 
-          {email && !isOwner && (
-            <div className="mt-6">
-              <ClaimForm slug={slug} siteKey={siteKey} />
-            </div>
-          )}
+          <ClaimContribute slug={slug} siteKey={siteKey} />
         </aside>
       </div>
 
