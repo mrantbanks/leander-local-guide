@@ -26,9 +26,25 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
   if (!b) notFound();
   const all = await getAllSpots();
   const ranked = all.filter(b.match).sort((x, y) => rankScore(y) - rankScore(x)).slice(0, 20);
+  const answer = ranked.length
+    ? `${b.title} (Leander, TX), ranked: ${ranked.slice(0, 5).map((s, i) => `${i + 1}. ${s.name}`).join('; ')}. Picked by Anthony Martinez, The Leander Local.`
+    : '';
+  const itemListLd = {
+    '@context': 'https://schema.org', '@type': 'ItemList', name: `${b.title} — Leander, TX`, description: b.blurb,
+    itemListElement: ranked.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.name, url: `https://leanderlocalguide.com/r/${s.slug}` })),
+  };
+  const crumbLd = {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanderlocalguide.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Best of Leander', item: 'https://leanderlocalguide.com/best' },
+      { '@type': 'ListItem', position: 3, name: b.title, item: `https://leanderlocalguide.com/best/${board}` },
+    ],
+  };
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
       <header className="border-b-2 border-ink">
         <div className="max-w-4xl mx-auto px-5 pt-8 pb-5">
           <Link href="/best" className="inline-flex items-center gap-1 font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft hover:text-chile transition-colors mb-4">← All rankings</Link>
@@ -37,6 +53,7 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
             {b.emoji} {b.title}
           </h1>
           <p className="mt-3 font-ui text-ink-soft max-w-xl">{b.blurb}</p>
+          {answer && <p className="mt-2 font-ui text-sm text-ink max-w-2xl">{answer}</p>}
         </div>
       </header>
       <ol className="max-w-4xl mx-auto px-5 py-8 divide-y divide-rule">

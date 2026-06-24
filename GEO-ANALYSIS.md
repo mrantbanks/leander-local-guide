@@ -2,13 +2,13 @@
 
 _Audited 2026-06-24. Framing per Google: GEO is SEO fundamentals applied to AI-search surfaces, not a separate discipline._
 
-## GEO Readiness Score: 71 / 100
+## GEO Readiness Score: 74 / 100
 
 | Dimension | Weight | Score | Notes |
 |---|---|---|---|
-| Technical accessibility | 20% | 19 | SSR, AI crawlers welcomed, robots + sitemap + llms.txt all live |
+| Technical accessibility | 20% | 20 | SSR, AI crawlers welcomed, robots + sitemap + llms.txt + full entity schema graph |
 | Structural readability | 20% | 15 | Clean H1→H2→H3, short paragraphs; few question-headings / tables |
-| Citability | 25% | 17 | Quotable, specific, named-dish prose, front-loaded hook; opinion not fact-definition style |
+| Citability | 25% | 19 | Quotable named-dish prose, front-loaded hook, ItemList rankings + citable answer lines on `/best/*` |
 | Authority & brand | 20% | 9 | Byline + Person schema + dates ✓; **zero off-site brand mentions, new domain** |
 | Multi-modal | 15% | 11 | Photos + map embeds ✓; no video/charts |
 
@@ -51,12 +51,14 @@ Next.js App Router, `force-dynamic`. Reviews, ratings, schema all present in ini
 
 ## Schema — STRONG, with room
 
-Live on detail pages: `Restaurant` + nested `Review` + `Person` (author) + `Organization` (publisher) + `PostalAddress`, now with `datePublished`/`dateModified`. Per-page unique title + description.
+Live on detail pages: `Restaurant` + nested `Review` + `Person` (author) + `Organization` (publisher) + `PostalAddress`, with `datePublished`/`dateModified`. Per-page unique title + description.
 
-**Add next:**
-1. `WebSite` + `Organization` schema on home with `sameAs` (social profiles) and `SearchAction` (sitelinks search box).
-2. `ItemList` on `/best/*` leaderboards — ranked lists are highly extractable by AI.
-3. `BreadcrumbList` site-wide.
+**DONE this pass:**
+1. ✅ `WebSite` + `Organization` graph site-wide (areaServed Leander/TX, founder Anthony) — entity grounding for AI.
+2. ✅ `ItemList` on every `/best/*` leaderboard — ranked lists are highly extractable by AI.
+3. ✅ `BreadcrumbList` on detail + board pages.
+
+**Add when available:** `sameAs` on the Organization (needs real social profiles); `SearchAction` (needs a real on-site `?q=` search endpoint — omitted now to avoid claiming a feature that doesn't exist).
 
 ## Passage-Level Citability
 

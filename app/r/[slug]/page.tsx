@@ -77,10 +77,18 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
         }
       : undefined,
   };
+  const crumbLd = {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanderlocalguide.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Food', item: 'https://leanderlocalguide.com/food' },
+      { '@type': 'ListItem', position: 3, name: spot.name, item: `https://leanderlocalguide.com/r/${slug}` },
+    ],
+  };
 
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
       {/* Hero */}
       <header className="border-b-2 border-ink">
         <div className="max-w-5xl mx-auto px-5 pt-8 pb-6">
