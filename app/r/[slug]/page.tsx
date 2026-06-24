@@ -55,11 +55,17 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     : spot.photo ? `https://leanderlocalguide.com/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
   const updated = spot.updatedAt ? new Date(spot.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
   const updatedISO = spot.updatedAt ? new Date(spot.updatedAt).toISOString().slice(0, 10) : undefined;
+  const VERDICT_RATING: Record<string, number> = {
+    'WORTH THE GRAVEL': 5, 'WORTH IT': 4.5, 'SOLID': 4, "IT'S FINE": 3.5, 'SKIP IT': 2,
+  };
+  const ratingValue = spot.verdict ? (VERDICT_RATING[spot.verdict.toUpperCase()] ?? 4) : 4;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
+    '@id': `https://leanderlocalguide.com/r/${slug}#restaurant`,
     name: spot.name,
-    url: `https://leanderlocalguide.com/r/${slug}`,
+    url: spot.website || undefined,
+    mainEntityOfPage: `https://leanderlocalguide.com/r/${slug}`,
     servesCuisine: spot.cuisines.length ? spot.cuisines : undefined,
     priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
     telephone: spot.phone || undefined,
@@ -68,8 +74,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     review: spot.review
       ? {
           '@type': 'Review',
-          author: { '@type': 'Person', name: 'Anthony Martinez', url: 'https://leanderlocalguide.com/about' },
-          publisher: { '@type': 'Organization', name: 'The Leander Local Guide' },
+          reviewRating: { '@type': 'Rating', ratingValue, bestRating: 5, worstRating: 1 },
+          author: { '@type': 'Person', '@id': 'https://leanderlocalguide.com/about#anthony-martinez', name: 'Anthony Martinez', url: 'https://leanderlocalguide.com/about' },
+          publisher: { '@id': 'https://leanderlocalguide.com/#org' },
           name: spot.hook || undefined,
           reviewBody: spot.review,
           datePublished: updatedISO,
@@ -181,14 +188,12 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           {/* Locals say */}
           <div className="mt-8 border-t border-rule pt-6">
             <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-3">Locals say</h3>
-            {tips.length > 0 ? (
+            {tips.length > 0 && (
               <ul className="space-y-3 mb-5">
                 {tips.map((t, i) => (
                   <li key={i} className="font-ui text-sm text-ink border-l-2 border-rule pl-3">{t.body}</li>
                 ))}
               </ul>
-            ) : (
-              <p className="font-ui text-sm text-ink-soft mb-4">No tips yet. Be the first to call it.</p>
             )}
             {user ? (
               <TipForm slug={slug} siteKey={siteKey} />
@@ -217,7 +222,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 <span className="font-ui text-sm text-ink">{reviews.avg}★ <span className="text-ink-soft text-xs">from locals ({reviews.count})</span></span>
               )}
             </div>
-            {reviews.list.length > 0 ? (
+            {reviews.list.length > 0 && (
               <ul className="space-y-4 mb-5">
                 {reviews.list.map((rv, i) => (
                   <li key={i} className="border-l-2 border-rule pl-3">
@@ -227,8 +232,6 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                   </li>
                 ))}
               </ul>
-            ) : (
-              <p className="font-ui text-sm text-ink-soft mb-4">No local reviews yet.</p>
             )}
             {isOwner ? (
               <div>

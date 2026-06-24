@@ -7,6 +7,22 @@ import SiteFooter from '@/components/SiteFooter';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'The Leander Local Guide · Leander, TX food scene',
+    description: 'Honest, first-person reviews of every local restaurant, bar, cafe and food truck in Leander, Texas. By a local, for locals.',
+    url: 'https://leanderlocalguide.com/',
+    siteName: 'The Leander Local Guide',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Leander Local Guide',
+    description: 'Honest, first-person reviews of every local food spot in Leander, TX.',
+  },
+};
+
 export default async function Home() {
   const [spots, counts, ink] = await Promise.all([getAllSpots(), countSpots(), getFreshInk()]);
   const dateline = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date());

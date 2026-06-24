@@ -12,6 +12,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: 'https://leanderlocalguide.com/sitemap.xml',
-    host: 'https://leanderlocalguide.com',
+    host: 'leanderlocalguide.com',
   };
 }

@@ -31,6 +31,9 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
     : '';
   const itemListLd = {
     '@context': 'https://schema.org', '@type': 'ItemList', name: `${b.title} — Leander, TX`, description: b.blurb,
+    url: `https://leanderlocalguide.com/best/${board}`,
+    mainEntityOfPage: `https://leanderlocalguide.com/best/${board}`,
+    numberOfItems: ranked.length,
     itemListElement: ranked.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.name, url: `https://leanderlocalguide.com/r/${s.slug}` })),
   };
   const crumbLd = {
