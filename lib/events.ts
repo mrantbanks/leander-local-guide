@@ -76,7 +76,7 @@ function ago(iso: string): string {
   return `${Math.floor(days / 7)} weeks ago`;
 }
 
-const LIVE = `status = 'approved' and (expires_at is null or expires_at > now())`;
+const LIVE = `e.status = 'approved' and (e.expires_at is null or e.expires_at > now())`;
 
 export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
   const { rows } = await pool.query(
