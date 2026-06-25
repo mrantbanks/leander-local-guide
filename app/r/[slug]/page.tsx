@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getSpot, getTips, getReviews, getOwnerResponses } from '@/lib/spots';
 import { getEventsForSpot } from '@/lib/events';
 import { getActiveSpecials, scheduleLabel } from '@/lib/specials';
+import MenuViewer from '@/components/MenuViewer';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
@@ -208,6 +209,16 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               /* eslint-disable-next-line @next/next/no-img-element */
               <img key={p.id} src={p.url} alt={spot.name} loading="lazy" className="h-44 w-auto object-cover border border-rule shrink-0" />
             ))}
+          </div>
+        </section>
+      )}
+
+      {spot.menus.length > 0 && (
+        <section className="border-b border-rule bg-paper-raised">
+          <div className="max-w-5xl mx-auto px-5 py-6">
+            <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-1">📋 The Menu</h2>
+            <p className="font-ui text-xs text-ink-soft mb-3">Tap to view full size and zoom in.</p>
+            <MenuViewer menus={spot.menus} />
           </div>
         </section>
       )}

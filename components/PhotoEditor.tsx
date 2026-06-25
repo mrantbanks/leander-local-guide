@@ -22,7 +22,7 @@ async function rotateFlip(src: string, deg: number, flipH: boolean, flipV: boole
   return cv.toDataURL('image/png');
 }
 
-export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: string; src: string; onSaved: () => void; onClose: () => void }) {
+export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { slug: string; src: string; photoId?: number; onSaved: () => void; onClose: () => void }) {
   const [work, setWork] = useState(src);
   const [crop, setCrop] = useState<Crop>();
   const [aspect, setAspect] = useState<number | undefined>(undefined);
@@ -50,6 +50,7 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
   }
 
   const ENHANCE = 'Enhance this food/restaurant photo: improve the lighting, white balance, color, and sharpness so the food and space look appetizing and professionally shot. Do NOT change the composition or crop, and do not add or remove any objects. Keep it realistic.';
+  const MENU_FIX = 'This is a photo of a printed restaurant menu. Turn it into a clean, flat, legible scan: correct the perspective and any slant or tilt so the menu is perfectly straight and rectangular, remove all glare, shadows, and reflections, remove the background and replace it with clean solid white, boost contrast and sharpness so every word is crisp, and center and straighten it. CRITICAL: keep ALL text exactly as it appears, do not change, add, or remove any words, prices, dishes, or numbers. Output a high-contrast straight-on image of just the menu, like a flatbed scan.';
 
   async function runGemini(p: string, clearPrompt = false) {
     if (!p.trim()) return;
@@ -64,7 +65,7 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
     setBusy('');
   }
 
-  async function save() {
+  async function save(replace: boolean) {
     const img = imgRef.current; if (!img) return;
     setBusy('save'); setErr('');
     try {
@@ -79,8 +80,9 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
       const blob: Blob = await new Promise((res) => cv.toBlob((b) => res(b!), 'image/jpeg', 0.92));
       const fd = new FormData(); fd.append('slug', slug); fd.append('files', new File([blob], 'edit.jpg', { type: 'image/jpeg' }));
+      if (replace && photoId) fd.append('replaceId', String(photoId));
       const r = await fetch('/api/admin/photos', { method: 'POST', body: fd });
-      const j = await r.json();
+      const j = await r.json().catch(() => ({}));
       if (j.saved?.length) onSaved(); else setErr(j.error || 'Save failed');
     } catch (e) { setErr((e as Error).message); }
     setBusy('');
@@ -135,13 +137,23 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
             </div>
             <div>
               <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-chile mb-1.5">✨ Magic edit (AI)</p>
-              <button onClick={() => runGemini(ENHANCE)} disabled={!!busy} className="w-full font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper py-2 rounded-sm disabled:opacity-50 mb-2">{busy === 'ai' ? 'Working...' : '⚡ Auto-enhance (1 tap)'}</button>
+              <div className="flex gap-1.5 mb-2">
+                <button onClick={() => runGemini(ENHANCE)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[11px] bg-chile text-paper py-2 rounded-sm disabled:opacity-50">⚡ Auto-enhance</button>
+                <button onClick={() => runGemini(MENU_FIX)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[11px] bg-ink text-paper py-2 rounded-sm disabled:opacity-50">📋 Fix menu</button>
+              </div>
               <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={2} placeholder="remove the background · warm the lighting · extend the photo wider · erase the trash can" className="w-full bg-paper border border-rule px-2 py-1.5 text-sm rounded-sm outline-none focus:border-chile" />
               <button onClick={() => runGemini(prompt, true)} disabled={!!busy || !prompt.trim()} className="mt-1 w-full font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper py-2 rounded-sm disabled:opacity-50">{busy === 'ai' ? 'Editing with AI...' : 'Apply AI edit'}</button>
             </div>
             {err && <p className="font-ui text-xs text-oxblood">{err}</p>}
-            <div className="flex gap-2 pt-2 border-t border-rule">
-              <button onClick={save} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-50">{busy === 'save' ? 'Saving...' : 'Save as new photo'}</button>
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-rule">
+              {photoId ? (
+                <>
+                  <button onClick={() => save(true)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-50">{busy === 'save' ? 'Saving...' : 'Save over original'}</button>
+                  <button onClick={() => save(false)} disabled={!!busy} className="font-stamp uppercase tracking-[0.06em] text-xs border border-ink text-ink px-3 rounded-sm disabled:opacity-50">Save a copy</button>
+                </>
+              ) : (
+                <button onClick={() => save(false)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-50">{busy === 'save' ? 'Saving...' : 'Save photo'}</button>
+              )}
               <button onClick={onClose} className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft px-3">Cancel</button>
             </div>
           </div>

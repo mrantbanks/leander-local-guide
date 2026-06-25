@@ -13,3 +13,4 @@ create table if not exists specials (
   created_at  timestamptz default now()
 );
 create index if not exists specials_place on specials(place_id, status);
+alter table photos add column if not exists is_menu boolean not null default false;

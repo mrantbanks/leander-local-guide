@@ -96,6 +96,14 @@ export async function setPhotoCaption(id: number, slug: string, caption: string)
   revalidatePath(`/r/${slug}`);
 }
 
+// Mark/unmark a photo as a menu (shown in its own zoomable Menu section, kept out of the food gallery).
+export async function setPhotoMenu(id: number, slug: string, isMenu: boolean) {
+  if (!(await requireAdmin())) return;
+  await pool.query('update photos set is_menu = $2 where id = $1', [id, isMenu]);
+  revalidatePath(`/r/${slug}`);
+  revalidatePath('/');
+}
+
 // Make a photo the main/hero (sorts first on cards + detail page).
 export async function makePrimaryPhoto(id: number, slug: string) {
   if (!(await requireAdmin())) return;
