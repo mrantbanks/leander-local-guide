@@ -21,7 +21,7 @@ export default async function WorkersPage() {
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
-  const [nodes, queue, recent, tally] = await Promise.all([
+  const [nodes, queue, recent, tally, scrape, coverage] = await Promise.all([
     pool.query(`select id, last_seen, first_seen, status, processed, errors,
                   (last_seen > now() - interval '3 minutes') as online from worker_nodes order by last_seen desc`),
     pool.query(`select
@@ -32,8 +32,20 @@ export default async function WorkersPage() {
       from events`),
     pool.query(`select created_at, worker_id, venue, event_type, decision, model, reason from worker_log order by created_at desc limit 60`),
     pool.query(`select decision, count(*)::int n from worker_log group by decision`),
+    pool.query(`select started_at, finished_at, checked, found, status, note from scraper_runs where kind='happy_hours' order by started_at desc limit 1`),
+    pool.query(`select count(*) filter (where coalesce(attributes->>'website','')<>'')::int sites,
+                       count(*) filter (where happy_hour_checked_at is not null)::int ever_checked,
+                       count(*) filter (where coalesce(happy_hour,'')<>'')::int with_hh,
+                       max(happy_hour_checked_at) last_site_check from restaurants`),
   ]);
   const q = queue.rows[0];
+  const sc = scrape.rows[0];
+  const cov = coverage.rows[0];
+  // weekly schedule: Mondays ~05:00 CT
+  const now = new Date();
+  const daysUntilMon = ((1 - now.getDay() + 7) % 7) || 7;
+  const nextRun = new Date(now); nextRun.setDate(now.getDate() + daysUntilMon); nextRun.setHours(5, 0, 0, 0);
+  const fmt = (d: Date) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' }).format(d);
   const online = nodes.rows.filter((n) => n.online).length;
   const tallyMap = Object.fromEntries(tally.rows.map((r) => [r.decision, r.n]));
   const totalVerdicts = tally.rows.reduce((a, r) => a + r.n, 0);
@@ -57,6 +69,20 @@ export default async function WorkersPage() {
         <Stat label="Approved" value={tallyMap.approve || 0} />
         <Stat label="Rejected" value={tallyMap.reject || 0} />
         <Stat label="Live events" value={q.approved} />
+      </div>
+
+      {/* Happy-hour scraper */}
+      <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink-soft mb-2">Happy-hour scraper</h2>
+      <div className="border border-rule bg-paper-raised p-4 mb-8 font-ui text-sm">
+        <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1.5">
+          <div className="flex justify-between"><span className="text-ink-soft">Last ran</span><span className="text-ink">{sc ? `${ago(sc.started_at)}${sc.status === 'running' ? ' · running now' : sc.finished_at ? ` · ${Math.max(1, Math.round((new Date(sc.finished_at).getTime() - new Date(sc.started_at).getTime()) / 1000))}s` : ''}` : 'never'}</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Next run</span><span className="text-ink">{fmt(nextRun)} CT</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Last result</span><span className="text-ink">{sc ? (sc.status === 'error' ? <span className="text-oxblood">error: {sc.note}</span> : sc.note || `checked ${sc.checked}, found ${sc.found}`) : '—'}</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Schedule</span><span className="text-ink">Weekly · Mondays ~5 AM CT</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Sites checked (all-time)</span><span className="text-ink">{cov.ever_checked} / {cov.sites} with websites</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Happy hours live</span><span className="text-ink">{cov.with_hh}</span></div>
+        </div>
+        <p className="text-ink-soft text-xs mt-3 pt-3 border-t border-rule/60">Reads each restaurant&apos;s website, has AI pull the happy hour (only kept if it has a real time), verifies existing ones, and finds new ones. Owner-set happy hours are never overwritten.</p>
       </div>
 
       {/* Connected workers */}

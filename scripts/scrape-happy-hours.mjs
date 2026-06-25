@@ -37,13 +37,15 @@ WEBSITE TEXT:
 }
 
 const onlyMissing = process.env.ONLY_MISSING === '1';
-const { rows } = await pool.query(`select slug, name, attributes->>'website' website from restaurants where coalesce(attributes->>'website','') <> '' ${onlyMissing ? "and coalesce(happy_hour,'')=''" : ''} order by name`);
+const { rows } = await pool.query(`select slug, name, attributes->>'website' website, owner_content->>'happyHour' owner_hh from restaurants where coalesce(attributes->>'website','') <> '' ${onlyMissing ? "and coalesce(happy_hour,'')=''" : ''} order by name`);
 console.log(`scraping ${rows.length} sites (onlyMissing=${onlyMissing})...`);
-let checked = 0, updated = 0;
+let checked = 0, updated = 0, skipped = 0;
 const CONC = 4;
 async function run(list) {
   for (const r of list) {
+    await pool.query('update restaurants set happy_hour_checked_at = now() where slug = $1', [r.slug]);
     checked++;
+    if (r.owner_hh && String(r.owner_hh).trim()) { skipped++; continue; } // owner-set: never override
     const text = await fetchSite(r.website);
     if (!text || !/happy\s*hour/i.test(text)) continue;
     const hh = await extract(text, r.name);
@@ -55,5 +57,5 @@ async function run(list) {
 }
 const chunks = Array.from({ length: CONC }, (_, i) => rows.filter((_, j) => j % CONC === i));
 await Promise.all(chunks.map(run));
-console.log(`DONE: checked ${checked}, happy hours stored ${updated}`);
+console.log(`DONE: checked ${checked}, stored ${updated}, owner-set skipped ${skipped}`);
 await pool.end();
