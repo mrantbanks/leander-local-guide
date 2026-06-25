@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
+import { eventRequiresTime } from '@/lib/validate';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,14 +47,23 @@ export async function POST(req: NextRequest) {
   const days = Array.isArray(b.days_of_week) ? b.days_of_week.filter((n: number) => n >= 1 && n <= 7) : null;
   const time = typeof b.start_time === 'string' && /^\d{1,2}:\d{2}/.test(b.start_time) ? b.start_time : null;
 
-  if (b.decision === 'approve') {
+  // Guardrail: a time-based event (trivia, live music, etc.) can't be approved without a start time.
+  let decision = String(b.decision);
+  if (decision === 'approve') {
+    const ev = await pool.query('select event_type, start_time from events where id = $1', [id]);
+    const etype = ev.rows[0]?.event_type || '';
+    const resultingTime = time || ev.rows[0]?.start_time || null;
+    if (eventRequiresTime(etype) && !resultingTime) decision = 'unsure';
+  }
+
+  if (decision === 'approve') {
     await pool.query(
       `update events set status='approved', verified=true, last_confirmed_at=now(),
          expires_at = case when source='ai_scrape' then now()+interval '45 days' else null end,
          days_of_week = coalesce($2, days_of_week), start_time = coalesce($3::time, start_time),
          worker_checked_at=now(), worker_note=$4, updated_at=now()
        where id=$1`, [id, days && days.length ? days : null, time, note]);
-  } else if (b.decision === 'reject') {
+  } else if (decision === 'reject') {
     await pool.query(`update events set status='removed', worker_checked_at=now(), worker_note=$2, updated_at=now() where id=$1`, [id, note]);
   } else {
     await pool.query(`update events set worker_checked_at=now(), worker_note=$2 where id=$1`, [id, note]);
@@ -64,7 +74,7 @@ export async function POST(req: NextRequest) {
     const wid = String(b.worker_id).slice(0, 80);
     await pool.query(
       'insert into worker_log (worker_id, event_id, venue, event_type, decision, model, reason) values ($1,$2,$3,$4,$5,$6,$7)',
-      [wid, id, String(b.venue || '').slice(0, 120), String(b.event_type || '').slice(0, 40), String(b.decision).slice(0, 20), String(b.model || '').slice(0, 80), note]
+      [wid, id, String(b.venue || '').slice(0, 120), String(b.event_type || '').slice(0, 40), decision.slice(0, 20), String(b.model || '').slice(0, 80), note]
     );
     await pool.query('update worker_nodes set last_seen=now() where id=$1', [wid]);
   }
