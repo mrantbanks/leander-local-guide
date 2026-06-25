@@ -56,6 +56,12 @@ body {
 .llg-pop-view, .llg-pop-dir { font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; padding: 7px 11px; text-decoration: none; border-radius: 2px; }
 .llg-pop-view { background: #E03A1E; color: #F4EFE6; }
 .llg-pop-dir { border: 1px solid #16130F; color: #16130F; }
+.llg-pop-status { margin-top: 6px; }
+.llg-pill { font-family: Arial, sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 7px; border-radius: 2px; display: inline-block; }
+.llg-pill-open { background: #1f7a3d; color: #fff; }
+.llg-pill-soon { background: #E8A33D; color: #16130F; }
+.llg-pill-closed { background: #e7ded0; color: #6b5b48; }
+.llg-pill-unknown { background: transparent; color: #6b5b48; border: 1px solid #d8cbb4; }
 .llg-tip .maplibregl-popup-content { background: #16130F; color: #F4EFE6; padding: 4px 9px; border-radius: 2px; font-family: Arial, sans-serif; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
 .llg-tip .maplibregl-popup-tip { display: none; }
 .llg-here { width: 20px; height: 20px; position: relative; }

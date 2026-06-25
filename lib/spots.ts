@@ -173,22 +173,49 @@ export type MapPin = {
   slug: string; name: string; lat: number; lng: number; cat: string; cuisines: string[];
   happyHour: boolean; openLate: boolean; hiddenGem: boolean; priceTier: number | null;
   rating: number | null; hook: string | null; visited: boolean;
+  periods: number[][]; open24: boolean; hoursText: string[];
+  patio: boolean; dog: boolean; veg: boolean;
 };
+
+// Google hours -> compact [openAbs, closeAbs] minute-of-week pairs (closeAbs wraps
+// past 10080 when a period runs past midnight). open_late = closes >=10pm or after midnight.
+function parseHours(h: { periods?: { open?: { day: number; hour?: number; minute?: number }; close?: { day: number; hour?: number; minute?: number } }[]; weekdayDescriptions?: string[] } | null): { periods: number[][]; open24: boolean; openLate: boolean; text: string[] } {
+  if (!h || !Array.isArray(h.periods)) return { periods: [], open24: false, openLate: false, text: [] };
+  if (h.periods.length === 1 && h.periods[0]?.open && !h.periods[0]?.close) return { periods: [], open24: true, openLate: true, text: h.weekdayDescriptions || [] };
+  const periods: number[][] = []; let openLate = false;
+  for (const p of h.periods) {
+    if (!p?.open || !p?.close) continue;
+    const oAbs = p.open.day * 1440 + (p.open.hour || 0) * 60 + (p.open.minute || 0);
+    let cAbs = p.close.day * 1440 + (p.close.hour || 0) * 60 + (p.close.minute || 0);
+    if (cAbs <= oAbs) cAbs += 10080;
+    periods.push([oAbs, cAbs]);
+    const ch = p.close.hour || 0;
+    if (ch >= 22 || ch < 4) openLate = true;
+  }
+  return { periods, open24: false, openLate, text: h.weekdayDescriptions || [] };
+}
+
 // Lean per-pin payload for the map. ~177 rows, all with coords.
 export async function getMapPins(): Promise<MapPin[]> {
   const { rows } = await pool.query(
     `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
-       (coalesce(happy_hour,'') <> '') happy_hour, coalesce(open_late,false) open_late,
+       (coalesce(happy_hour,'') <> '') happy_hour, hours, attributes,
        ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
        editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited
      from restaurants where lat is not null and lng is not null`
   );
-  return rows.map((r) => ({
-    slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
-    cat: r.cat, cuisines: r.cuisines || [], happyHour: !!r.happy_hour, openLate: !!r.open_late,
-    hiddenGem: !!r.is_hidden_gem, priceTier: r.price_tier ?? null, rating: r.rating ?? null,
-    hook: clean(r.hook), visited: !!r.visited,
-  }));
+  return rows.map((r) => {
+    const h = parseHours(r.hours);
+    const a = r.attributes || {};
+    return {
+      slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
+      cat: r.cat, cuisines: r.cuisines || [], happyHour: !!r.happy_hour, openLate: h.openLate,
+      hiddenGem: !!r.is_hidden_gem, priceTier: r.price_tier ?? null, rating: r.rating ?? null,
+      hook: clean(r.hook), visited: !!r.visited,
+      periods: h.periods, open24: h.open24, hoursText: h.text,
+      patio: !!a.outdoorSeating, dog: !!a.allowsDogs, veg: !!a.servesVegetarianFood,
+    };
+  });
 }
 export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
   const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1`, [slug]);

@@ -5,11 +5,19 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapPin } from '@/lib/spots';
 import { directionsUrl, isApple, haversineMi } from '@/lib/map';
+import { evalHours, statusLabel, type HourState } from '@/lib/hours';
 
 const LEANDER: [number, number] = [-97.853, 30.572];
 
 function esc(s: string): string {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Live open/closed pill, computed at popup-open time against Central now.
+function pillHtml(periods: number[][], open24: boolean): string {
+  const st = evalHours(periods, open24);
+  const cls: Record<HourState, string> = { open: 'open', open24: 'open', closing_soon: 'soon', closed: 'closed', unknown: 'unknown' };
+  return `<span class="llg-pill llg-pill-${cls[st.state]}">${esc(statusLabel(st))}</span>`;
 }
 
 function fc(pins: MapPin[]): GeoJSON.FeatureCollection {
@@ -18,7 +26,7 @@ function fc(pins: MapPin[]): GeoJSON.FeatureCollection {
     features: pins.map((p) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0 },
+      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0, periods: JSON.stringify(p.periods), open24: p.open24 ? 1 : 0 },
     })),
   };
 }
@@ -120,8 +128,11 @@ function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: 
   const dist = userLoc ? haversineMi(userLoc, { lat, lng }) : null;
   const price = Number(p.price) ? '$'.repeat(Number(p.price)) : '';
   const meta = [esc(String(p.cat)), price, p.gem ? 'Hidden Gem' : '', dist != null ? `${dist.toFixed(dist < 10 ? 1 : 0)} mi` : ''].filter(Boolean).join(' · ');
+  let periods: number[][] = [];
+  try { periods = JSON.parse(String(p.periods || '[]')); } catch { /* ignore */ }
   const html = `<div class="llg-pop">
     <a class="llg-pop-name" href="/r/${esc(String(p.slug))}">${esc(String(p.name))}</a>
+    <div class="llg-pop-status">${pillHtml(periods, Number(p.open24) === 1)}</div>
     <div class="llg-pop-meta">${meta}</div>
     ${p.blurb ? `<p class="llg-pop-blurb">${esc(String(p.blurb))}</p>` : ''}
     <div class="llg-pop-btns">
@@ -137,6 +148,7 @@ function flyToSlug(m: maplibregl.Map, pins: MapPin[], slug: string) {
   if (!p) return;
   m.flyTo({ center: [p.lng, p.lat], zoom: 15 });
   const html = `<div class="llg-pop"><a class="llg-pop-name" href="/r/${p.slug}">${esc(p.name)}</a>
+    <div class="llg-pop-status">${pillHtml(p.periods, p.open24)}</div>
     <div class="llg-pop-meta">${esc(p.cat)}</div>
     <div class="llg-pop-btns"><a class="llg-pop-view" href="/r/${p.slug}">View</a>
     <a class="llg-pop-dir" href="${directionsUrl(p, isApple())}" target="_blank" rel="noopener">Directions</a></div></div>`;
