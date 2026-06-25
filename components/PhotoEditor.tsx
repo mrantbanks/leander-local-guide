@@ -32,6 +32,7 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
   const [prompt, setPrompt] = useState('');
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
+  const [flash, setFlash] = useState('');
   const imgRef = useRef<HTMLImageElement>(null);
 
   const filter = `brightness(${bright}%) contrast(${contrast}%) saturate(${saturate}%)`;
@@ -39,11 +40,13 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
   async function doRotate(dir: 1 | -1) { setBusy('t'); setWork(await rotateFlip(work, dir * 90, false, false)); setCrop(undefined); setBusy(''); }
   async function doFlip() { setBusy('t'); setWork(await rotateFlip(work, 0, true, false)); setCrop(undefined); setBusy(''); }
 
+  // Re-encode the current image to JPEG via canvas so Gemini always gets a format it edits cleanly.
   async function toBase64(s: string): Promise<{ data: string; mime: string }> {
-    const blob = await (await fetch(s)).blob();
-    const url: string = await new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result as string); fr.readAsDataURL(blob); });
-    const [meta, data] = url.split(',');
-    return { data, mime: (meta.match(/data:(.*?);/) || [])[1] || 'image/jpeg' };
+    const img = await loadImg(s);
+    const cv = document.createElement('canvas'); cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+    cv.getContext('2d')!.drawImage(img, 0, 0);
+    const url = cv.toDataURL('image/jpeg', 0.95);
+    return { data: url.split(',')[1], mime: 'image/jpeg' };
   }
 
   const ENHANCE = 'Enhance this food/restaurant photo: improve the lighting, white balance, color, and sharpness so the food and space look appetizing and professionally shot. Do NOT change the composition or crop, and do not add or remove any objects. Keep it realistic.';
@@ -54,9 +57,9 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
     try {
       const { data, mime } = await toBase64(work);
       const r = await fetch('/api/admin/gemini-edit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: data, mimeType: mime, prompt: p }) });
-      const j = await r.json();
-      if (j.image) { setWork(`data:${j.mimeType};base64,${j.image}`); setCrop(undefined); if (clearPrompt) setPrompt(''); }
-      else setErr(j.error || 'AI edit failed');
+      const j = await r.json().catch(() => ({}));
+      if (j.image) { setWork(`data:${j.mimeType};base64,${j.image}`); setCrop(undefined); if (clearPrompt) setPrompt(''); setFlash('✓ AI edit applied'); setTimeout(() => setFlash(''), 2500); }
+      else setErr(j.error || `AI edit failed (${r.status})`);
     } catch (e) { setErr((e as Error).message); }
     setBusy('');
   }
@@ -92,11 +95,18 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
           <button onClick={onClose} className="text-ink-soft text-xl leading-none">✕</button>
         </div>
         <div className="grid md:grid-cols-[1fr_270px] gap-4 p-4">
-          <div className="flex items-center justify-center bg-paper-sunk rounded-sm min-h-[40vh] p-2 overflow-hidden">
+          <div className="relative flex items-center justify-center bg-paper-sunk rounded-sm min-h-[40vh] p-2 overflow-hidden">
             <ReactCrop crop={crop} onChange={(_, pct) => setCrop(pct)} aspect={aspect}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img ref={imgRef} src={work} alt="edit" crossOrigin="anonymous" style={{ filter, maxHeight: '60vh', width: 'auto' }} />
             </ReactCrop>
+            {(busy === 'ai' || busy === 'save') && (
+              <div className="absolute inset-0 bg-ink/65 flex flex-col items-center justify-center z-20 gap-2">
+                <span className="font-stamp uppercase tracking-[0.12em] text-paper text-sm animate-pulse">{busy === 'ai' ? '✨ AI is editing' : 'Saving'}</span>
+                {busy === 'ai' && <span className="font-ui text-xs text-paper/80">this takes 5-15 seconds...</span>}
+              </div>
+            )}
+            {flash && <span className="absolute top-2 left-1/2 -translate-x-1/2 z-20 font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper px-3 py-1.5 rounded-sm">{flash}</span>}
           </div>
           <div className="space-y-4">
             <div>
