@@ -41,6 +41,21 @@ async function claim(kind: 'review' | 'tip'): Promise<Item[]> {
   return rows.map((x) => ({ id: x.id, body: x.body, stars: x.stars, venue: x.venue, kind }));
 }
 
+// Start a moderation pass now (overlap-guarded, idle-aware), running in the background. Called by
+// the cron AND fired the moment a review/tip is submitted, so nothing waits for the next tick.
+export async function kickoffModeration(): Promise<{ started?: boolean; idle?: boolean; skipped?: string; runId?: number }> {
+  const pend = await pool.query("select (select count(*) from reviews where status='pending') + (select count(*) from tips where status='pending') n");
+  if (Number(pend.rows[0].n) === 0) return { idle: true };
+  const running = await pool.query("select id from scraper_runs where kind='moderation' and status='running' and started_at > now() - interval '30 minutes' limit 1");
+  if (running.rows[0]) return { skipped: 'already running', runId: running.rows[0].id };
+  const { rows } = await pool.query("insert into scraper_runs(kind, status) values('moderation','running') returning id");
+  const runId = rows[0].id;
+  moderateSubmissions(runId)
+    .then((r) => pool.query("update scraper_runs set finished_at=now(), status='done', checked=$2, found=$3, note=$4 where id=$1", [runId, r.checked, r.approved, `${r.approved} approved, ${r.rejected} rejected, ${r.unsure} left for human`]))
+    .catch((e) => pool.query("update scraper_runs set finished_at=now(), status='error', note=$2 where id=$1", [runId, String(e).slice(0, 300)]));
+  return { started: true, runId };
+}
+
 export async function moderateSubmissions(runId: number): Promise<{ checked: number; approved: number; rejected: number; unsure: number }> {
   const key = process.env.GEMINI_API_KEY || '';
   const items = [...(await claim('review')), ...(await claim('tip'))];

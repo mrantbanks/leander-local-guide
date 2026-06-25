@@ -4,6 +4,7 @@ import { pool } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { isVerifiedOwner } from '@/lib/spots';
 import { screenSubmission } from '@/lib/moderate';
+import { kickoffModeration } from '@/lib/moderateSubmissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,5 +32,6 @@ export async function POST(req: NextRequest) {
      on conflict (place_id, user_email) do update set stars = $3, body = $4, status = 'pending', created_at = now()`,
     [rows[0].id, email, stars, body || null]
   );
+  void kickoffModeration().catch(() => {}); // moderate it right away, don't wait for the 15-min cron
   return NextResponse.json({ ok: true });
 }

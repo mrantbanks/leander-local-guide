@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { screenSubmission } from '@/lib/moderate';
+import { kickoffModeration } from '@/lib/moderateSubmissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,5 +31,6 @@ export async function POST(req: NextRequest) {
     "insert into tips (place_id, body, user_email, status, ip_hash) values ($1,$2,$3,'pending',$4)",
     [rows[0].id, body, email, ip || null]
   );
+  void kickoffModeration().catch(() => {}); // moderate it right away, don't wait for the 15-min cron
   return NextResponse.json({ ok: true });
 }
