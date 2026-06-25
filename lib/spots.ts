@@ -63,13 +63,16 @@ export type CardSpot = Pick<Spot,
 // Preserves paragraph breaks (\n\n) and real hyphens (Chick-fil-A).
 function clean(s: string | null | undefined): string | null {
   if (s == null) return null;
-  return String(s)
+  const v = String(s)
     .replace(/[ \t]*[—–][ \t]*/g, ', ')
     .replace(/ ,/g, ',')
     .replace(/,\s*,/g, ',')
     .replace(/,(\s*[.!?])/g, '$1')
     .replace(/[ \t]{2,}/g, ' ')
+    .trim()
+    .replace(/^["']+|["']+$/g, '') // safety net: strip stray wrapping quotes from scraped imports
     .trim();
+  return v.length ? v : null;
 }
 function cleanRange(s: string | null | undefined): string | null {
   if (s == null) return null;

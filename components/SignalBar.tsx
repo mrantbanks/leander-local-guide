@@ -46,7 +46,7 @@ export default function SignalBar({
         votedVerdict ? 'opacity-60 cursor-default text-oxblood border-oxblood/50' : 'text-oxblood border-oxblood/70 hover:bg-oxblood hover:text-paper -rotate-1'
       } ${compact ? 'text-[12px]' : 'text-sm'}`}
     >
-      {label} {n > 0 && <span className="opacity-70">{n}</span>}
+      {label} {n >= 3 && <span className="opacity-70">{n}</span>}
     </button>
   );
 
@@ -64,14 +64,14 @@ export default function SignalBar({
             disabled={tapped.has('been_here')}
             className={`font-stamp uppercase tracking-[0.06em] text-sm px-3 py-1 border-2 rounded-[2px] transition-colors ${tapped.has('been_here') ? 'opacity-60 text-ink-soft border-rule' : 'text-ink border-ink hover:bg-ink hover:text-paper'}`}
           >
-            ✓ Been here {c.beenHere > 0 && <span className="opacity-70">{c.beenHere}</span>}
+            ✓ Been here {c.beenHere >= 3 && <span className="opacity-70">{c.beenHere}</span>}
           </button>
           <button
             onClick={(e) => { e.preventDefault(); tap('want_to_go', undefined, 'want_to_go'); }}
             disabled={tapped.has('want_to_go')}
             className={`font-stamp uppercase tracking-[0.06em] text-sm px-3 py-1 border-2 rounded-[2px] transition-colors ${tapped.has('want_to_go') ? 'opacity-60 text-ink-soft border-rule' : 'text-ink-soft border-rule hover:border-ink hover:text-ink'}`}
           >
-            ☆ Want to go {c.wantToGo > 0 && <span className="opacity-70">{c.wantToGo}</span>}
+            ☆ Want to go {c.wantToGo >= 3 && <span className="opacity-70">{c.wantToGo}</span>}
           </button>
         </div>
       )}

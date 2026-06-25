@@ -82,12 +82,12 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           {spot.ratingGoogle != null && <span className="font-ui text-xs text-ink-soft">{spot.ratingGoogle}★ <span className="opacity-60">Google</span></span>}
           {spot.priceTier ? <span className="font-ui text-xs text-ink-soft">{'$'.repeat(spot.priceTier)}</span> : null}
           {spot.cuisines.length > 0 && <span className="font-ui text-xs text-ink-soft">{spot.cuisines.slice(0, 2).join(', ')}</span>}
-          {spot.beenHere > 0 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
+          {spot.beenHere >= 3 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
         </div>
 
         {spot.happyHour && (
           <p className="px-3 mt-2 font-ui text-xs text-ink leading-snug line-clamp-2">
-            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[11px]">🍸 Happy Hour </span>
+            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[11px]">Happy Hour · </span>
             {spot.happyHour.replace(/^happy hour[:\s-]*/i, '')}
           </p>
         )}

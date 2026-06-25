@@ -390,7 +390,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                   </ul>
                 </dd></div>
               )}
-              {spot.happyHour && <div><dt className="text-ink-soft mb-1">🍸 Happy Hour</dt><dd className="text-ink">{spot.happyHour}</dd></div>}
+              {spot.happyHour && <div><dt className="text-ink-soft mb-1">Happy Hour</dt><dd className="text-ink">{spot.happyHour}</dd></div>}
               {spot.website && <div><dt className="text-ink-soft">Website</dt><dd className="truncate"><a href={spot.website} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">{spot.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a></dd></div>}
               {spot.menuUrl && <div><dt className="text-ink-soft">Menu</dt><dd><a href={spot.menuUrl} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">View menu</a></dd></div>}
               {spot.orderUrl && <div><dt className="text-ink-soft">Order</dt><dd><a href={spot.orderUrl} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">Order online</a></dd></div>}
@@ -402,7 +402,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             <p className="font-display font-bold text-xl text-ink leading-tight">Eat here with Anthony</p>
             <p className="font-ui text-xs text-ink-soft mt-2">He runs personalized Leander food crawls. This spot might be on one.</p>
             <Link href="/about" className="mt-3 inline-flex font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper px-4 py-2 hover:bg-oxblood transition-colors">
-              🍴 Book a tour
+              Book a tour
             </Link>
           </div>
 

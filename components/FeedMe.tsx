@@ -39,7 +39,7 @@ export default function FeedMe({ spots }: { spots: FeedPick[] }) {
           onClick={() => roll()}
           className="font-stamp uppercase tracking-[0.15em] text-lg bg-chile text-paper px-6 py-2.5 hover:bg-amber hover:text-ink transition-colors"
         >
-          🍴 Feed Me
+          Feed Me
         </button>
         <div className="flex gap-1.5">
           {moods.map((m) => (
