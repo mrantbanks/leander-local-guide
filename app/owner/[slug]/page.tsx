@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { auth, signIn } from '@/auth';
 import { getSpot, isVerifiedOwner } from '@/lib/spots';
 import { getOwnerContent } from '@/lib/owner';
+import { getOwnerSpecials, scheduleLabel } from '@/lib/specials';
+import { removeSpecialAction } from '@/app/actions';
 import OwnerEditor from '@/components/OwnerEditor';
+import LocalsOnlyForm from '@/components/LocalsOnlyForm';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Owner desk', robots: { index: false } };
@@ -37,6 +40,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
   const spot = await getSpot(slug);
   if (!spot) return <main className="p-10 text-center font-ui">Listing not found.</main>;
   const { ownerContent, googleWeek } = await getOwnerContent(slug);
+  const specials = await getOwnerSpecials(slug);
 
   const stats = [
     { n: spot.wantToGo, label: 'want to try you', lead: true },
@@ -88,8 +92,34 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
         }}
       />
 
+      {/* Locals Only deals */}
+      <section className="mt-8 border-t-2 border-ink pt-5">
+        <div className="flex items-center gap-2 mb-1">
+          <img src="/locals-only.webp" alt="" width={28} height={28} className="w-7 h-7" />
+          <h2 className="font-stamp uppercase tracking-[0.14em] text-ink text-base">Locals Only</h2>
+        </div>
+        <p className="font-ui text-sm text-ink-soft mb-4">Post a deal just for Leander locals. They get a printable ticket to show you. Honor system, you decide what to give.</p>
+        <LocalsOnlyForm slug={slug} />
+        {specials.length > 0 && (
+          <ul className="mt-5 space-y-2">
+            {specials.map((s) => (
+              <li key={s.id} className="bg-paper-raised border border-rule rounded-sm p-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-display font-bold text-ink truncate">{s.title}</p>
+                  <p className="font-stamp uppercase tracking-[0.06em] text-[11px] text-chile">{scheduleLabel(s)}</p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Ticket →</Link>
+                  <form action={async () => { 'use server'; await removeSpecialAction(s.id); }}><button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood">End it</button></form>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {/* the trust line */}
-      <p className="font-ui text-xs text-ink-soft mt-6 border-t border-rule pt-4">
+      <p className="font-ui text-xs text-ink-soft mt-8 border-t border-rule pt-4">
         The review, the verdict, and the &ldquo;worth it&rdquo; tally are Anthony&apos;s and the public&apos;s — you can&apos;t edit those, and that&apos;s the point: your page stays credible.
       </p>
     </main>

@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
+import { createSpecial, removeSpecial, specialOwnerSlug, type SpecialInput } from '@/lib/specials';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -203,6 +204,34 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
     safe.hours = patch.hours.map((d) => (d && d.open && d.close) ? { open: String(d.open), close: String(d.close) } : null);
   }
   await saveOwnerContent(slug, safe, email);
+  revalidatePath(`/r/${slug}`);
+  revalidatePath(`/owner/${slug}`);
+  return { ok: true };
+}
+
+// "Locals Only" deals — owner-created, honor-based.
+export async function createSpecialAction(slug: string, input: SpecialInput): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email || !(await isVerifiedOwner(slug, email))) return { ok: false, error: 'Not authorized' };
+  const title = clean(input.title);
+  if (!title) return { ok: false, error: 'Add the deal' };
+  await createSpecial(slug, email, {
+    title, details: clean(input.details ?? null), recurring: !!input.recurring,
+    daysOfWeek: Array.isArray(input.daysOfWeek) ? input.daysOfWeek.filter((n) => n >= 0 && n <= 6) : null,
+    endsOn: input.endsOn || null,
+  });
+  revalidatePath(`/r/${slug}`);
+  revalidatePath(`/owner/${slug}`);
+  return { ok: true };
+}
+
+export async function removeSpecialAction(id: number): Promise<{ ok: boolean }> {
+  const session = await auth();
+  const email = session?.user?.email;
+  const slug = await specialOwnerSlug(id);
+  if (!email || !slug || !(await isVerifiedOwner(slug, email))) return { ok: false };
+  await removeSpecial(id);
   revalidatePath(`/r/${slug}`);
   revalidatePath(`/owner/${slug}`);
   return { ok: true };

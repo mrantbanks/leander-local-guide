@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSpot, getTips, getReviews, getOwnerResponses } from '@/lib/spots';
 import { getEventsForSpot } from '@/lib/events';
+import { getActiveSpecials, scheduleLabel } from '@/lib/specials';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
@@ -43,8 +44,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   if (!spot) notFound();
 
   const siteKey = process.env.TURNSTILE_SITE_KEY || '';
-  const [tips, reviews, ownerResponses, events] = await Promise.all([
-    getTips(slug), getReviews(slug), getOwnerResponses(slug), getEventsForSpot(slug),
+  const [tips, reviews, ownerResponses, events, specials] = await Promise.all([
+    getTips(slug), getReviews(slug), getOwnerResponses(slug), getEventsForSpot(slug), getActiveSpecials(slug),
   ]);
   const todayIdx = (new Date().getDay() + 6) % 7;
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -159,6 +160,31 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           </div>
         </div>
       </header>
+
+      {specials.length > 0 && (
+        <div className="border-b-2 border-ink bg-paper-raised">
+          <div className="max-w-2xl mx-auto px-5 py-4">
+            <div className="flex items-center gap-2 mb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/locals-only.webp" alt="" width={24} height={24} className="w-6 h-6" />
+              <h2 className="font-stamp uppercase tracking-[0.14em] text-chile text-sm">Locals Only</h2>
+            </div>
+            <ul className="space-y-2">
+              {specials.map((s) => (
+                <li key={s.id} className="flex items-center justify-between gap-3 border-l-2 border-chile pl-3">
+                  <div className="min-w-0">
+                    <p className="font-display font-bold text-ink leading-tight">{s.title}</p>
+                    {s.details && <p className="font-ui text-xs text-ink-soft">{s.details}</p>}
+                    <p className="font-stamp uppercase tracking-[0.06em] text-[11px] text-ink-soft">{scheduleLabel(s)}</p>
+                  </div>
+                  <Link href={`/ticket/${s.id}`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the ticket →</Link>
+                </li>
+              ))}
+            </ul>
+            <p className="font-ui text-[11px] text-ink-soft mt-2">A perk from the owner for Leander locals. Show your ticket in-house.</p>
+          </div>
+        </div>
+      )}
 
       {(spot.localPhotos[0] || spot.photo) && (
         <div className="border-b border-rule bg-paper-sunk">
