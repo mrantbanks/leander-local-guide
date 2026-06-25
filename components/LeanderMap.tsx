@@ -5,7 +5,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapPin } from '@/lib/spots';
 import { directionsUrl, isApple, haversineMi } from '@/lib/map';
-import { evalHours, statusLabel, type HourState } from '@/lib/hours';
+import { evalHours, statusLabel, centralNowAbs, type HourState } from '@/lib/hours';
 
 const LEANDER: [number, number] = [-97.853, 30.572];
 
@@ -26,12 +26,30 @@ function fc(pins: MapPin[]): GeoJSON.FeatureCollection {
     features: pins.map((p) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0, periods: JSON.stringify(p.periods), open24: p.open24 ? 1 : 0 },
+      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0, periods: JSON.stringify(p.periods), open24: p.open24 ? 1 : 0, happy: p.happyHourText || '', hours: JSON.stringify(p.hoursText || []) },
     })),
   };
 }
 
-export default function LeanderMap({ pins, userLoc, openSlug }: { pins: MapPin[]; userLoc: { lat: number; lng: number } | null; openSlug?: string | null }) {
+// Pull today's human hours line ("11:00 AM – 10:00 PM") from Google's Monday-first weekdayDescriptions.
+function todayHours(hoursText: string[]): string {
+  if (!hoursText || !hoursText.length) return '';
+  const day = Math.floor(centralNowAbs() / 1440); // 0=Sun..6=Sat
+  const idx = (day + 6) % 7; // -> Monday-first index
+  return String(hoursText[idx] || '').replace(/^[A-Za-z]+:\s*/, '');
+}
+
+// Context-aware detail lines: surface happy-hour details when that's what they filtered,
+// and always show today's hours (so "open late" actually shows the hours).
+function detailHtml(hoursText: string[], happyText: string, emphasis?: 'happy' | 'hours' | null): string {
+  const parts: string[] = [];
+  if (emphasis === 'happy' && happyText) parts.push(`<div class="llg-pop-happy">🍺 Happy Hour · ${esc(happyText)}</div>`);
+  const th = todayHours(hoursText);
+  if (th) parts.push(`<div class="llg-pop-hours">Today · ${esc(th)}</div>`);
+  return parts.join('');
+}
+
+export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins: MapPin[]; userLoc: { lat: number; lng: number } | null; openSlug?: string | null; emphasis?: 'happy' | 'hours' | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const userMarker = useRef<maplibregl.Marker | null>(null);
@@ -70,7 +88,7 @@ export default function LeanderMap({ pins, userLoc, openSlug }: { pins: MapPin[]
         hover.setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number]).setHTML(`<strong>${esc(p.name)}</strong>`).addTo(m);
       });
       m.on('mouseleave', 'pins', () => { m.getCanvas().style.cursor = ''; hover.remove(); });
-      m.on('click', 'pins', (e) => { hover.remove(); openPopup(m, e.features![0], userLocRef.current); });
+      m.on('click', 'pins', (e) => { hover.remove(); openPopup(m, e.features![0], userLocRef.current, emphasisRef.current); });
       m.on('mouseenter', 'clusters', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'clusters', () => { m.getCanvas().style.cursor = ''; });
       m.on('click', 'clusters', async (e) => {
@@ -81,7 +99,7 @@ export default function LeanderMap({ pins, userLoc, openSlug }: { pins: MapPin[]
         m.easeTo({ center: (f.geometry as GeoJSON.Point).coordinates as [number, number], zoom });
       });
       ready.current = true;
-      if (openSlugRef.current) flyToSlug(m, pinsRef.current, openSlugRef.current);
+      if (openSlugRef.current) flyToSlug(m, pinsRef.current, openSlugRef.current, emphasisRef.current);
     });
     return () => { m.remove(); map.current = null; ready.current = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,6 +109,7 @@ export default function LeanderMap({ pins, userLoc, openSlug }: { pins: MapPin[]
   const pinsRef = useRef(pins); pinsRef.current = pins;
   const userLocRef = useRef(userLoc); userLocRef.current = userLoc;
   const openSlugRef = useRef(openSlug); openSlugRef.current = openSlug;
+  const emphasisRef = useRef(emphasis); emphasisRef.current = emphasis;
 
   // update markers when filtered pins change
   useEffect(() => {
@@ -115,13 +134,13 @@ export default function LeanderMap({ pins, userLoc, openSlug }: { pins: MapPin[]
   // open a specific spot (deep-link)
   useEffect(() => {
     const m = map.current; if (!m || !ready.current || !openSlug) return;
-    flyToSlug(m, pins, openSlug);
+    flyToSlug(m, pins, openSlug, emphasisRef.current);
   }, [openSlug, pins]);
 
   return <div ref={ref} className="w-full h-full" />;
 }
 
-function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: { lat: number; lng: number } | null) {
+function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: { lat: number; lng: number } | null, emphasis?: 'happy' | 'hours' | null) {
   const p = f.properties as Record<string, string | number>;
   const lat = Number(p.lat), lng = Number(p.lng);
   const apple = isApple();
@@ -130,10 +149,13 @@ function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: 
   const meta = [esc(String(p.cat)), price, p.gem ? 'Hidden Gem' : '', dist != null ? `${dist.toFixed(dist < 10 ? 1 : 0)} mi` : ''].filter(Boolean).join(' · ');
   let periods: number[][] = [];
   try { periods = JSON.parse(String(p.periods || '[]')); } catch { /* ignore */ }
+  let hoursText: string[] = [];
+  try { hoursText = JSON.parse(String(p.hours || '[]')); } catch { /* ignore */ }
   const html = `<div class="llg-pop">
     <a class="llg-pop-name" href="/r/${esc(String(p.slug))}">${esc(String(p.name))}</a>
     <div class="llg-pop-status">${pillHtml(periods, Number(p.open24) === 1)}</div>
     <div class="llg-pop-meta">${meta}</div>
+    ${detailHtml(hoursText, String(p.happy || ''), emphasis)}
     ${p.blurb ? `<p class="llg-pop-blurb">${esc(String(p.blurb))}</p>` : ''}
     <div class="llg-pop-btns">
       <a class="llg-pop-view" href="/r/${esc(String(p.slug))}">View</a>
@@ -143,13 +165,14 @@ function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: 
     .setLngLat([lng, lat]).setHTML(html).addTo(m);
 }
 
-function flyToSlug(m: maplibregl.Map, pins: MapPin[], slug: string) {
+function flyToSlug(m: maplibregl.Map, pins: MapPin[], slug: string, emphasis?: 'happy' | 'hours' | null) {
   const p = pins.find((x) => x.slug === slug);
   if (!p) return;
   m.flyTo({ center: [p.lng, p.lat], zoom: 15 });
   const html = `<div class="llg-pop"><a class="llg-pop-name" href="/r/${p.slug}">${esc(p.name)}</a>
     <div class="llg-pop-status">${pillHtml(p.periods, p.open24)}</div>
     <div class="llg-pop-meta">${esc(p.cat)}</div>
+    ${detailHtml(p.hoursText || [], p.happyHourText || '', emphasis)}
     <div class="llg-pop-btns"><a class="llg-pop-view" href="/r/${p.slug}">View</a>
     <a class="llg-pop-dir" href="${directionsUrl(p, isApple())}" target="_blank" rel="noopener">Directions</a></div></div>`;
   new maplibregl.Popup({ offset: 14, maxWidth: '260px', className: 'llg-popup' }).setLngLat([p.lng, p.lat]).setHTML(html).addTo(m);

@@ -171,7 +171,7 @@ export async function getAllSpots(): Promise<Spot[]> {
 
 export type MapPin = {
   slug: string; name: string; lat: number; lng: number; cat: string; cuisines: string[];
-  happyHour: boolean; openLate: boolean; hiddenGem: boolean; priceTier: number | null;
+  happyHour: boolean; happyHourText: string | null; openLate: boolean; hiddenGem: boolean; priceTier: number | null;
   rating: number | null; hook: string | null; visited: boolean;
   periods: number[][]; open24: boolean; hoursText: string[];
   patio: boolean; dog: boolean; veg: boolean;
@@ -199,7 +199,7 @@ function parseHours(h: { periods?: { open?: { day: number; hour?: number; minute
 export async function getMapPins(): Promise<MapPin[]> {
   const { rows } = await pool.query(
     `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
-       (coalesce(happy_hour,'') <> '') happy_hour, hours, attributes,
+       happy_hour, hours, attributes,
        ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
        editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited
      from restaurants where lat is not null and lng is not null`
@@ -207,9 +207,10 @@ export async function getMapPins(): Promise<MapPin[]> {
   return rows.map((r) => {
     const h = parseHours(r.hours);
     const a = r.attributes || {};
+    const happyText = cleanHappyHour(r.happy_hour);
     return {
       slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
-      cat: r.cat, cuisines: r.cuisines || [], happyHour: !!r.happy_hour, openLate: h.openLate,
+      cat: r.cat, cuisines: r.cuisines || [], happyHour: !!happyText, happyHourText: happyText || null, openLate: h.openLate,
       hiddenGem: !!r.is_hidden_gem, priceTier: r.price_tier ?? null, rating: r.rating ?? null,
       hook: clean(r.hook), visited: !!r.visited,
       periods: h.periods, open24: h.open24, hoursText: h.text,

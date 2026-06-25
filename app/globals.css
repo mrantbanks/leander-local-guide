@@ -62,6 +62,8 @@ body {
 .llg-pill-soon { background: #E8A33D; color: #16130F; }
 .llg-pill-closed { background: #e7ded0; color: #6b5b48; }
 .llg-pill-unknown { background: transparent; color: #6b5b48; border: 1px solid #d8cbb4; }
+.llg-pop-happy { font-family: Arial, sans-serif; font-size: 12px; color: #16130F; background: #faf3e2; border-left: 3px solid #E8A33D; padding: 5px 8px; margin-top: 7px; }
+.llg-pop-hours { font-family: Arial, sans-serif; font-size: 12px; color: #4A4239; margin-top: 6px; }
 .llg-tip .maplibregl-popup-content { background: #16130F; color: #F4EFE6; padding: 4px 9px; border-radius: 2px; font-family: Arial, sans-serif; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
 .llg-tip .maplibregl-popup-tip { display: none; }
 .llg-here { width: 20px; height: 20px; position: relative; }

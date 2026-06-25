@@ -58,6 +58,8 @@ export default function MapView({ pins, initialSpot }: { pins: MapPin[]; initial
   function togglePrice(n: number) { setPrice((s) => { const x = new Set(s); if (x.has(n)) x.delete(n); else x.add(n); return x; }); }
   function clearAll() { setActive(new Set()); setCuisine(''); setPrice(new Set()); }
   const moreCount = MORE.filter((t) => active.has(t.key)).length + (cuisine ? 1 : 0) + (price.size ? 1 : 0);
+  // surface the detail that matches the active filter inside each popup
+  const emphasis: 'happy' | 'hours' | null = active.has('happy') ? 'happy' : (active.has('openLate') || active.has('openNow')) ? 'hours' : null;
 
   function locate() {
     if (!navigator.geolocation) { setGeo('denied'); return; }
@@ -129,7 +131,7 @@ export default function MapView({ pins, initialSpot }: { pins: MapPin[]; initial
 
       {/* map */}
       <div className="relative flex-1 min-h-0">
-        <LeanderMap pins={filtered} userLoc={userLoc} openSlug={initialSpot} />
+        <LeanderMap pins={filtered} userLoc={userLoc} openSlug={initialSpot} emphasis={emphasis} />
         {filtered.length === 0 && (
           <div className="absolute inset-0 z-10 flex items-center justify-center p-6 pointer-events-none">
             <div className="bg-paper border-2 border-ink p-5 max-w-xs text-center shadow-xl pointer-events-auto">
