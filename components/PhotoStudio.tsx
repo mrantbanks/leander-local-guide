@@ -13,6 +13,7 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
   const [capBusy, setCapBusy] = useState(0);
+  const [bulkCap, setBulkCap] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -31,6 +32,11 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
       if (j.caption) { setPhotos((ps) => ps.map((x) => x.id === p.id ? { ...x, caption: j.caption } : x)); await setPhotoCaption(p.id, slug, j.caption); }
     } catch { /* ignore */ }
     setCapBusy(0);
+  }
+  async function captionAll() {
+    const todo = photos.filter((p) => !p.caption);
+    for (let i = 0; i < todo.length; i++) { setBulkCap(`Captioning ${i + 1}/${todo.length}...`); await autoCaption(todo[i]); }
+    setBulkCap('');
   }
 
   async function upload(files: FileList | null) {
@@ -66,6 +72,11 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
       {photos.length === 0 ? (
         <p className="font-ui text-sm text-ink-soft">No photos yet.</p>
       ) : (
+        <>
+        <div className="flex items-center justify-between mb-2">
+          <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft">{photos.length} photo{photos.length !== 1 ? 's' : ''}</p>
+          <button onClick={captionAll} disabled={!!bulkCap || photos.every((p) => p.caption)} className="font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-1.5 rounded-sm disabled:opacity-50">{bulkCap || '✨ Auto-caption all'}</button>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {photos.map((p, i) => (
             <div key={p.id} className="border border-rule rounded-sm overflow-hidden">
@@ -87,6 +98,7 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
             </div>
           ))}
         </div>
+        </>
       )}
 
       {editing && <PhotoEditor slug={slug} src={editing.src} photoId={editing.id} onClose={() => setEditing(null)}
