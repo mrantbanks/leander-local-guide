@@ -1,3 +1,3 @@
-// Public base URL for uploaded photos (Cloudflare R2 custom domain, edge-served).
-export const UPLOADS_BASE = process.env.UPLOADS_BASE || 'https://img.leanderlocalguide.com';
-export const uploadUrl = (filename: string) => `${UPLOADS_BASE}/${filename}`;
+// Local uploads are served same-origin via the /u/[name] route (sharp-resized, CF-cacheable).
+// (R2 custom-domain serving is deferred until the R2 write token is fixed.)
+export const uploadUrl = (filename: string) => `/u/${filename}`;

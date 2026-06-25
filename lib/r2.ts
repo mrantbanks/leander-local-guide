@@ -1,21 +1,12 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 
-// Cloudflare R2 (S3-compatible) client for storing uploaded photos.
-const s3 = new S3Client({
-  region: 'auto',
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-  },
-});
+// Photo storage. R2 write is currently deferred (token is read-only), so we store
+// uploads on the local persisted volume (llg-uploads -> /app/uploads) and serve via /u/[name].
+export const UPLOAD_DIR = process.env.UPLOAD_DIR || '/app/uploads';
 
-export async function putUpload(key: string, body: Buffer, contentType: string): Promise<void> {
-  await s3.send(new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET || 'leander-uploads',
-    Key: key,
-    Body: body,
-    ContentType: contentType,
-    CacheControl: 'public, max-age=31536000, immutable',
-  }));
+export async function putUpload(key: string, body: Buffer, _contentType: string): Promise<void> {
+  const safe = path.basename(key); // never escape the dir
+  await mkdir(UPLOAD_DIR, { recursive: true });
+  await writeFile(path.join(UPLOAD_DIR, safe), body);
 }

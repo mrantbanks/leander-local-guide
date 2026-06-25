@@ -90,6 +90,12 @@ export async function deletePhoto(id: number, slug: string) {
   revalidatePath(`/admin/r/${slug}`);
 }
 
+export async function setPhotoCaption(id: number, slug: string, caption: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query('update photos set caption = $2 where id = $1', [id, caption.trim() || null]);
+  revalidatePath(`/r/${slug}`);
+}
+
 // Make a photo the main/hero (sorts first on cards + detail page).
 export async function makePrimaryPhoto(id: number, slug: string) {
   if (!(await requireAdmin())) return;

@@ -9,6 +9,7 @@ type Preset = { title: string; details?: string; recurring?: boolean; days?: num
 const PRESETS: Preset[] = [
   { title: '10% off for Leander locals', details: 'Show your ticket. Dine-in.' },
   { title: 'Free chips & queso with any entree', details: 'One per table.' },
+  { title: 'Free appetizer with orders over $25', details: 'Dine-in, one per table.' },
   { title: '$5 off your first visit', details: 'New locals, one time.' },
   { title: 'Buy one entree, get one half off', details: 'Equal or lesser value, dine-in.' },
   { title: 'Free drink with any meal', details: 'Fountain drink, tea, or coffee.' },

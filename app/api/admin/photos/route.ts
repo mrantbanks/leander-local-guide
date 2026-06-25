@@ -20,15 +20,19 @@ export async function POST(req: NextRequest) {
 
   const files = fd.getAll('files').filter((f): f is File => f instanceof File);
   const saved: { id: number; filename: string; url: string }[] = [];
-  for (const file of files.slice(0, 24)) {
-    if (!file.type.startsWith('image/') || file.size > 15 * 1024 * 1024) continue;
-    const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
-    const fn = `${randomUUID()}.${ext}`;
-    await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
-    const ins = await pool.query(
-      "insert into photos (place_id, filename, source, status, uploaded_by, rights_ack, rights_ack_at) values ($1,$2,'editorial','approved',$3,true,now()) returning id",
-      [placeId, fn, email]);
-    saved.push({ id: ins.rows[0].id, filename: fn, url: uploadUrl(fn) });
+  try {
+    for (const file of files.slice(0, 24)) {
+      if (!file.type.startsWith('image/') || file.size > 15 * 1024 * 1024) continue;
+      const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+      const fn = `${randomUUID()}.${ext}`;
+      await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
+      const ins = await pool.query(
+        "insert into photos (place_id, filename, source, status, uploaded_by, rights_ack, rights_ack_at) values ($1,$2,'editorial','approved',$3,true,now()) returning id",
+        [placeId, fn, email]);
+      saved.push({ id: ins.rows[0].id, filename: fn, url: uploadUrl(fn) });
+    }
+  } catch (e) {
+    return NextResponse.json({ error: `Storage error: ${(e as Error).name} — ${(e as Error).message}`, saved }, { status: 500 });
   }
   return NextResponse.json({ saved });
 }

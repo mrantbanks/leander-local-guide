@@ -31,7 +31,7 @@ export type Spot = {
   priceTier: number | null;
   photo: string | null;
   photoCredit: string | null;
-  localPhotos: { id: number; filename: string; url: string }[];
+  localPhotos: { id: number; filename: string; url: string; caption: string | null }[];
   updatedAt: Date | null;
   hook: string | null;
   verdict: string | null;
@@ -154,7 +154,7 @@ function mapRow(r: any): Spot {
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,
     badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
     photo: r.photos?.[0]?.name || null, photoCredit: r.photos?.[0]?.attribution?.[0] || null,
-    localPhotos: (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename, url: uploadUrl(p.filename) })),
+    localPhotos: (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename, url: uploadUrl(p.filename), caption: clean(p.caption) })),
     updatedAt: r.updated_at || null,
     hook: clean(ed.hook), verdict: ed.verdict || null, review: clean(ed.review),
     whatToOrder: clean(ed.whatToOrder), gotcha: clean(ed.gotcha),
@@ -168,7 +168,7 @@ function mapRow(r: any): Spot {
 }
 
 const ORDER = `order by (attributes->>'chainStatus' = 'chain'), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
-const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
+const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename,'caption',caption) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
 // Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
 const GEM_WHERE = `attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
 const GEM_ORDER = `order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last`;

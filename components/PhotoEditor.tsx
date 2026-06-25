@@ -46,14 +46,16 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
     return { data, mime: (meta.match(/data:(.*?);/) || [])[1] || 'image/jpeg' };
   }
 
-  async function doGemini() {
-    if (!prompt.trim()) return;
+  const ENHANCE = 'Enhance this food/restaurant photo: improve the lighting, white balance, color, and sharpness so the food and space look appetizing and professionally shot. Do NOT change the composition or crop, and do not add or remove any objects. Keep it realistic.';
+
+  async function runGemini(p: string, clearPrompt = false) {
+    if (!p.trim()) return;
     setBusy('ai'); setErr('');
     try {
       const { data, mime } = await toBase64(work);
-      const r = await fetch('/api/admin/gemini-edit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: data, mimeType: mime, prompt }) });
+      const r = await fetch('/api/admin/gemini-edit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: data, mimeType: mime, prompt: p }) });
       const j = await r.json();
-      if (j.image) { setWork(`data:${j.mimeType};base64,${j.image}`); setCrop(undefined); setPrompt(''); }
+      if (j.image) { setWork(`data:${j.mimeType};base64,${j.image}`); setCrop(undefined); if (clearPrompt) setPrompt(''); }
       else setErr(j.error || 'AI edit failed');
     } catch (e) { setErr((e as Error).message); }
     setBusy('');
@@ -123,8 +125,9 @@ export default function PhotoEditor({ slug, src, onSaved, onClose }: { slug: str
             </div>
             <div>
               <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-chile mb-1.5">✨ Magic edit (AI)</p>
+              <button onClick={() => runGemini(ENHANCE)} disabled={!!busy} className="w-full font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper py-2 rounded-sm disabled:opacity-50 mb-2">{busy === 'ai' ? 'Working...' : '⚡ Auto-enhance (1 tap)'}</button>
               <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={2} placeholder="remove the background · warm the lighting · extend the photo wider · erase the trash can" className="w-full bg-paper border border-rule px-2 py-1.5 text-sm rounded-sm outline-none focus:border-chile" />
-              <button onClick={doGemini} disabled={!!busy || !prompt.trim()} className="mt-1 w-full font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper py-2 rounded-sm disabled:opacity-50">{busy === 'ai' ? 'Editing with AI...' : 'Apply AI edit'}</button>
+              <button onClick={() => runGemini(prompt, true)} disabled={!!busy || !prompt.trim()} className="mt-1 w-full font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper py-2 rounded-sm disabled:opacity-50">{busy === 'ai' ? 'Editing with AI...' : 'Apply AI edit'}</button>
             </div>
             {err && <p className="font-ui text-xs text-oxblood">{err}</p>}
             <div className="flex gap-2 pt-2 border-t border-rule">
