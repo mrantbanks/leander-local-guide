@@ -5,7 +5,7 @@ import { getOwnerContent } from '@/lib/owner';
 import { getOwnerSpecials, scheduleLabel } from '@/lib/specials';
 import { removeSpecialAction } from '@/app/actions';
 import OwnerEditor from '@/components/OwnerEditor';
-import LocalsOnlyForm from '@/components/LocalsOnlyForm';
+import LocalsOnlyStudio from '@/components/LocalsOnlyStudio';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Owner desk', robots: { index: false } };
@@ -98,8 +98,8 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
           <img src="/locals-only.webp" alt="" width={28} height={28} className="w-7 h-7" />
           <h2 className="font-stamp uppercase tracking-[0.14em] text-ink text-base">Locals Only</h2>
         </div>
-        <p className="font-ui text-sm text-ink-soft mb-4">Post a deal just for Leander locals. They get a printable ticket to show you. Honor system, you decide what to give.</p>
-        <LocalsOnlyForm slug={slug} />
+        <p className="font-ui text-sm text-ink-soft mb-4">Post a deal just for Leander locals. They get a printable ticket to show you. Honor system, you decide what to give. Activate as many as you like.</p>
+        <LocalsOnlyStudio slug={slug} restaurant={spot.name} />
         {specials.length > 0 && (
           <ul className="mt-5 space-y-2">
             {specials.map((s) => (

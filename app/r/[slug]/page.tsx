@@ -181,7 +181,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 </li>
               ))}
             </ul>
-            <p className="font-ui text-[11px] text-ink-soft mt-2">A perk from the owner for Leander locals. Show your ticket in-house.</p>
+            <p className="font-ui text-[11px] text-ink-soft mt-2">A perk from the owner for Leander locals. Show your ticket in-house. <Link href="/locals-only" className="text-chile">See every Leander deal →</Link></p>
           </div>
         </div>
       )}

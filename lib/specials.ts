@@ -1,22 +1,22 @@
 import { pool } from '@/lib/db';
-
-export type Special = {
-  id: number; slug?: string; restaurant?: string;
-  title: string; details: string | null; recurring: boolean; daysOfWeek: number[] | null;
-  startsOn: string | null; endsOn: string | null;
-};
-
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-export function scheduleLabel(s: { recurring: boolean; daysOfWeek: number[] | null; endsOn: string | null }): string {
-  if (s.recurring && s.daysOfWeek?.length) return `Every ${s.daysOfWeek.slice().sort((a, b) => a - b).map((i) => DAYS[i]).join(', ')}`;
-  if (s.endsOn) return `Through ${new Date(s.endsOn + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}`;
-  return 'Ongoing';
-}
+import type { Special } from '@/lib/specials-format';
+export type { Special } from '@/lib/specials-format';
+export { scheduleLabel } from '@/lib/specials-format';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function map(r: any): Special {
-  return { id: r.id, slug: r.slug, restaurant: r.name && (r.name as string), title: r.title, details: r.details, recurring: r.recurring, daysOfWeek: r.days_of_week, startsOn: r.starts_on, endsOn: r.ends_on };
+  return { id: r.id, slug: r.slug, restaurant: r.name && (r.name as string), category: r.cat, title: r.title, details: r.details, recurring: r.recurring, daysOfWeek: r.days_of_week, startsOn: r.starts_on, endsOn: r.ends_on };
+}
+
+// every live deal in town, for the round-up page
+export async function getAllActiveSpecials(): Promise<Special[]> {
+  const { rows } = await pool.query(
+    `select s.*, r.slug, r.name, r.primary_category cat from specials s join restaurants r on r.id = s.place_id
+     where s.status = 'active'
+       and (s.starts_on is null or s.starts_on <= current_date)
+       and (s.ends_on is null or s.ends_on >= current_date)
+     order by r.name`);
+  return rows.map(map);
 }
 
 export async function getActiveSpecials(slug: string): Promise<Special[]> {

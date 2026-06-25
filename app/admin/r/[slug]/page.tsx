@@ -30,7 +30,12 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
       <Link href="/admin" className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft hover:text-chile">← Newsroom</Link>
       <h1 className="font-display font-black text-3xl text-ink mt-3 mb-1">{r.name}</h1>
       <p className="font-ui text-sm text-ink-soft mb-2">Editing Anthony&apos;s take. Saves go live immediately. (No em dashes; they get stripped on save.)</p>
-      <a href={`/admin/r/${slug}/print`} target="_blank" rel="noopener" className="inline-block font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper px-3 py-1.5 rounded-sm mb-4 hover:bg-oxblood">🖨 Print owner claim sheet →</a>
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <a href={`/admin/r/${slug}/packet`} target="_blank" rel="noopener" className="inline-block font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-1.5 rounded-sm hover:bg-oxblood">🖨 Print packet (claim + guide) →</a>
+        <span className="font-ui text-xs text-ink-soft">or just one:</span>
+        <a href={`/admin/r/${slug}/print`} target="_blank" rel="noopener" className="inline-block font-stamp uppercase tracking-[0.08em] text-xs border border-ink text-ink px-3 py-1.5 rounded-sm hover:bg-ink hover:text-paper">Claim sheet</a>
+        <a href={`/admin/r/${slug}/guide`} target="_blank" rel="noopener" className="inline-block font-stamp uppercase tracking-[0.08em] text-xs border border-ink text-ink px-3 py-1.5 rounded-sm hover:bg-ink hover:text-paper">Owner guide</a>
+      </div>
       <form action={action}>
         <label className={label}>Verdict</label>
         <select name="verdict" defaultValue={ed.verdict || 'WORTH IT'} className={field}>

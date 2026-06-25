@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}/r/${r.slug}`, lastModified: r.updated_at || new Date(), changeFrequency: 'weekly', priority: 0.7,
   }));
   const boards: MetadataRoute.Sitemap = BOARDS.map((b) => ({ url: `${base}/best/${b.slug}`, changeFrequency: 'weekly', priority: 0.6 }));
-  const statics: MetadataRoute.Sitemap = ['', '/map', '/best', '/whats-on', '/new', '/hidden-gems', '/about', '/subscribe'].map((p) => ({
+  const statics: MetadataRoute.Sitemap = ['', '/map', '/locals-only', '/best', '/whats-on', '/new', '/hidden-gems', '/about', '/subscribe'].map((p) => ({
     url: `${base}${p}`, changeFrequency: p === '' ? 'daily' : 'weekly', priority: p === '' ? 1 : 0.5,
   }));
   return [...statics, ...boards, ...spots];
