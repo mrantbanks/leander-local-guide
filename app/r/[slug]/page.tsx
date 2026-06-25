@@ -73,7 +73,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     telephone: spot.phone || undefined,
     image: ogImg ? [ogImg] : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
-    review: spot.review
+    // Only claim a first-person Review by Anthony when he has ACTUALLY visited.
+    // Otherwise expose Google's aggregate rating, which is what the summary reflects.
+    review: spot.visited && spot.review
       ? {
           '@type': 'Review',
           reviewRating: { '@type': 'Rating', ratingValue, bestRating: 5, worstRating: 1 },
@@ -81,9 +83,12 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           publisher: { '@id': 'https://leanderlocalguide.com/#org' },
           name: spot.hook || undefined,
           reviewBody: spot.review,
-          datePublished: updatedISO,
+          datePublished: spot.visitedDate || updatedISO,
           dateModified: updatedISO,
         }
+      : undefined,
+    aggregateRating: !spot.visited && spot.ratingGoogle
+      ? { '@type': 'AggregateRating', ratingValue: spot.ratingGoogle, reviewCount: spot.ratingCount || 1, bestRating: 5, worstRating: 1 }
       : undefined,
   };
   const crumbLd = {

@@ -78,7 +78,7 @@ export default async function GrowthPage() {
           { t: 'Per-user write rate limits + EXIF-strip on uploads + worker claim-locking.' },
         ]} />
 
-      <p className="font-ui text-xs text-ink-soft border-t border-rule pt-4">Open decision (owner): how to honestly frame Anthony&apos;s reviews (curation vs first-person) — under consideration.</p>
+      <p className="font-ui text-xs text-ink-soft border-t border-rule pt-4">Resolved: every spot reads as an honest summary of local diner reviews (not a personal visit) until Anthony actually goes, marks it visited in the editor, and posts his own first-person take.</p>
     </main>
   );
 }

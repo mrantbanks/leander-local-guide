@@ -11,7 +11,7 @@ export const metadata = {
   alternates: { canonical: '/' },
   openGraph: {
     title: 'The Leander Local Guide · Leander, TX food scene',
-    description: 'Honest, first-person reviews of every local restaurant, bar, cafe and food truck in Leander, Texas. By a local, for locals.',
+    description: 'An honest local food guide to Leander, Texas: a curated summary of what diners say about every restaurant, bar, cafe and food truck. By a local, for locals.',
     url: 'https://leanderlocalguide.com/',
     siteName: 'The Leander Local Guide',
     type: 'website',
@@ -19,7 +19,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'The Leander Local Guide',
-    description: 'Honest, first-person reviews of every local food spot in Leander, TX.',
+    description: 'An honest local food guide to every spot in Leander, TX, summarizing what real diners say.',
   },
 };
 

@@ -31,7 +31,7 @@ const siteLd = {
       '@id': 'https://leanderlocalguide.com/#org',
       name: 'The Leander Local Guide',
       url: 'https://leanderlocalguide.com/',
-      description: 'Honest, first-person reviews of every local restaurant, bar, cafe, brewery, bakery and food truck in Leander, Texas.',
+      description: 'An honest local food guide to Leander, Texas: clear-eyed summaries of what real diners say about every restaurant, bar, cafe, brewery, bakery and food truck, curated by Anthony Martinez, The Leander Local.',
       areaServed: { '@type': 'City', name: 'Leander', containedInPlace: { '@type': 'State', name: 'Texas' } },
       founder: { '@id': 'https://leanderlocalguide.com/about#anthony-martinez' },
       knowsAbout: ['Leander Texas restaurants', 'Leander food scene', 'local dining', 'tacos', 'BBQ', 'food trucks'],
