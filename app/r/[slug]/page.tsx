@@ -385,11 +385,11 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           </div>
 
           <div className="mt-6 border-2 border-dashed border-oxblood bg-paper-raised p-5 -rotate-1">
-            <p className="font-stamp uppercase tracking-[0.12em] text-chile text-xs mb-1">Admit one</p>
-            <p className="font-display font-bold text-xl text-ink leading-tight">Eat here with Anthony</p>
-            <p className="font-ui text-xs text-ink-soft mt-2">He runs personalized Leander food crawls. This spot might be on one.</p>
+            <p className="font-stamp uppercase tracking-[0.12em] text-chile text-xs mb-1">Why trust this</p>
+            <p className="font-display font-bold text-xl text-ink leading-tight">No sponsors. No pay-to-play.</p>
+            <p className="font-ui text-xs text-ink-soft mt-2">Every verdict here is an honest, local read, never bought and never traded for a free meal. That&apos;s the whole point.</p>
             <Link href="/about" className="mt-3 inline-flex font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper px-4 py-2 hover:bg-oxblood transition-colors">
-              Book a tour
+              How this works
             </Link>
           </div>
 

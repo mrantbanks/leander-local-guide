@@ -12,7 +12,7 @@ const REASONS: { h: string; body: string }[] = [
   { h: 'A correction', body: 'Hours wrong? Place closed, moved, or under new ownership? Tell me and I will fix it fast.' },
   { h: 'A tip', body: 'Found a spot I am missing, or a dish I have to try? This is how the guide gets better. Send it.' },
   { h: 'Claim your listing', body: 'Own or run one of these places? Use the claim button on your listing, or reach out here and I will get you set up.' },
-  { h: 'A food tour', body: 'Want to eat your way through Leander with a local who has done the research? Ask about a tour.' },
+  { h: 'Ideas or feedback', body: 'Something feel off, or got an idea to make the guide better? I read everything. Send it my way.' },
   { h: 'Sponsor or partner', body: 'There is room for one good local sponsor. No pay-to-play on rankings, ever, but let us talk.' },
   { h: 'Privacy and data', body: 'Want your account or a submission removed? Email me and it is done.' },
 ];
