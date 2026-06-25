@@ -14,6 +14,9 @@ export type Spot = {
   hoursToday: string | null;
   weekHours: string[] | null;
   openNow: boolean | null;
+  periods: number[][];
+  open24: boolean;
+  openLate: boolean;
   mapsUrl: string | null;
   menuUrl: string | null;
   orderUrl: string | null;
@@ -49,8 +52,8 @@ export type Spot = {
 // Lightweight shape for cards/grid (no heavy review prose) - keeps the client payload small.
 export type CardSpot = Pick<Spot,
   'id' | 'slug' | 'name' | 'category' | 'cuisines' | 'ratingGoogle' | 'priceTier' | 'addressLine' |
-  'hoursToday' | 'openNow' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
-  'chainStatus' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'happyHour' | 'localPhotos'>;
+  'hoursToday' | 'openNow' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
+  'chainStatus' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos'>;
 
 // HOUSE RULE: no em/en dashes anywhere on the site. Prose -> comma; ranges -> hyphen.
 // Preserves paragraph breaks (\n\n) and real hyphens (Chick-fil-A).
@@ -133,6 +136,7 @@ function mapRow(r: any): Spot {
     ['liveMusic', 'Live Music'], ['goodForWatchingSports', 'Sports'],
   ];
   for (const [k, label] of amen) if (a[k]) amenities.push(label);
+  const hrs = parseHours(r.hours);
   return {
     id: r.id, slug: r.slug, name: clean(r.name) || r.name, category: r.primary_category, cuisines: r.cuisines || [],
     ratingGoogle: ratings.google?.rating ?? null, ratingCount: ratings.google?.count ?? null,
@@ -140,6 +144,7 @@ function mapRow(r: any): Spot {
     hoursToday: week ? cleanRange(week[todayIdx]) : null,
     weekHours: week ? week.map((w) => cleanRange(w) as string) : null,
     openNow: isOpenNow(r.hours?.periods),
+    periods: hrs.periods, open24: hrs.open24, openLate: hrs.openLate,
     mapsUrl: r.google_maps_url || null, menuUrl: a.menuUrl || null, orderUrl: a.orderUrl || null,
     website: a.website || null, phone: a.phone || null,
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,

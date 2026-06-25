@@ -2,14 +2,21 @@ import Link from 'next/link';
 import Tag from '@/components/Tag';
 import VerdictStamp from '@/components/VerdictStamp';
 import SignalBar from '@/components/SignalBar';
+import CardStatus from '@/components/CardStatus';
 import type { CardSpot } from '@/lib/spots';
 
 const categoryIcons: Record<string, string> = {
   Restaurant: '🍽️', 'Food Truck': '🚚', Cafe: '☕', Bakery: '🥐', Bar: '🍸', Brewery: '🍺', Dessert: '🍦',
 };
 
+// Committee priority order; max 3 editorial badges per card so the zine look stays clean.
+const BADGE_RANK = ["Anthony's Pick", 'Hidden Gem', 'Local Favorite', 'New', 'Food Truck', 'Local', 'Patio', 'Dog-Friendly', 'Veg', 'Happy Hour'];
+
 export default function SpotCard({ spot, priority = false }: { spot: CardSpot; priority?: boolean }) {
   const icon = categoryIcons[spot.category] ?? '📍';
+  const badges = [...new Set([...(spot.visited ? ["Anthony's Pick"] : []), ...spot.badges])]
+    .sort((a, b) => { const ia = BADGE_RANK.indexOf(a), ib = BADGE_RANK.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); })
+    .slice(0, 3);
   return (
     <div className="group relative flex flex-col">
       <Link href={`/r/${spot.slug}`} className="flex flex-col focus-visible:outline-none">
@@ -53,9 +60,7 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           )}
           <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
           <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
-          {spot.openNow === true && (
-            <span className="absolute right-2 bottom-2 font-stamp uppercase tracking-[0.08em] text-[11px] text-ink bg-amber px-1.5 py-0.5 rounded-sm">Open Now</span>
-          )}
+          <CardStatus periods={spot.periods} open24={spot.open24} openLate={spot.openLate} />
         </div>
 
         <div className="relative -mt-5 mx-3 z-10">
@@ -72,6 +77,7 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
         <div className="px-3 mt-3 flex items-center gap-3 flex-wrap">
           {spot.ratingGoogle != null && <span className="font-ui text-xs text-ink-soft">{spot.ratingGoogle}★ <span className="opacity-60">Google</span></span>}
           {spot.priceTier ? <span className="font-ui text-xs text-ink-soft">{'$'.repeat(spot.priceTier)}</span> : null}
+          {spot.cuisines.length > 0 && <span className="font-ui text-xs text-ink-soft">{spot.cuisines.slice(0, 2).join(', ')}</span>}
           {spot.beenHere > 0 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
         </div>
 
@@ -82,10 +88,9 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           </p>
         )}
 
-        {(spot.badges.length > 0 || spot.cuisines.length > 0) && (
+        {badges.length > 0 && (
           <div className="px-3 mt-3 flex flex-wrap gap-1.5">
-            {spot.badges.slice(0, 3).map((b) => <Tag key={b} label={b} />)}
-            {spot.cuisines.slice(0, 2).map((c) => <Tag key={`c-${c}`} label={c} />)}
+            {badges.map((b) => <Tag key={b} label={b} />)}
           </div>
         )}
 
