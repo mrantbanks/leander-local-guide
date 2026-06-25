@@ -5,6 +5,7 @@ import { updateReview, deletePhoto, addEvent, deleteEvent } from '@/app/actions'
 import { EVENT_LABELS } from '@/lib/events';
 import { auth } from '@/auth';
 import PhotoUploader from '@/components/PhotoUploader';
+import ReviewComposer from '@/components/ReviewComposer';
 import { uploadUrl } from '@/lib/uploads';
 
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,8 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <a href={`/admin/r/${slug}/guide`} target="_blank" rel="noopener" className="inline-block font-stamp uppercase tracking-[0.08em] text-xs border border-ink text-ink px-3 py-1.5 rounded-sm hover:bg-ink hover:text-paper">Owner guide</a>
         <Link href={`/admin/r/${slug}/photos`} className="inline-block font-stamp uppercase tracking-[0.08em] text-xs border border-chile text-chile px-3 py-1.5 rounded-sm hover:bg-chile hover:text-paper">🖼 Photo editor →</Link>
       </div>
+      <ReviewComposer slug={slug} />
+
       <form action={action}>
         <label className={label}>Verdict</label>
         <select name="verdict" defaultValue={ed.verdict || 'WORTH IT'} className={field}>

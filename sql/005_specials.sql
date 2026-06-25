@@ -14,3 +14,4 @@ create table if not exists specials (
 );
 create index if not exists specials_place on specials(place_id, status);
 alter table photos add column if not exists is_menu boolean not null default false;
+alter table photos add column if not exists is_header boolean not null default false;

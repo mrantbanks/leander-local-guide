@@ -104,15 +104,23 @@ export async function setPhotoMenu(id: number, slug: string, isMenu: boolean) {
   revalidatePath('/');
 }
 
-// Make a photo the main/hero (sorts first on cards + detail page).
-export async function makePrimaryPhoto(id: number, slug: string) {
+// Toggle a local photo as THE header (overrides the Google image). Off = Google image is header.
+export async function setHeaderPhoto(id: number, slug: string) {
   if (!(await requireAdmin())) return;
-  await pool.query(
-    `update photos set sort = (select coalesce(min(sort), 0) - 1 from photos where place_id = (select id from restaurants where slug = $2)) where id = $1`,
-    [id, slug]);
-  revalidatePath(`/r/${slug}`);
-  revalidatePath(`/admin/r/${slug}`);
-  revalidatePath('/');
+  const cur = await pool.query('select is_header from photos where id = $1', [id]);
+  if (cur.rows[0]?.is_header) {
+    await pool.query('update photos set is_header = false where id = $1', [id]); // revert to Google
+  } else {
+    await pool.query('update photos set is_header = (id = $1) where place_id = (select id from restaurants where slug = $2)', [id, slug]);
+  }
+  revalidatePath(`/r/${slug}`); revalidatePath(`/admin/r/${slug}`); revalidatePath('/');
+}
+
+// Persist a new photo order (drag-to-reorder in the studio).
+export async function reorderPhotos(slug: string, ids: number[]) {
+  if (!(await requireAdmin())) return;
+  for (let i = 0; i < ids.length; i++) await pool.query('update photos set sort = $2 where id = $1', [ids[i], i]);
+  revalidatePath(`/r/${slug}`); revalidatePath(`/admin/r/${slug}`); revalidatePath('/');
 }
 
 async function requireAdmin() {

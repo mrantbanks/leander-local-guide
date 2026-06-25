@@ -38,7 +38,7 @@ export default async function Home() {
     photo: s.photo, photoCredit: s.photoCredit,
     verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities,
     chainStatus: s.chainStatus, beenHere: s.beenHere, worthIt: s.worthIt, itsFine: s.itsFine,
-    skipIt: s.skipIt, wantToGo: s.wantToGo, visited: s.visited, happyHour: s.happyHour, localPhotos: s.localPhotos,
+    skipIt: s.skipIt, wantToGo: s.wantToGo, visited: s.visited, happyHour: s.happyHour, localPhotos: s.localPhotos, headerPhoto: s.headerPhoto,
   }));
 
   return (

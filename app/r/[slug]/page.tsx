@@ -187,31 +187,32 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
         </div>
       )}
 
-      {(spot.localPhotos[0] || spot.photo) && (
-        <div className="border-b border-rule bg-paper-sunk">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={spot.localPhotos[0] ? spot.localPhotos[0].url : `/img?n=${encodeURIComponent(spot.photo!)}&w=1200`}
-            alt={spot.name}
-            width={1200}
-            height={400}
-            fetchPriority="high"
-            loading="eager"
-            className="block w-full max-w-5xl mx-auto h-[260px] sm:h-[360px] object-cover"
-          />
-        </div>
-      )}
-
-      {spot.localPhotos.length > 1 && (
-        <section className="border-b border-rule">
-          <div className="max-w-5xl mx-auto px-5 py-5 flex gap-3 overflow-x-auto no-scrollbar">
-            {spot.localPhotos.slice(1).map((p) => (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img key={p.id} src={p.url} alt={spot.name} loading="lazy" className="h-44 w-auto object-cover border border-rule shrink-0" />
-            ))}
-          </div>
-        </section>
-      )}
+      {(() => {
+        // Default header = the Google image; a local photo only takes over if explicitly set as header.
+        const heroLocal = spot.headerPhoto || (!spot.photo ? spot.localPhotos[0] : null);
+        const heroUrl = heroLocal ? `${heroLocal.url}?w=1200` : (spot.photo ? `/img?n=${encodeURIComponent(spot.photo)}&w=1200` : null);
+        const gallery = spot.localPhotos.filter((p) => p.id !== heroLocal?.id);
+        return (
+          <>
+            {heroUrl && (
+              <div className="border-b border-rule bg-paper-sunk">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={heroUrl} alt={spot.name} width={1200} height={400} fetchPriority="high" loading="eager" className="block w-full max-w-5xl mx-auto h-[260px] sm:h-[360px] object-cover" />
+              </div>
+            )}
+            {gallery.length > 0 && (
+              <section className="border-b border-rule">
+                <div className="max-w-5xl mx-auto px-5 py-5 flex gap-3 overflow-x-auto no-scrollbar">
+                  {gallery.map((p) => (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img key={p.id} src={`${p.url}?w=600`} alt={p.caption || spot.name} loading="lazy" title={p.caption || ''} className="h-44 w-auto object-cover border border-rule shrink-0" />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        );
+      })()}
 
       {spot.menus.length > 0 && (
         <section className="border-b border-rule bg-paper-raised">

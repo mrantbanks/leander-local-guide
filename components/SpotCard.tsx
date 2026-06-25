@@ -17,14 +17,16 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
   const badges = [...new Set([...(spot.visited ? ["Anthony's Pick"] : []), ...spot.badges])]
     .sort((a, b) => { const ia = BADGE_RANK.indexOf(a), ib = BADGE_RANK.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); })
     .slice(0, 3);
+  // Google image is the card default; a promoted local header overrides it. Local is fallback only if no Google photo.
+  const localImg = spot.headerPhoto || (!spot.photo ? (spot.localPhotos[0] ?? null) : null);
   return (
     <div className="group relative flex flex-col">
       <Link href={`/r/${spot.slug}`} className="flex flex-col focus-visible:outline-none">
         <div className="relative aspect-[5/4] bg-paper-sunk border border-rule overflow-hidden transition-colors duration-150 group-hover:border-ink">
-          {spot.localPhotos.length > 0 ? (
+          {localImg ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              src={spot.localPhotos[0].url}
+              src={`${localImg.url}?w=800`}
               alt={spot.name}
               width={800}
               height={640}
