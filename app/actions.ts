@@ -73,9 +73,15 @@ export async function updateReview(slug: string, fd: FormData) {
     edited: '2026-06-24',
   };
   const hh = clean(fd.get('happyHour'));
-  await pool.query('update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3, updated_at = now() where slug = $1', [
-    slug, JSON.stringify(ed), hh,
-  ]);
+  const norm = (v: FormDataEntryValue | null) => { const s = String(v || '').trim(); return s ? (/^https?:\/\//i.test(s) ? s : 'https://' + s) : null; };
+  const menuUrl = norm(fd.get('menuUrl'));
+  const orderUrl = norm(fd.get('orderUrl'));
+  await pool.query(
+    `update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3,
+       attributes = coalesce(attributes,'{}'::jsonb) || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text),
+       updated_at = now() where slug = $1`,
+    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl]
+  );
   revalidatePath(`/r/${slug}`);
   revalidatePath('/admin');
   redirect('/admin');

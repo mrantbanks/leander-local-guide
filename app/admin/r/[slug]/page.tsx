@@ -16,10 +16,12 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) redirect('/admin');
   const { slug } = await params;
-  const { rows } = await pool.query('select slug, name, editorial, happy_hour from restaurants where slug = $1', [slug]);
+  const { rows } = await pool.query('select slug, name, editorial, happy_hour, attributes, owner_content from restaurants where slug = $1', [slug]);
   const r = rows[0];
   if (!r) notFound();
   const ed = r.editorial || {};
+  const attr = r.attributes || {};
+  const oc = r.owner_content || {};
   const ph = await pool.query('select id, filename from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
   const ev = await pool.query('select id, event_type, title, freq, days_of_week, start_time, status from events where place_id = (select id from restaurants where slug = $1) order by event_type', [slug]);
   const action = updateReview.bind(null, slug);
@@ -66,6 +68,14 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
 
         <label className={label}>Happy Hour (times/details, optional)</label>
         <input name="happyHour" defaultValue={r.happy_hour || ''} className={field} />
+
+        <label className={label}>Menu link {oc.menuUrl ? <span className="text-chile lowercase tracking-normal">· owner set their own (live)</span> : null}</label>
+        <input name="menuUrl" defaultValue={attr.menuUrl || ''} className={field} placeholder="https://..." />
+        {oc.menuUrl ? <p className="font-ui text-xs text-ink-soft mt-1">Owner&apos;s link shows on the site: <span className="break-all">{oc.menuUrl}</span>. Yours is the fallback if they clear theirs.</p> : null}
+
+        <label className={label}>Order online link {oc.orderUrl ? <span className="text-chile lowercase tracking-normal">· owner set their own (live)</span> : null}</label>
+        <input name="orderUrl" defaultValue={attr.orderUrl || ''} className={field} placeholder="https://..." />
+        {oc.orderUrl ? <p className="font-ui text-xs text-ink-soft mt-1">Owner&apos;s link shows on the site: <span className="break-all">{oc.orderUrl}</span>. Yours is the fallback if they clear theirs.</p> : null}
 
         <label className={label}>Pinned badges (comma-separated, e.g. Hidden Gem, Local Favorite)</label>
         <input name="badges" defaultValue={(ed.badges || []).join(', ')} className={field} />
