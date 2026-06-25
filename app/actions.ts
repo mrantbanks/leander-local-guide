@@ -90,6 +90,17 @@ export async function deletePhoto(id: number, slug: string) {
   revalidatePath(`/admin/r/${slug}`);
 }
 
+// Make a photo the main/hero (sorts first on cards + detail page).
+export async function makePrimaryPhoto(id: number, slug: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query(
+    `update photos set sort = (select coalesce(min(sort), 0) - 1 from photos where place_id = (select id from restaurants where slug = $2)) where id = $1`,
+    [id, slug]);
+  revalidatePath(`/r/${slug}`);
+  revalidatePath(`/admin/r/${slug}`);
+  revalidatePath('/');
+}
+
 async function requireAdmin() {
   const session = await auth();
   return !!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
