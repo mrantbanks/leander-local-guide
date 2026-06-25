@@ -12,8 +12,26 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
   const [editing, setEditing] = useState<{ src: string; id: number } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
+  const [capBusy, setCapBusy] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  async function imgToBase64(url: string): Promise<{ data: string; mime: string }> {
+    const im = await new Promise<HTMLImageElement>((res, rej) => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const cv = document.createElement('canvas'); cv.width = im.naturalWidth; cv.height = im.naturalHeight;
+    cv.getContext('2d')!.drawImage(im, 0, 0);
+    return { data: cv.toDataURL('image/jpeg', 0.9).split(',')[1], mime: 'image/jpeg' };
+  }
+  async function autoCaption(p: Photo) {
+    setCapBusy(p.id);
+    try {
+      const { data, mime } = await imgToBase64(`/uploads/${p.filename}?w=800`);
+      const r = await fetch('/api/admin/caption', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: data, mimeType: mime }) });
+      const j = await r.json();
+      if (j.caption) { setPhotos((ps) => ps.map((x) => x.id === p.id ? { ...x, caption: j.caption } : x)); await setPhotoCaption(p.id, slug, j.caption); }
+    } catch { /* ignore */ }
+    setCapBusy(0);
+  }
 
   async function upload(files: FileList | null) {
     if (!files || !files.length) return;
@@ -62,13 +80,21 @@ export default function PhotoStudio({ slug, initial }: { slug: string; initial: 
                 </div>
                 {p.isMenu ? <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-amber text-ink px-1 rounded-sm">Menu</span> : i === 0 && <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-chile text-paper px-1 rounded-sm">Main</span>}
               </div>
-              <input defaultValue={p.caption || ''} onBlur={(e) => { if (e.target.value !== (p.caption || '')) setPhotoCaption(p.id, slug, e.target.value); }} placeholder="Add a caption..." className="w-full bg-paper border-t border-rule px-2 py-1 text-xs text-ink outline-none focus:bg-paper-raised" />
+              <div className="flex items-center border-t border-rule">
+                <input value={p.caption || ''} onChange={(e) => setPhotos((ps) => ps.map((x) => x.id === p.id ? { ...x, caption: e.target.value } : x))} onBlur={(e) => setPhotoCaption(p.id, slug, e.target.value)} placeholder="Caption..." className="flex-1 min-w-0 bg-paper px-2 py-1 text-xs text-ink outline-none focus:bg-paper-raised" />
+                <button onClick={() => autoCaption(p)} disabled={capBusy === p.id} title="Auto-caption with AI" className="shrink-0 px-2 py-1 text-chile text-sm disabled:opacity-50">{capBusy === p.id ? '…' : '✨'}</button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {editing && <PhotoEditor slug={slug} src={editing.src} photoId={editing.id} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); router.refresh(); }} />}
+      {editing && <PhotoEditor slug={slug} src={editing.src} photoId={editing.id} onClose={() => setEditing(null)}
+        onSaved={(saved) => {
+          setEditing(null);
+          setPhotos((p) => saved.replaced ? p.map((x) => x.id === saved.id ? { ...x, filename: saved.filename } : x) : [{ id: saved.id, filename: saved.filename }, ...p]);
+          router.refresh();
+        }} />}
     </div>
   );
 }

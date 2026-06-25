@@ -22,7 +22,7 @@ async function rotateFlip(src: string, deg: number, flipH: boolean, flipV: boole
   return cv.toDataURL('image/png');
 }
 
-export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { slug: string; src: string; photoId?: number; onSaved: () => void; onClose: () => void }) {
+export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { slug: string; src: string; photoId?: number; onSaved: (saved: { id: number; filename: string; replaced: boolean }) => void; onClose: () => void }) {
   const [work, setWork] = useState(src);
   const [crop, setCrop] = useState<Crop>();
   const [aspect, setAspect] = useState<number | undefined>(undefined);
@@ -37,8 +37,27 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
 
   const filter = `brightness(${bright}%) contrast(${contrast}%) saturate(${saturate}%)`;
 
-  async function doRotate(dir: 1 | -1) { setBusy('t'); setWork(await rotateFlip(work, dir * 90, false, false)); setCrop(undefined); setBusy(''); }
-  async function doFlip() { setBusy('t'); setWork(await rotateFlip(work, 0, true, false)); setCrop(undefined); setBusy(''); }
+  function hasPending(): boolean { return !!(crop && crop.width && crop.height) || bright !== 100 || contrast !== 100 || saturate !== 100; }
+  function resetEdits() { setCrop(undefined); setBright(100); setContrast(100); setSaturate(100); }
+
+  // Bake the pending crop + color into a fresh image so edits stack (crop -> AI -> rotate -> save).
+  async function bakeCurrent(): Promise<string> {
+    const img = imgRef.current;
+    if (!img || !hasPending()) return work;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    let sx = 0, sy = 0, sw = nw, sh = nh;
+    if (crop && crop.width && crop.height) {
+      if (crop.unit === '%') { sx = (crop.x / 100) * nw; sy = (crop.y / 100) * nh; sw = (crop.width / 100) * nw; sh = (crop.height / 100) * nh; }
+      else { const rx = nw / img.width, ry = nh / img.height; sx = crop.x * rx; sy = crop.y * ry; sw = crop.width * rx; sh = crop.height * ry; }
+    }
+    const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(sw)); cv.height = Math.max(1, Math.round(sh));
+    const ctx = cv.getContext('2d')!; ctx.filter = filter;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
+    return cv.toDataURL('image/jpeg', 0.95);
+  }
+  async function applyEdits() { if (!hasPending()) return; setBusy('t'); const d = await bakeCurrent(); resetEdits(); setWork(d); setBusy(''); }
+  async function doRotate(dir: 1 | -1) { setBusy('t'); const base = await bakeCurrent(); resetEdits(); setWork(await rotateFlip(base, dir * 90, false, false)); setBusy(''); }
+  async function doFlip() { setBusy('t'); const base = await bakeCurrent(); resetEdits(); setWork(await rotateFlip(base, 0, true, false)); setBusy(''); }
 
   // Re-encode the current image to JPEG via canvas so Gemini always gets a format it edits cleanly.
   async function toBase64(s: string): Promise<{ data: string; mime: string }> {
@@ -56,34 +75,27 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
     if (!p.trim()) return;
     setBusy('ai'); setErr('');
     try {
-      const { data, mime } = await toBase64(work);
+      const base = await bakeCurrent();
+      const { data, mime } = await toBase64(base);
       const r = await fetch('/api/admin/gemini-edit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: data, mimeType: mime, prompt: p }) });
       const j = await r.json().catch(() => ({}));
-      if (j.image) { setWork(`data:${j.mimeType};base64,${j.image}`); setCrop(undefined); if (clearPrompt) setPrompt(''); setFlash('✓ AI edit applied'); setTimeout(() => setFlash(''), 2500); }
-      else setErr(j.error || `AI edit failed (${r.status})`);
+      if (j.image) { resetEdits(); setWork(`data:${j.mimeType};base64,${j.image}`); if (clearPrompt) setPrompt(''); setFlash('✓ AI edit applied'); setTimeout(() => setFlash(''), 2500); }
+      else setErr(j.error || `AI edit failed (${r.status}) — try again or rephrase`);
     } catch (e) { setErr((e as Error).message); }
     setBusy('');
   }
 
   async function save(replace: boolean) {
-    const img = imgRef.current; if (!img) return;
     setBusy('save'); setErr('');
     try {
-      const nw = img.naturalWidth, nh = img.naturalHeight;
-      let sx = 0, sy = 0, sw = nw, sh = nh;
-      if (crop && crop.width && crop.height) {
-        if (crop.unit === '%') { sx = (crop.x / 100) * nw; sy = (crop.y / 100) * nh; sw = (crop.width / 100) * nw; sh = (crop.height / 100) * nh; }
-        else { const rx = nw / img.width, ry = nh / img.height; sx = crop.x * rx; sy = crop.y * ry; sw = crop.width * rx; sh = crop.height * ry; }
-      }
-      const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(sw)); cv.height = Math.max(1, Math.round(sh));
-      const ctx = cv.getContext('2d')!; ctx.filter = filter;
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
-      const blob: Blob = await new Promise((res) => cv.toBlob((b) => res(b!), 'image/jpeg', 0.92));
-      const fd = new FormData(); fd.append('slug', slug); fd.append('files', new File([blob], 'edit.jpg', { type: 'image/jpeg' }));
+      const base = await bakeCurrent();
+      const blob = await (await fetch(base)).blob();
+      const fd = new FormData(); fd.append('slug', slug); fd.append('files', new File([blob], 'edit.jpg', { type: blob.type || 'image/jpeg' }));
       if (replace && photoId) fd.append('replaceId', String(photoId));
       const r = await fetch('/api/admin/photos', { method: 'POST', body: fd });
       const j = await r.json().catch(() => ({}));
-      if (j.saved?.length) onSaved(); else setErr(j.error || 'Save failed');
+      if (j.saved?.length) onSaved({ id: j.saved[0].id, filename: j.saved[0].filename, replaced: !!j.replaced });
+      else setErr(j.error || 'Save failed');
     } catch (e) { setErr((e as Error).message); }
     setBusy('');
   }
@@ -135,6 +147,9 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
                 </label>
               ))}
             </div>
+            {hasPending() && (
+              <button onClick={applyEdits} disabled={!!busy} className="w-full font-stamp uppercase tracking-[0.08em] text-xs border-2 border-ink text-ink py-2 rounded-sm hover:bg-ink hover:text-paper disabled:opacity-50">✓ Apply crop &amp; color (keep editing)</button>
+            )}
             <div>
               <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-chile mb-1.5">✨ Magic edit (AI)</p>
               <div className="flex gap-1.5 mb-2">
