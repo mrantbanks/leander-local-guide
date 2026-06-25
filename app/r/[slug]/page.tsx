@@ -10,6 +10,7 @@ import PhotoContribute from '@/components/PhotoContribute';
 import TipContribute from '@/components/TipContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
+import Subscribe from '@/components/Subscribe';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -260,6 +261,14 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               <Link href="/whats-on" className="mt-3 inline-flex font-stamp uppercase tracking-[0.08em] text-xs text-chile hover:text-oxblood">All Leander events →</Link>
             </div>
           )}
+
+          {/* Email capture, post-verdict */}
+          <div className="mt-8">
+            <Subscribe source={`spot:${slug}`} siteKey={siteKey}
+              headline="That's the word on this one."
+              sub="I'm working through every spot in Leander, and posting my own take as I go. Get the next one before everyone else, one email a week."
+              cta="Send me the good stuff" />
+          </div>
 
           {/* Locals say */}
           <div className="mt-8 border-t border-rule pt-6">

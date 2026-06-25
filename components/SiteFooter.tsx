@@ -6,6 +6,7 @@ export default function SiteFooter() {
       <div className="max-w-6xl mx-auto px-5 py-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between font-ui text-xs text-ink-soft">
         <span className="font-display font-bold text-base text-ink">Leander Local Guide</span>
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Link href="/subscribe" className="font-stamp uppercase tracking-[0.08em] text-chile hover:text-oxblood">Get the weekly digest →</Link>
           <Link href="/about" className="hover:text-chile">About</Link>
           <Link href="/best" className="hover:text-chile">Best Of</Link>
           <Link href="/contact" className="hover:text-chile">Contact</Link>

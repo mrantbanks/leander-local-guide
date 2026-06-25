@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getNewInLeander } from '@/lib/spots';
 import SiteFooter from '@/components/SiteFooter';
+import Subscribe from '@/components/Subscribe';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,7 @@ const STATUS: Record<string, { emoji: string; label: string; cls: string }> = {
 
 export default async function NewPage() {
   const items = await getNewInLeander();
+  const siteKey = process.env.TURNSTILE_SITE_KEY;
   return (
     <main>
       <header className="border-b-2 border-ink">
@@ -51,6 +53,12 @@ export default async function NewPage() {
           })}
         </ul>
       )}
+      <div className="max-w-3xl mx-auto px-5 pb-10">
+        <Subscribe source="new" siteKey={siteKey}
+          headline="Know it opened before the line forms."
+          sub="Leander gets a new spot what feels like every other week. Get on the list and you'll hear about the good ones first, while the tables are still easy to get."
+          cta="Put me first in line" />
+      </div>
       <SiteFooter />
     </main>
   );
