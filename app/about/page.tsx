@@ -57,6 +57,11 @@ export default function AboutPage() {
           <a href="https://www.linkedin.com/in/anthony-m-493b2691/" target="_blank" rel="noopener noreferrer" className="font-stamp uppercase tracking-[0.1em] text-xs text-chile hover:text-oxblood">Anthony on LinkedIn →</a>
           <span className="font-ui text-xs text-ink-soft"> · a real Leander local, not a faceless brand.</span>
         </p>
+        <p className="!mt-6 font-ui text-sm text-ink-soft leading-relaxed">
+          And since that dog isn&apos;t the only one who ends up in a drive-thru: some friends over in the Austin
+          metro keep a <a href="https://austinweightlosstoday.com/tools/fast-food-finder" target="_blank" rel="noopener" className="text-chile underline underline-offset-2 hover:text-oxblood">Texas Fast Food Survival Guide</a> for
+          the nights the drive-thru wins, the smarter picks at the chains we all end up at anyway.
+        </p>
 
         <p className="!mt-12 pt-6 font-ui text-xs text-ink-soft leading-relaxed border-t border-rule">
           My reviews are my honest opinion, one local who actually goes. No pay-to-play, the rankings
