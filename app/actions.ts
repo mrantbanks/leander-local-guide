@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
+import { isVerifiedOwner } from '@/lib/spots';
+import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -176,4 +178,32 @@ export async function rejectEvent(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update events set status = 'removed' where id = $1", [id]);
   revalidatePath('/admin/moderation');
+}
+
+// ---- Owner claim + management (any signed-in user; ownership checked per-place) ----
+export async function claimRestaurant(tokenId: number): Promise<{ ok: boolean; slug?: string; reason?: string }> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) return { ok: false, reason: 'Please sign in first.' };
+  const res = await consumeClaim(tokenId, email);
+  if (res.ok && res.slug) revalidatePath(`/r/${res.slug}`);
+  return res;
+}
+
+export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email || !(await isVerifiedOwner(slug, email))) return { ok: false, error: 'Not authorized' };
+  // Only ever writes owner_content. Never touches editorial (Anthony's) or attributes (admin's).
+  const safe: OwnerContent = {};
+  for (const k of ['phone', 'website', 'menuUrl', 'orderUrl', 'happyHour', 'blurb'] as const) {
+    if (k in patch) safe[k] = clean(patch[k] as string) ?? undefined;
+  }
+  if (Array.isArray(patch.hours) && patch.hours.length === 7) {
+    safe.hours = patch.hours.map((d) => (d && d.open && d.close) ? { open: String(d.open), close: String(d.close) } : null);
+  }
+  await saveOwnerContent(slug, safe, email);
+  revalidatePath(`/r/${slug}`);
+  revalidatePath(`/owner/${slug}`);
+  return { ok: true };
 }

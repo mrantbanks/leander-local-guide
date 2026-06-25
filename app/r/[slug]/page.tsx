@@ -283,10 +283,11 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             <TipContribute slug={slug} siteKey={siteKey} />
           </div>
 
-          {/* From the owner */}
-          {ownerResponses.length > 0 && (
+          {/* From the owner (clearly separate from Anthony's independent take above) */}
+          {(spot.ownerBlurb || ownerResponses.length > 0) && (
             <div className="mt-8 border-t border-rule pt-6">
               <h3 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-3">From the owner</h3>
+              {spot.ownerBlurb && <p className="font-ui text-sm text-ink border-l-2 border-chile pl-3 mb-2">{spot.ownerBlurb}</p>}
               {ownerResponses.map((o, i) => (
                 <p key={i} className="font-ui text-sm text-ink border-l-2 border-chile pl-3 mb-2">{o.body}</p>
               ))}

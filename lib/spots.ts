@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import { pool } from './db';
 import { uploadUrl } from './uploads';
+import { ownerHoursToGoogle } from './owner';
 
 export type Spot = {
   id: string;
@@ -42,6 +43,7 @@ export type Spot = {
   visited: boolean;
   visitedDate: string | null;
   happyHour: string | null;
+  ownerBlurb: string | null;
   worthIt: number;
   itsFine: number;
   skipIt: number;
@@ -108,9 +110,11 @@ function isOpenNow(periods: any[] | undefined): boolean | null {
 
 function mapRow(r: any): Spot {
   const a = r.attributes || {};
+  const oc = r.owner_content || {}; // owner-contributed (claimed) — overrides facts only, never editorial
   const ratings = r.ratings || {};
   const ed = r.editorial || {};
-  const week: string[] | null = r.hours?.weekdayDescriptions || null;
+  const hoursSrc = (Array.isArray(oc.hours) && oc.hours.length === 7) ? ownerHoursToGoogle(oc.hours) : r.hours;
+  const week: string[] | null = hoursSrc?.weekdayDescriptions || null;
   const todayIdx = (new Date().getDay() + 6) % 7;
   const badges: string[] = [];
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
@@ -136,17 +140,17 @@ function mapRow(r: any): Spot {
     ['liveMusic', 'Live Music'], ['goodForWatchingSports', 'Sports'],
   ];
   for (const [k, label] of amen) if (a[k]) amenities.push(label);
-  const hrs = parseHours(r.hours);
+  const hrs = parseHours(hoursSrc);
   return {
     id: r.id, slug: r.slug, name: clean(r.name) || r.name, category: r.primary_category, cuisines: r.cuisines || [],
     ratingGoogle: ratings.google?.rating ?? null, ratingCount: ratings.google?.count ?? null,
     addressLine: clean((r.address_formatted || '').replace(/,?\s*USA$/, '')) || '',
     hoursToday: week ? cleanRange(week[todayIdx]) : null,
     weekHours: week ? week.map((w) => cleanRange(w) as string) : null,
-    openNow: isOpenNow(r.hours?.periods),
+    openNow: isOpenNow(hoursSrc?.periods),
     periods: hrs.periods, open24: hrs.open24, openLate: hrs.openLate,
-    mapsUrl: r.google_maps_url || null, menuUrl: a.menuUrl || null, orderUrl: a.orderUrl || null,
-    website: a.website || null, phone: a.phone || null,
+    mapsUrl: r.google_maps_url || null, menuUrl: oc.menuUrl || a.menuUrl || null, orderUrl: oc.orderUrl || a.orderUrl || null,
+    website: oc.website || a.website || null, phone: oc.phone || a.phone || null,
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,
     badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
     photo: r.photos?.[0]?.name || null, photoCredit: r.photos?.[0]?.attribution?.[0] || null,
@@ -156,7 +160,8 @@ function mapRow(r: any): Spot {
     whatToOrder: clean(ed.whatToOrder), gotcha: clean(ed.gotcha),
     summaryNote: clean(ed.summaryNote), cantWait: clean(ed.cantWait),
     visited: !!ed.visited, visitedDate: ed.visitedDate || null,
-    happyHour: cleanHappyHour(r.happy_hour),
+    happyHour: cleanHappyHour(oc.happyHour || r.happy_hour),
+    ownerBlurb: clean(oc.blurb),
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
     beenHere: r.been_here_ct || 0, wantToGo: r.want_to_go_ct || 0,
   };
