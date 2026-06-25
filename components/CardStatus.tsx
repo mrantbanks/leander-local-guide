@@ -32,5 +32,5 @@ export default function CardStatus({ periods, open24, openLate }: { periods: num
     else { label = 'Open Now'; cls = 'bg-[#1f7a3d] text-paper'; }
   } else return null;
 
-  return <span className={`absolute right-2 bottom-2 font-stamp uppercase tracking-[0.08em] text-[11px] px-1.5 py-0.5 rounded-sm shadow-sm ${cls}`}>{label}</span>;
+  return <span className={`font-stamp uppercase tracking-[0.08em] text-[11px] px-1.5 py-0.5 rounded-sm shadow-sm ${cls}`}>{label}</span>;
 }

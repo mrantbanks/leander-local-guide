@@ -58,9 +58,11 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
               </div>
             </div>
           )}
-          <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
+          <div className="absolute left-3 top-3 z-[1] flex flex-col items-start gap-1.5">
+            <span className="font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
+            <CardStatus periods={spot.periods} open24={spot.open24} openLate={spot.openLate} />
+          </div>
           <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
-          <CardStatus periods={spot.periods} open24={spot.open24} openLate={spot.openLate} />
         </div>
 
         <div className="relative -mt-5 mx-3 z-10">
