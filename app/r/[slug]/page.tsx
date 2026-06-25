@@ -321,6 +321,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             <div className="aspect-[16/9] border border-rule overflow-hidden bg-paper-sunk">
               <iframe title={`Map of ${spot.name}`} src={mapEmbed} loading="lazy" className="w-full h-full" style={{ border: 0, filter: 'grayscale(0.2) contrast(1.05)' }} />
             </div>
+            <Link href={`/map?spot=${slug}`} className="mt-3 mr-4 inline-flex font-stamp uppercase tracking-[0.1em] text-sm text-chile hover:text-oxblood">
+              See it on the Leander map →
+            </Link>
             {spot.mapsUrl && (
               <a href={spot.mapsUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex font-stamp uppercase tracking-[0.1em] text-sm text-chile hover:text-oxblood">
                 Open in Google Maps →

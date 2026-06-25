@@ -8,8 +8,9 @@ import SearchBar from './SearchBar';
 // folded into Best Of. New + Anthony stay desktop-only so mobile + search fit.
 const links = [
   { label: 'Eat', href: '/', hide: false },
+  { label: 'Map', href: '/map', hide: false },
   { label: "What's On", href: '/whats-on', hide: false },
-  { label: 'Best Of', href: '/best', hide: false },
+  { label: 'Best Of', href: '/best', hide: true },
   { label: 'New', href: '/new', hide: true },
   { label: 'Anthony', href: '/about', hide: true },
 ];

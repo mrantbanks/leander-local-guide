@@ -168,6 +168,28 @@ export async function getAllSpots(): Promise<Spot[]> {
   const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants ${ORDER}`);
   return rows.map(mapRow);
 }
+
+export type MapPin = {
+  slug: string; name: string; lat: number; lng: number; cat: string; cuisines: string[];
+  happyHour: boolean; openLate: boolean; hiddenGem: boolean; priceTier: number | null;
+  rating: number | null; hook: string | null; visited: boolean;
+};
+// Lean per-pin payload for the map. ~177 rows, all with coords.
+export async function getMapPins(): Promise<MapPin[]> {
+  const { rows } = await pool.query(
+    `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
+       (coalesce(happy_hour,'') <> '') happy_hour, coalesce(open_late,false) open_late,
+       ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
+       editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited
+     from restaurants where lat is not null and lng is not null`
+  );
+  return rows.map((r) => ({
+    slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
+    cat: r.cat, cuisines: r.cuisines || [], happyHour: !!r.happy_hour, openLate: !!r.open_late,
+    hiddenGem: !!r.is_hidden_gem, priceTier: r.price_tier ?? null, rating: r.rating ?? null,
+    hook: clean(r.hook), visited: !!r.visited,
+  }));
+}
 export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
   const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1`, [slug]);
   return rows[0] ? mapRow(rows[0]) : null;
