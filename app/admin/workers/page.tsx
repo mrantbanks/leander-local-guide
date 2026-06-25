@@ -21,7 +21,7 @@ export default async function WorkersPage() {
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
-  const [nodes, queue, recent, tally, scrape, coverage] = await Promise.all([
+  const [nodes, queue, recent, tally, scrape, coverage, mod, subs] = await Promise.all([
     pool.query(`select id, last_seen, first_seen, status, processed, errors,
                   (last_seen > now() - interval '3 minutes') as online from worker_nodes order by last_seen desc`),
     pool.query(`select
@@ -37,7 +37,15 @@ export default async function WorkersPage() {
                        count(*) filter (where happy_hour_checked_at is not null)::int ever_checked,
                        count(*) filter (where coalesce(happy_hour,'')<>'')::int with_hh,
                        max(happy_hour_checked_at) last_site_check from restaurants`),
+    pool.query(`select started_at, finished_at, checked, found, status, note from scraper_runs where kind='moderation' order by started_at desc limit 1`),
+    pool.query(`select (select count(*) from reviews where status='pending')::int pend_rev,
+                       (select count(*) from tips where status='pending')::int pend_tip,
+                       (select count(*) from reviews where status='approved')::int ok_rev,
+                       (select count(*) from tips where status='approved')::int ok_tip,
+                       (select count(*) from worker_log where worker_id='ai-moderation')::int mod_actions`),
   ]);
+  const md = mod.rows[0];
+  const sb = subs.rows[0];
   const q = queue.rows[0];
   const sc = scrape.rows[0];
   const cov = coverage.rows[0];
@@ -83,6 +91,20 @@ export default async function WorkersPage() {
           <div className="flex justify-between"><span className="text-ink-soft">Happy hours live</span><span className="text-ink">{cov.with_hh}</span></div>
         </div>
         <p className="text-ink-soft text-xs mt-3 pt-3 border-t border-rule/60">Reads each restaurant&apos;s website, has AI pull the happy hour (only kept if it has a real time), verifies existing ones, and finds new ones. Owner-set happy hours are never overwritten.</p>
+      </div>
+
+      {/* Submission moderation */}
+      <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink-soft mb-2">Submission moderation</h2>
+      <div className="border border-rule bg-paper-raised p-4 mb-8 font-ui text-sm">
+        <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1.5">
+          <div className="flex justify-between"><span className="text-ink-soft">Awaiting review</span><span className={(sb.pend_rev + sb.pend_tip) > 0 ? 'text-chile font-semibold' : 'text-ink'}>{sb.pend_rev} reviews · {sb.pend_tip} tips</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Last ran</span><span className="text-ink">{md ? `${ago(md.started_at)}${md.status === 'running' ? ' · running' : ''}` : 'never'}</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Published (live)</span><span className="text-ink">{sb.ok_rev} reviews · {sb.ok_tip} tips</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Last result</span><span className="text-ink">{md ? (md.status === 'error' ? <span className="text-oxblood">error</span> : md.note || '—') : '—'}</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">AI decisions made</span><span className="text-ink">{sb.mod_actions}</span></div>
+          <div className="flex justify-between"><span className="text-ink-soft">Schedule</span><span className="text-ink">Every 15 min, when something is waiting</span></div>
+        </div>
+        <p className="text-ink-soft text-xs mt-3 pt-3 border-t border-rule/60">A hard guardrail blocks links, contact info, profanity, and spam at submission. The AI then checks each pending review/tip is a genuine, on-topic take on the restaurant: it approves the real ones, rejects spam/abuse/off-topic, and leaves anything borderline here for you. It never auto-approves something the guardrail flagged.</p>
       </div>
 
       {/* Connected workers */}

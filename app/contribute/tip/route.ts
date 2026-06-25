@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
+import { screenSubmission } from '@/lib/moderate';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +19,8 @@ export async function POST(req: NextRequest) {
   const slug = String(fd.get('slug') || '');
   const body = String(fd.get('body') || '').trim().replace(/[—–]/g, '-').slice(0, 280);
   if (body.length < 4) return NextResponse.json({ error: 'Say a little more' }, { status: 400 });
-  // block links from drive-by spam
-  if (/https?:\/\//i.test(body)) return NextResponse.json({ error: 'No links, please' }, { status: 400 });
+  const scr = screenSubmission(body);
+  if (scr.hardReject) return NextResponse.json({ error: scr.message || 'We could not accept that' }, { status: 400 });
 
   const cnt = await pool.query("select count(*)::int n from tips where user_email = $1 and created_at > now() - interval '1 day'", [email]);
   if (cnt.rows[0].n >= 20) return NextResponse.json({ error: "You've hit today's tip limit, try again tomorrow" }, { status: 429 });

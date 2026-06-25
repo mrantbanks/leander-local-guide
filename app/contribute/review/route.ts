@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { isVerifiedOwner } from '@/lib/spots';
+import { screenSubmission } from '@/lib/moderate';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
   const stars = parseInt(String(fd.get('stars') || '0'), 10);
   if (!(stars >= 1 && stars <= 5)) return NextResponse.json({ error: 'Pick a star rating' }, { status: 400 });
   const body = String(fd.get('body') || '').trim().replace(/[—–]/g, '-').slice(0, 1200);
-  if (/https?:\/\//i.test(body)) return NextResponse.json({ error: 'No links, please' }, { status: 400 });
+  if (body) { const scr = screenSubmission(body); if (scr.hardReject) return NextResponse.json({ error: scr.message || 'We could not accept that' }, { status: 400 }); }
 
   if (await isVerifiedOwner(slug, email)) return NextResponse.json({ error: "You own this spot, you can't review it" }, { status: 400 });
 
