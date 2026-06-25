@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/img": ["./node_modules/sharp/**/*", "./node_modules/@img/**/*"],
   },
+  // "/food" was a duplicate of the homepage directory; consolidate it onto "/".
+  async redirects() {
+    return [{ source: "/food", destination: "/", permanent: true }];
+  },
 };
 
 export default nextConfig;

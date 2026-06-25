@@ -19,6 +19,16 @@ export default function BestIndex() {
           <p className="mt-3 font-ui text-ink-soft max-w-xl">Anthony&apos;s running rankings, weighted by what locals actually love. Updated as the votes come in.</p>
         </div>
       </header>
+      <div className="max-w-4xl mx-auto px-5 pt-6">
+        <Link href="/hidden-gems" className="group flex items-center justify-between border-2 border-chile bg-paper-raised p-4 hover:bg-paper-sunk transition-colors">
+          <div>
+            <span className="font-stamp uppercase tracking-[0.12em] text-chile text-xs">💎 Hand-picked</span>
+            <h2 className="font-display font-black text-2xl text-ink mt-0.5">Hidden Gems</h2>
+            <p className="font-ui text-sm text-ink-soft">The strip-mall doors and back-lot trucks worth knowing about.</p>
+          </div>
+          <span className="font-stamp uppercase tracking-[0.1em] text-sm text-chile group-hover:text-oxblood shrink-0 ml-3">See them →</span>
+        </Link>
+      </div>
       <div className="max-w-4xl mx-auto px-5 py-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
         {BOARDS.map((b) => (
           <Link key={b.slug} href={`/best/${b.slug}`} className="group border border-rule bg-paper-raised p-4 hover:border-ink transition-colors">
