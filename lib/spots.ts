@@ -179,12 +179,12 @@ function mapRow(r: any): Spot {
 const ORDER = `order by (attributes->>'chainStatus' = 'chain'), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
 const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename,'caption',caption,'is_menu',is_menu,'is_header',is_header) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
 // Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
-const GEM_WHERE = `attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
+const GEM_WHERE = `not hidden and attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
 const GEM_ORDER = `order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last`;
 const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)) as is_hidden_gem`;
 
 export async function getAllSpots(): Promise<Spot[]> {
-  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants ${ORDER}`);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where not hidden ${ORDER}`);
   return rows.map(mapRow);
 }
 
@@ -221,7 +221,7 @@ export async function getMapPins(): Promise<MapPin[]> {
        happy_hour, hours, attributes,
        ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
        editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited
-     from restaurants where lat is not null and lng is not null`
+     from restaurants where lat is not null and lng is not null and not hidden`
   );
   return rows.map((r) => {
     const h = parseHours(r.hours);
@@ -238,7 +238,7 @@ export async function getMapPins(): Promise<MapPin[]> {
   });
 }
 export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
-  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1`, [slug]);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1 and not hidden`, [slug]);
   return rows[0] ? mapRow(rows[0]) : null;
 });
 
@@ -279,8 +279,8 @@ export async function getHiddenGems(): Promise<Spot[]> {
   // The auto top 8, plus any spot hand-pinned as a Hidden Gem (e.g. Leander Grocery) -> matches the badged set.
   const { rows } = await pool.query(
     `select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants
-     where slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)
-        or editorial->'badges' ? 'Hidden Gem'
+     where (slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)
+        or editorial->'badges' ? 'Hidden Gem') and not hidden
      ${GEM_ORDER}`
   );
   return rows.map(mapRow);
@@ -290,7 +290,7 @@ export async function getNewInLeander(): Promise<NewItem[]> {
   const { rows } = await pool.query(
     `select slug, name, primary_category cat, editorial->>'openingStatus' status, editorial->>'openingNote' note, updated_at
      from restaurants
-     where coalesce(editorial->>'openingStatus','') <> ''
+     where coalesce(editorial->>'openingStatus','') <> '' and not hidden
      order by updated_at desc limit 60`
   );
   return rows.map((r) => ({ slug: r.slug, name: clean(r.name) || r.name, category: r.cat, status: r.status, note: clean(r.note), when: r.updated_at }));
@@ -301,12 +301,12 @@ export type InkItem = { kind: 'new' | 'rave' | 'buzz'; slug: string; name: strin
 // FRESH INK: the home heartbeat, assembled from real activity.
 export async function getFreshInk(): Promise<InkItem[]> {
   const [fresh, raves, buzz] = await Promise.all([
-    pool.query(`select slug, name, primary_category cat from restaurants order by created_at desc limit 4`),
+    pool.query(`select slug, name, primary_category cat from restaurants where not hidden order by created_at desc limit 4`),
     pool.query(`select slug, name, editorial->>'hook' hook from restaurants
-                where editorial->>'verdict'='WORTH THE GRAVEL'
+                where editorial->>'verdict'='WORTH THE GRAVEL' and not hidden
                 order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last limit 6`),
     pool.query(`select r.slug, r.name, (r.worth_it_ct + r.been_here_ct) tot from restaurants r
-                where (r.worth_it_ct + r.been_here_ct) > 0 order by tot desc limit 3`),
+                where (r.worth_it_ct + r.been_here_ct) > 0 and not r.hidden order by tot desc limit 3`),
   ]);
   const items: InkItem[] = [];
   for (const r of fresh.rows) items.push({ kind: 'new', slug: r.slug, name: clean(r.name) || r.name, note: `New to the guide · ${r.cat}` });
@@ -320,7 +320,7 @@ export async function countSpots(): Promise<{ total: number; local: number; chai
     `select count(*)::int total,
             count(*) filter (where attributes->>'chainStatus'='local')::int local,
             count(*) filter (where attributes->>'chainStatus'='chain')::int chain
-     from restaurants`
+     from restaurants where not hidden`
   );
   return rows[0];
 }

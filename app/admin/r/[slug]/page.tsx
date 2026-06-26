@@ -16,7 +16,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) redirect('/admin');
   const { slug } = await params;
-  const { rows } = await pool.query('select slug, name, editorial, happy_hour, attributes, owner_content from restaurants where slug = $1', [slug]);
+  const { rows } = await pool.query('select slug, name, editorial, happy_hour, attributes, owner_content, hidden from restaurants where slug = $1', [slug]);
   const r = rows[0];
   if (!r) notFound();
   const ed = r.editorial || {};
@@ -43,6 +43,13 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
       <ReviewComposer slug={slug} />
 
       <form action={action}>
+        <label className={`flex items-center gap-2 border-2 rounded-sm px-3 py-2.5 mb-1 cursor-pointer ${r.hidden ? 'border-oxblood bg-oxblood/5' : 'border-rule'}`}>
+          <input type="checkbox" name="hidden" defaultChecked={!!r.hidden} className="w-4 h-4" />
+          <span className="font-stamp uppercase tracking-[0.08em] text-xs text-ink">Hide this listing</span>
+          <span className="font-ui text-xs text-ink-soft">— closed, or coming soon / not open yet. Removes it from the whole public site.</span>
+        </label>
+        {r.hidden ? <p className="font-ui text-xs text-oxblood mb-2">This listing is currently hidden from the site.</p> : null}
+
         <label className={label}>Verdict</label>
         <select name="verdict" defaultValue={ed.verdict || 'WORTH IT'} className={field}>
           {VERDICTS.map((v) => <option key={v} value={v}>{v}</option>)}

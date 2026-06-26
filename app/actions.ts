@@ -76,15 +76,23 @@ export async function updateReview(slug: string, fd: FormData) {
   const norm = (v: FormDataEntryValue | null) => { const s = String(v || '').trim(); return s ? (/^https?:\/\//i.test(s) ? s : 'https://' + s) : null; };
   const menuUrl = norm(fd.get('menuUrl'));
   const orderUrl = norm(fd.get('orderUrl'));
+  const hidden = fd.get('hidden') === 'on';
   await pool.query(
     `update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3,
        attributes = coalesce(attributes,'{}'::jsonb) || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text),
-       updated_at = now() where slug = $1`,
-    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl]
+       hidden = $6, updated_at = now() where slug = $1`,
+    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden]
   );
-  revalidatePath(`/r/${slug}`);
-  revalidatePath('/admin');
+  for (const p of ['/', '/map', '/best', '/new', `/r/${slug}`, '/admin', '/admin/spots']) revalidatePath(p);
   redirect('/admin');
+}
+
+// Admin: hide/show a listing (closed, or coming-soon and not established yet). Hidden = gone from
+// the whole public site (directory, map, search, detail page, gems, fresh ink, counts).
+export async function setHidden(slug: string, hidden: boolean) {
+  if (!(await requireAdmin())) return;
+  await pool.query('update restaurants set hidden = $2, updated_at = now() where slug = $1', [slug, hidden]);
+  for (const p of ['/', '/map', '/best', '/new', `/r/${slug}`, '/admin/spots']) revalidatePath(p);
 }
 
 // Admin: delete an uploaded photo.

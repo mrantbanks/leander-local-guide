@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const { rows } = await pool.query(
     `select slug, name, primary_category cat
      from restaurants
-     where name ilike $1 or primary_category ilike $1 or array_to_string(coalesce(cuisines,'{}'),' ') ilike $1
+     where not hidden and (name ilike $1 or primary_category ilike $1 or array_to_string(coalesce(cuisines,'{}'),' ') ilike $1)
      order by (name ilike $2) desc, (name ilike $3) desc, name
      limit 8`,
     [like, prefix, like]
