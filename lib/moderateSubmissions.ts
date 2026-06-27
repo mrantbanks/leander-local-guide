@@ -8,10 +8,10 @@ import { screenSubmission } from '@/lib/moderate';
 type Item = { id: number; body: string; stars: number | null; venue: string; kind: 'review' | 'tip' };
 
 async function judge(it: Item, key: string): Promise<{ decision: 'approve' | 'reject' | 'unsure'; reason: string }> {
-  const prompt = `You moderate user-submitted content for a local restaurant guide. Decide whether to PUBLISH this ${it.kind} for the restaurant "${it.venue}".
-APPROVE only if it is a genuine, on-topic ${it.kind} about THIS restaurant (its food, service, a visit, the atmosphere, value) that reads like a real person wrote it.
-REJECT if it is spam, an advertisement, off-topic, gibberish, a fake or templated review, hateful or harassing, contains contact info or links, or is clearly not about this restaurant.
-Use "unsure" only when a reasonable human would need to look (borderline relevance or tone).
+  const prompt = `You moderate user-submitted content for a local restaurant guide. You are filtering spam and abuse, NOT fact-checking. Be decisive. Decide whether to PUBLISH this ${it.kind} for the restaurant "${it.venue}".
+APPROVE if it reads like a real person's genuine experience, opinion, or tip about a local food spot, EVEN IF you cannot verify specific details (the menu, the setup, a food truck, a vendor, "the guy on the deck"), and even if it is short, casual, vague, or only refers to the place as "this place" / "here". Approve honest negative reviews too. When in doubt and it looks human and on-topic, APPROVE.
+REJECT only if it is clearly spam or an ad, contains links or contact info, is hateful or harassing, is pure gibberish, or is obviously not about food or a restaurant at all.
+Use "unsure" RARELY: only when you genuinely cannot tell if it is a planted fake, or cannot tell whether it concerns a food business at all. Do NOT use "unsure" merely because you cannot verify a detail or the venue's exact setup.
 ${it.kind === 'review' && it.stars ? `The user gave ${it.stars} stars.` : ''}
 SUBMISSION: """${(it.body || '').slice(0, 1500)}"""
 Return ONLY minified JSON: {"decision":"approve"|"reject"|"unsure","reason":"<short reason>"}`;
