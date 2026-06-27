@@ -154,28 +154,32 @@ export async function rejectPhoto(id: number) {
   revalidatePath('/admin/moderation');
 }
 
-// Moderation: approve / reject a pending user tip.
+// Moderation: approve / reject a pending user tip or review (used by the moderation page AND the
+// inline one-click buttons on the workers panel). Refreshes the spot page + both admin views.
+async function revalidateModeration(table: 'tips' | 'reviews', id: number) {
+  const { rows } = await pool.query(`select r.slug from ${table} s join restaurants r on r.id = s.place_id where s.id = $1`, [id]);
+  if (rows[0]?.slug) revalidatePath(`/r/${rows[0].slug}`);
+  revalidatePath('/admin/moderation'); revalidatePath('/admin/workers');
+}
 export async function approveTip(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update tips set status = 'approved' where id = $1", [id]);
-  revalidatePath('/admin/moderation');
+  await revalidateModeration('tips', id);
 }
 export async function rejectTip(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update tips set status = 'removed' where id = $1", [id]);
-  revalidatePath('/admin/moderation');
+  await revalidateModeration('tips', id);
 }
-
-// Moderation: approve / reject a pending user review.
 export async function approveReview(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update reviews set status = 'approved' where id = $1", [id]);
-  revalidatePath('/admin/moderation');
+  await revalidateModeration('reviews', id);
 }
 export async function rejectReview(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update reviews set status = 'removed' where id = $1", [id]);
-  revalidatePath('/admin/moderation');
+  await revalidateModeration('reviews', id);
 }
 
 // Owner claims: verify (grants owner-response rights) / reject.

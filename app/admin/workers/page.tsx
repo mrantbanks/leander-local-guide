@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
+import { approveReview, rejectReview, approveTip, rejectTip } from '@/app/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +22,7 @@ export default async function WorkersPage() {
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
-  const [nodes, queue, recent, tally, scrape, coverage, mod, subs] = await Promise.all([
+  const [nodes, queue, recent, tally, scrape, coverage, mod, subs, pendingQ] = await Promise.all([
     pool.query(`select id, last_seen, first_seen, status, processed, errors,
                   (last_seen > now() - interval '3 minutes') as online from worker_nodes order by last_seen desc`),
     pool.query(`select
@@ -43,7 +44,14 @@ export default async function WorkersPage() {
                        (select count(*) from reviews where status='approved')::int ok_rev,
                        (select count(*) from tips where status='approved')::int ok_tip,
                        (select count(*) from worker_log where worker_id='ai-moderation')::int mod_actions`),
+    pool.query(`select 'review' kind, rv.id, rv.stars::text extra, rv.body, rv.worker_note, r.name venue
+                from reviews rv join restaurants r on r.id=rv.place_id where rv.status='pending'
+                union all
+                select 'tip' kind, t.id, null, t.body, t.worker_note, r.name
+                from tips t join restaurants r on r.id=t.place_id where t.status='pending'
+                order by 1`),
   ]);
+  const queueItems = pendingQ.rows as { kind: string; id: number; extra: string | null; body: string; worker_note: string | null; venue: string }[];
   const md = mod.rows[0];
   const sb = subs.rows[0];
   const q = queue.rows[0];
@@ -105,6 +113,30 @@ export default async function WorkersPage() {
           <div className="flex justify-between"><span className="text-ink-soft">Schedule</span><span className="text-ink">Every 15 min, when something is waiting</span></div>
         </div>
         <p className="text-ink-soft text-xs mt-3 pt-3 border-t border-rule/60">A hard guardrail blocks links, contact info, profanity, and spam at submission. The AI then checks each pending review/tip is a genuine, on-topic take on the restaurant: it approves the real ones, rejects spam/abuse/off-topic, and leaves anything borderline here for you. It never auto-approves something the guardrail flagged.</p>
+
+        {queueItems.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-rule/60 space-y-3">
+            <p className="font-stamp uppercase tracking-[0.1em] text-xs text-oxblood">Needs your call ({queueItems.length})</p>
+            {queueItems.map((it) => (
+              <div key={`${it.kind}-${it.id}`} className="border border-rule rounded-sm p-3 bg-paper">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-stamp uppercase tracking-[0.06em] text-[10px] bg-ink text-paper px-1.5 py-0.5 rounded-sm">{it.kind}</span>
+                  <span className="font-ui text-xs text-ink-soft">{it.venue}{it.extra ? ` · ${it.extra}★` : ''}</span>
+                </div>
+                <p className="font-ui text-sm text-ink">{it.body}</p>
+                {it.worker_note ? <p className="font-ui text-xs text-ink-soft mt-1 italic">AI: {it.worker_note}</p> : null}
+                <div className="flex gap-2 mt-2">
+                  <form action={async () => { 'use server'; if (it.kind === 'review') await approveReview(it.id); else await approveTip(it.id); }}>
+                    <button className="font-stamp uppercase tracking-[0.08em] text-xs bg-amber text-ink px-3 py-1 rounded-sm hover:opacity-80">Approve</button>
+                  </form>
+                  <form action={async () => { 'use server'; if (it.kind === 'review') await rejectReview(it.id); else await rejectTip(it.id); }}>
+                    <button className="font-stamp uppercase tracking-[0.08em] text-xs border border-oxblood text-oxblood px-3 py-1 rounded-sm hover:bg-oxblood hover:text-paper">Reject</button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Connected workers */}
