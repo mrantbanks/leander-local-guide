@@ -6187,5 +6187,45 @@
     "provenance": {
       "core": "google_places_new"
     }
+  },
+  {
+    "id": "ChIJgTkKPiQpW4YRiQ0wCkHRyBo",
+    "slug": "lali-son-fast-food-leander",
+    "name": "Lali Son Fast Food",
+    "primaryCategory": "Indian Restaurant",
+    "cuisines": [],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "1500 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.555949199999997,
+      "lng": -97.8585566
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1930022517602258313&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.5,
+        "count": 725
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place",
+      "phone": "(512) 309-8934"
+    }
   }
 ]
