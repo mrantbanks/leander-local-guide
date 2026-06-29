@@ -77,11 +77,12 @@ export async function updateReview(slug: string, fd: FormData) {
   const menuUrl = norm(fd.get('menuUrl'));
   const orderUrl = norm(fd.get('orderUrl'));
   const hidden = fd.get('hidden') === 'on';
+  const category = String(fd.get('category') || '').trim(); // venue type, e.g. Food Truck
   await pool.query(
     `update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3,
        attributes = coalesce(attributes,'{}'::jsonb) || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text),
-       hidden = $6, updated_at = now() where slug = $1`,
-    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden]
+       hidden = $6, primary_category = coalesce(nullif($7,''), primary_category), updated_at = now() where slug = $1`,
+    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden, category]
   );
   for (const p of ['/', '/map', '/best', '/new', `/r/${slug}`, '/admin', '/admin/spots']) revalidatePath(p);
   redirect('/admin');

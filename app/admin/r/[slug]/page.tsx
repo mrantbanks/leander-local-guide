@@ -50,6 +50,12 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         </label>
         {r.hidden ? <p className="font-ui text-xs text-oxblood mb-2">This listing is currently hidden from the site.</p> : null}
 
+        <label className={label}>Category (venue type — drives the Food Truck filter, map pin, icons &amp; boards)</label>
+        <select name="category" defaultValue={r.primary_category} className={field}>
+          {[...new Set([r.primary_category, 'Restaurant', 'Food Truck', 'Cafe', 'Bakery', 'Bar', 'Brewery', 'Dessert', 'Coffee Shop', 'Tea House', 'Ice Cream Shop', 'Donut Shop'])].filter(Boolean).map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <p className="font-ui text-xs text-ink-soft mt-1">Set this to <strong>Food Truck</strong> to tag a trailer/stand. The spot keeps its cuisine; it just shows under the Food Truck filter and the 🚚 boards.</p>
+
         <label className={label}>Verdict</label>
         <select name="verdict" defaultValue={ed.verdict || 'WORTH IT'} className={field}>
           {VERDICTS.map((v) => <option key={v} value={v}>{v}</option>)}

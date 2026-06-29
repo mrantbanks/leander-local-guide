@@ -94,7 +94,7 @@ async function searchPage(query, pageToken) {
     console.log(`    ${v.addr}   ${id}`);
   }
   console.log('\n── MISSING — national chains (your call) ───────────────────');
-  for (const [, v] of chains.sort((a, b) => a[1].name.localeCompare(b[1].name))) console.log(`• ${v.name}  [${v.type}]  ${v.addr}`);
+  for (const [id, v] of chains.sort((a, b) => a[1].name.localeCompare(b[1].name))) console.log(`• ${v.name}  [${v.type}]\n    ${v.addr}   ${id}`);
 
   console.log('\nLOCAL_IDS=' + locals.map(([id]) => id).join(','));
 })().catch((e) => { console.error('✗', e.message); process.exit(1); });

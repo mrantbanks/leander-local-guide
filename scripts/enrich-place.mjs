@@ -18,7 +18,8 @@ if (!KEY || !GEMINI) { console.error('✗ need GOOGLE_PLACES_KEY and GEMINI_API_
 
 const argv = process.argv.slice(2);
 const slug = argv.find((a) => !a.startsWith('--'));
-const commit = argv.includes('--commit');
+const commit = argv.includes('--commit') || argv.includes('--db'); // --db kept for parity with add-place
+const isChain = argv.includes('--chain');
 const cIdx = argv.indexOf('--cuisines');
 const cuisinesArg = cIdx >= 0 ? argv[cIdx + 1].split(',').map((s) => s.trim()).filter(Boolean) : null;
 if (!slug) { console.error('Usage: enrich-place.mjs <slug> [--cuisines "A,B"] [--commit]'); process.exit(1); }
@@ -80,7 +81,7 @@ async function gemini(instruction) {
     takeout: p.takeout ?? null,
     delivery: p.delivery ?? null,
     dineIn: p.dineIn ?? null,
-    chainStatus: 'local', // locally owned Leander spot, not a national chain
+    chainStatus: isChain ? 'chain' : 'local', // --chain for national brands
     businessStatus: p.businessStatus || null,
   };
 

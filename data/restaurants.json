@@ -678,7 +678,7 @@
     "id": "ChIJQUiPcbQtW4YRVwQyBugUPIg",
     "slug": "the-boss-cheesesteak",
     "name": "The Boss Cheesesteak",
-    "primaryCategory": "Restaurant",
+    "primaryCategory": "Food Truck",
     "cuisines": [
       "American"
     ],
@@ -1070,7 +1070,7 @@
     "id": "ChIJm-it7sQrW4YR5IgidjJ7zjA",
     "slug": "stubblefield-s",
     "name": "Stubblefield\u2019s",
-    "primaryCategory": "Restaurant",
+    "primaryCategory": "Food Truck",
     "cuisines": [
       "BBQ"
     ],
@@ -2938,40 +2938,6 @@
     }
   },
   {
-    "id": "ChIJ99Gh4AcsW4YRs1TP0ve8xNY",
-    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard",
-    "name": "Sleeps 8 Modern 3BR Leander | Coffee Bar & Yard",
-    "primaryCategory": "Restaurant",
-    "cuisines": [],
-    "googleType": "Lodging",
-    "address": {
-      "formatted": "Leander, TX 78641, USA",
-      "locality": "Leander"
-    },
-    "geo": {
-      "lat": 30.565086299999997,
-      "lng": -97.8615342
-    },
-    "links": {
-      "googleMapsUrl": "https://maps.google.com/?cid=15475701992131613875&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
-    },
-    "priceTier": null,
-    "hours": null,
-    "photos": [],
-    "badgesEditorial": [],
-    "attributes": {
-      "chainStatus": "unknown"
-    },
-    "editorial": null,
-    "ratings": {
-      "composite": null
-    },
-    "status": "needs_enrich",
-    "provenance": {
-      "core": "google_places_new"
-    }
-  },
-  {
     "id": "ChIJ_5GhPwIrW4YRuyvdHg0ZPhs",
     "slug": "shipley-do-nuts",
     "name": "Shipley Do-Nuts",
@@ -2990,74 +2956,6 @@
     },
     "links": {
       "googleMapsUrl": "https://maps.google.com/?cid=1963034031723195323&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
-    },
-    "priceTier": null,
-    "hours": null,
-    "photos": [],
-    "badgesEditorial": [],
-    "attributes": {
-      "chainStatus": "unknown"
-    },
-    "editorial": null,
-    "ratings": {
-      "composite": null
-    },
-    "status": "needs_enrich",
-    "provenance": {
-      "core": "google_places_new"
-    }
-  },
-  {
-    "id": "ChIJ99Gh4AcsW4YRMaCyK5dG0oA",
-    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard-2",
-    "name": "Sleeps 8 Modern 3BR Leander | Coffee Bar & Yard",
-    "primaryCategory": "Restaurant",
-    "cuisines": [],
-    "googleType": "Lodging",
-    "address": {
-      "formatted": "Leander, TX 78641, USA",
-      "locality": "Leander"
-    },
-    "geo": {
-      "lat": 30.565086299999997,
-      "lng": -97.8615342
-    },
-    "links": {
-      "googleMapsUrl": "https://maps.google.com/?cid=9282559397051146289&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
-    },
-    "priceTier": null,
-    "hours": null,
-    "photos": [],
-    "badgesEditorial": [],
-    "attributes": {
-      "chainStatus": "unknown"
-    },
-    "editorial": null,
-    "ratings": {
-      "composite": null
-    },
-    "status": "needs_enrich",
-    "provenance": {
-      "core": "google_places_new"
-    }
-  },
-  {
-    "id": "ChIJ99Gh4AcsW4YRqF3UOZvOyyA",
-    "slug": "sleeps-8-modern-3br-leander-coffee-bar-yard-3",
-    "name": "Sleeps 8 Modern 3BR Leander Coffee Bar & Yard",
-    "primaryCategory": "Restaurant",
-    "cuisines": [],
-    "googleType": "Lodging",
-    "address": {
-      "formatted": "Leander, TX 78641, USA",
-      "locality": "Leander"
-    },
-    "geo": {
-      "lat": 30.565086299999997,
-      "lng": -97.8615342
-    },
-    "links": {
-      "googleMapsUrl": "https://maps.google.com/?cid=2363209595571428776&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
     },
     "priceTier": null,
     "hours": null,
@@ -6192,7 +6090,7 @@
     "id": "ChIJgTkKPiQpW4YRiQ0wCkHRyBo",
     "slug": "lali-son-fast-food-leander",
     "name": "Lali Son Fast Food",
-    "primaryCategory": "Indian Restaurant",
+    "primaryCategory": "Food Truck",
     "cuisines": [],
     "googleType": "Indian Restaurant",
     "address": {
@@ -6226,6 +6124,1141 @@
       "core": "google_places_new",
       "addedBy": "add-place",
       "phone": "(512) 309-8934"
+    }
+  },
+  {
+    "id": "ChIJ9YVBk1QrW4YRm_7hkr_FpLg",
+    "slug": "aroma-leander",
+    "name": "Aroma Leander",
+    "primaryCategory": "Food Truck",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "2450 N US Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.619767,
+      "lng": -97.861553
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13304976625752997531&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.3,
+        "count": 164
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJK9-XXMUtW4YRoWeHIB5zPrU",
+    "slug": "beyond-pompeii-pizza-leander",
+    "name": "Beyond Pompeii Pizza",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "3651 US-183 Ste 170, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.602122,
+      "lng": -97.8604321
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13060002542652975009&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.4,
+        "count": 76
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJ_SsJTSfTRIYRCfOR2GpKHsE",
+    "slug": "birrieria-mama-rosa-leander",
+    "name": "Birrieria Mama Rosa",
+    "primaryCategory": "Mexican Restaurant",
+    "cuisines": [
+      "Mexican"
+    ],
+    "googleType": "Mexican Restaurant",
+    "address": {
+      "formatted": "3800 Co Rd 175, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5519953,
+      "lng": -97.7653478
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=13915641721381843721&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "\"ChIJrXUGEAotW4YRFgga21IOyrI\"",
+    "slug": "desi-dhaba-kebab-bar-grill-leander-tx",
+    "name": "Desi Dhaba / Kebab Bar & Grill - LEANDER TX",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "\"Indian\""
+    ],
+    "googleType": "\"Indian Restaurant\"",
+    "address": {
+      "formatted": "1500 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5559332,
+      "lng": -97.8585673
+    },
+    "links": {
+      "googleMapsUrl": "\"https://maps.google.com/?cid=12883125433072748566&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA\""
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJNzQGEwAtW4YRUYQO5oztjDM",
+    "slug": "coat-and-thai-leander",
+    "name": "Coat and Thai",
+    "primaryCategory": "Food Truck",
+    "cuisines": [
+      "Thai"
+    ],
+    "googleType": "Thai Restaurant",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5483815,
+      "lng": -97.8148925
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=3714604982084731985&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 2.0,
+        "count": 2
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "\"ChIJK9-XXMUtW4YRoWeHIB5zPrU\"",
+    "slug": "beyond-pompeii-pizza",
+    "name": "Beyond Pompeii Pizza",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "\"Pizza\""
+    ],
+    "googleType": "\"Pizza Restaurant\"",
+    "address": {
+      "formatted": "3651 US-183 Ste 170, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.602122,
+      "lng": -97.8604321
+    },
+    "links": {
+      "googleMapsUrl": "\"https://maps.google.com/?cid=13060002542652975009&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA\""
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJrXUGEAotW4YRFgga21IOyrI",
+    "slug": "desi-dhaba-kebab-bar-and-grill-leander",
+    "name": "Desi Dhaba / Kebab Bar & Grill",
+    "primaryCategory": "Food Truck",
+    "cuisines": [
+      "Indian"
+    ],
+    "googleType": "Indian Restaurant",
+    "address": {
+      "formatted": "1500 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5559332,
+      "lng": -97.8585673
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=12883125433072748566&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 3.9,
+        "count": 466
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJXYKn2P8sW4YR1U3dLIwlG3U",
+    "slug": "doubledave-s-pizzaworks-leander",
+    "name": "DoubleDave's Pizzaworks",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "3725 N Lakeline Blvd Ste A2, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5468414,
+      "lng": -97.8658182
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8438379610787106261&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 3.9,
+        "count": 376
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJ1-ZUF88tW4YRgvrdT-WgGmE",
+    "slug": "grand-donuts-leander",
+    "name": "Grand Donuts",
+    "primaryCategory": "Donut Shop",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "1395 US-183 Ste 150, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5610766,
+      "lng": -97.846083
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=6997081877821389442&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.2,
+        "count": 32
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJL2re43EsW4YRbOyuzXNoJjs",
+    "slug": "kai-sushi-leander",
+    "name": "Kai Sushi",
+    "primaryCategory": "Sushi Restaurant",
+    "cuisines": [
+      "Japanese"
+    ],
+    "googleType": "Sushi Restaurant",
+    "address": {
+      "formatted": "1805 S Hwy 183 #400, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.556389,
+      "lng": -97.843951
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4262208943934073964&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.7,
+        "count": 693
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJe-w5D4RVyg4RkxRJ6P-XPCY",
+    "slug": "makis-atx-leander",
+    "name": "MAKIS ATX",
+    "primaryCategory": "Food Truck",
+    "cuisines": [
+      "Peruvian"
+    ],
+    "googleType": "Peruvian Restaurant",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5470022,
+      "lng": -97.8141436
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2755244197413459091&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.2,
+        "count": 48
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJF2a7rMQtW4YRbwGfkoEL6XQ",
+    "slug": "pizza-depot-leander",
+    "name": "Pizza Depot",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "14300 Ronald Reagan Blvd Bldg-2, Suite-206, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5488927,
+      "lng": -97.7932197
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8424277229111804271&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.7,
+        "count": 213
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJq6fSbsksW4YRx5yksbSPffY",
+    "slug": "pizza-twist-leander",
+    "name": "Pizza Twist",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "13920 Ronald Reagan Blvd Bldg 2 - Ste 205, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.543938,
+      "lng": -97.7913627
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17761510511656344775&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.6,
+        "count": 162
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "\"ChIJJdH443EsW4YRytcnGK5atfs\"",
+    "slug": "southern-s-pizza-sports-pub",
+    "name": "Southern's Pizza & Sports Pub",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "\"Pizza\""
+    ],
+    "googleType": "\"Pizza Restaurant\"",
+    "address": {
+      "formatted": "1913 S Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5532681,
+      "lng": -97.8422908
+    },
+    "links": {
+      "googleMapsUrl": "\"https://maps.google.com/?cid=18137502778080614346&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA\""
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJ6Yt3PwAtW4YRS-WskV0sLN8",
+    "slug": "sebastian-s-snowcones-leander",
+    "name": "Sebastian's Snowcones",
+    "primaryCategory": "Ice Cream Shop",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "10870 E Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5602093,
+      "lng": -97.8129373
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=16081277149820806475&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 5.0,
+        "count": 2
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJBS6Q5SMtW4YRjKdqlWq6p0Y",
+    "slug": "skyes-ice-leander",
+    "name": "Skyes Ice",
+    "primaryCategory": "Ice Cream Shop",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "1717 Scottsdale Dr, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5472438,
+      "lng": -97.8142439
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=5091242870701729676&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.8,
+        "count": 69
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJJdH443EsW4YRytcnGK5atfs",
+    "slug": "southern-s-pizza-and-sports-pub-leander",
+    "name": "Southern's Pizza & Sports Pub",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [
+      "Italian"
+    ],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "1913 S Hwy 183, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5532681,
+      "lng": -97.8422908
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18137502778080614346&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.5,
+        "count": 480
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJl80UXwArW4YReNK6Jp413RA",
+    "slug": "stubblefield-bbq-leander",
+    "name": "Stubblefield BBQ",
+    "primaryCategory": "Barbecue Restaurant",
+    "cuisines": [
+      "BBQ"
+    ],
+    "googleType": "Barbecue Restaurant",
+    "address": {
+      "formatted": "3312 E Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5813108,
+      "lng": -97.8513593
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1215186427830784632&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJD4796kAsW4YRvR4lT9tYP_I",
+    "slug": "super-donuts-8-leander",
+    "name": "Super Donuts 8",
+    "primaryCategory": "Donut Shop",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "2800 S Bagdad Rd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5404179,
+      "lng": -97.8488225
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=17455768379660246717&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.7,
+        "count": 74
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJNR2Fbn0tW4YRx_2DiESZYkQ",
+    "slug": "teapioca-lounge-leander",
+    "name": "Teapioca Lounge",
+    "primaryCategory": "Tea House",
+    "cuisines": [],
+    "googleType": "Tea House",
+    "address": {
+      "formatted": "14300 Ronald Reagan Blvd Ste 302, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.548716,
+      "lng": -97.7931446
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=4927669461923921351&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.2,
+        "count": 65
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJn2MmWBrdWoYRZQGotXAQABY",
+    "slug": "the-frozen-affair-leander",
+    "name": "The Frozen Affair",
+    "primaryCategory": "Ice Cream Shop",
+    "cuisines": [],
+    "googleType": "Ice Cream Shop",
+    "address": {
+      "formatted": "209 W Broade St, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5801945,
+      "lng": -97.8556444
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=1585285145104482661&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.7,
+        "count": 18
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJd-Kk4B0tW4YRY2cj-LVm3h4",
+    "slug": "zenshi-handcrafted-sushi-leander",
+    "name": "ZENSHI Handcrafted Sushi",
+    "primaryCategory": "Restaurant",
+    "cuisines": [
+      "Japanese"
+    ],
+    "googleType": "Restaurant",
+    "address": {
+      "formatted": "3441 N Lakeline Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5429991,
+      "lng": -97.8650798
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=2224328197705787235&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "local"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 5.0,
+        "count": 1
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJu2Uoym8sW4YRIZqNFiCNzPw",
+    "slug": "domino-s-pizza-n-us-183-leander",
+    "name": "Domino's Pizza (N US-183)",
+    "primaryCategory": "Pizza Delivery",
+    "cuisines": [],
+    "googleType": "Pizza Delivery",
+    "address": {
+      "formatted": "651 N US Hwy 183 190 Ste 190, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5851528,
+      "lng": -97.8569147
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18216089761763662369&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.2,
+        "count": 395
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJuzuqljstW4YR7pmLJdBzxXM",
+    "slug": "domino-s-pizza-crystal-falls-leander",
+    "name": "Domino's Pizza (Crystal Falls)",
+    "primaryCategory": "Pizza Restaurant",
+    "cuisines": [],
+    "googleType": "Pizza Restaurant",
+    "address": {
+      "formatted": "1890 Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.545009,
+      "lng": -97.867091
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8342201222594009582&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 3.9,
+        "count": 40
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJjf-51EAsW4YRNBFU482nsvs",
+    "slug": "domino-s-pizza-s-bagdad-rd-leander",
+    "name": "Domino's Pizza (S Bagdad Rd)",
+    "primaryCategory": "Pizza Delivery",
+    "cuisines": [],
+    "googleType": "Pizza Delivery",
+    "address": {
+      "formatted": "2906 S Bagdad Rd Building #1, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5391301,
+      "lng": -97.848367
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=18136743152098480436&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.3,
+        "count": 311
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJ12pSwH4tW4YRE1E3kZ75Wd0",
+    "slug": "domino-s-pizza-ronald-reagan-leander",
+    "name": "Domino's Pizza (Ronald Reagan)",
+    "primaryCategory": "Pizza Delivery",
+    "cuisines": [],
+    "googleType": "Pizza Delivery",
+    "address": {
+      "formatted": "14420 Ronald Reagan Blvd, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5503167,
+      "lng": -97.7936491
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=15950054014745792787&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.2,
+        "count": 143
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "\"ChIJi_12Q0DTRIYRz7t6Cwsl73Y\"",
+    "slug": "dog-house-drinkery-dog-park",
+    "name": "Dog House Drinkery & Dog Park",
+    "primaryCategory": "Bar",
+    "cuisines": [],
+    "googleType": "\"Dog Park\"",
+    "address": {
+      "formatted": "3800 Co Rd 175, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5519444,
+      "lng": -97.7652778
+    },
+    "links": {
+      "googleMapsUrl": "\"https://maps.google.com/?cid=8570109345276804047&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA\""
+    },
+    "priceTier": null,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "unknown"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new"
+    }
+  },
+  {
+    "id": "ChIJfY5S-ZUtW4YRnMbrF5bHx3I",
+    "slug": "shipley-do-nuts-ronald-reagan-leander",
+    "name": "Shipley Do-Nuts (Ronald Reagan)",
+    "primaryCategory": "Donut Shop",
+    "cuisines": [],
+    "googleType": "Donut Shop",
+    "address": {
+      "formatted": "15237 Ronald Reagan Blvd, Bldg OP1, Suite 702, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.5591752,
+      "lng": -97.799267
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=8270798688149554844&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 1,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 3.7,
+        "count": 99
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
+    }
+  },
+  {
+    "id": "ChIJYdhHkhgsW4YRUkpCWNsiiJI",
+    "slug": "starbucks-crystal-falls-leander",
+    "name": "Starbucks (Crystal Falls)",
+    "primaryCategory": "Coffee Shop",
+    "cuisines": [],
+    "googleType": "Coffee Shop",
+    "address": {
+      "formatted": "1820 Crystal Falls Pkwy, Leander, TX 78641, USA",
+      "locality": "Leander"
+    },
+    "geo": {
+      "lat": 30.54458,
+      "lng": -97.86485
+    },
+    "links": {
+      "googleMapsUrl": "https://maps.google.com/?cid=10558727651844049490&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    },
+    "priceTier": 2,
+    "hours": null,
+    "photos": [],
+    "badgesEditorial": [],
+    "attributes": {
+      "chainStatus": "chain"
+    },
+    "editorial": null,
+    "ratings": {
+      "composite": null,
+      "google": {
+        "rating": 4.1,
+        "count": 480
+      }
+    },
+    "status": "needs_enrich",
+    "provenance": {
+      "core": "google_places_new",
+      "addedBy": "add-place"
     }
   }
 ]
