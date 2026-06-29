@@ -143,6 +143,18 @@ async function requireAdmin() {
   return !!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
 }
 
+// Admin: map each AI task to an engine (gemini / claude / remote workers).
+export async function setAiConfig(fd: FormData) {
+  if (!(await requireAdmin())) return;
+  const { TASKS, setProvider } = await import('@/lib/ai/router');
+  for (const t of TASKS) {
+    const v = String(fd.get(t.task) || '');
+    if (t.allow.includes(v as never)) await setProvider(t.task, v);
+  }
+  revalidatePath('/admin/ai');
+  redirect('/admin/ai');
+}
+
 // Moderation: approve / reject a pending user photo.
 export async function approvePhoto(id: number) {
   if (!(await requireAdmin())) return;

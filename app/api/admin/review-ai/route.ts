@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
+import { runJSON } from '@/lib/ai/router';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
@@ -10,8 +11,7 @@ const PERSONA = "You are Anthony, 'The Leander Local', writing about Leander, Te
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return NextResponse.json({ error: 'Gemini not configured' }, { status: 503 });
+  if (!process.env.GEMINI_API_KEY && !process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'No AI engine configured' }, { status: 503 });
 
   const { slug, notes, visited, verdict, hiddenGem, tags } = await req.json().catch(() => ({}));
   const { rows } = await pool.query('select name, primary_category cat, cuisines, ratings from restaurants where slug = $1', [slug]);
@@ -31,14 +31,7 @@ export async function POST(req: NextRequest) {
   const instruction = `${PERSONA}\n\n${ctx}\n\n${task}\n\nAnthony's rough notes:\n"""${notes || '(no notes, work from the rating and what can fairly be said)'}"""\n\nReturn ONLY minified JSON with exactly these keys: ${shape}. Everything in his voice. No em or en dashes.`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-    const body = { contents: [{ parts: [{ text: instruction }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.9 } };
-    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const j = await resp.json();
-    const txt = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
-    if (!txt) return NextResponse.json({ error: j?.error?.message || 'No draft returned' }, { status: 502 });
-    let out;
-    try { out = JSON.parse(txt); } catch { out = JSON.parse(txt.replace(/^```json\s*|\s*```$/g, '')); }
+    const out = await runJSON('anthony_voice', instruction, { temperature: 0.9 }) as Record<string, unknown>;
     out.visited = !!visited;
     return NextResponse.json(out);
   } catch (e) {
