@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import Providers from '@/components/Providers';
+import Script from 'next/script';
 import type { Metadata } from 'next';
 import { fraunces, hanken, caveat, bebas } from './fonts';
 import './globals.css';
@@ -59,6 +60,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }} />
         <Navbar />
         <Providers>{children}</Providers>
+        {/* Google Analytics (GA4) */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-X002EB34YE" strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-X002EB34YE');`}
+        </Script>
       </body>
     </html>
   );
