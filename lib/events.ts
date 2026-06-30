@@ -55,6 +55,7 @@ export type SpotEvent = {
   id: number; type: string; label: string; emoji: string; title: string; description: string | null;
   when: string; url: string | null; fresh: boolean; confirmedNote: string | null;
   schedule: { byDay: string[]; startTime: string | null; endTime: string | null; freq: string; date: string | null };
+  startDate: string | null; endDate: string | null; // next concrete occurrence (ISO, Central) for structured data
 };
 
 function freshness(r: EventRow): { fresh: boolean; note: string | null } {
@@ -76,6 +77,49 @@ function ago(iso: string): string {
   return `${Math.floor(days / 7)} weeks ago`;
 }
 
+// --- structured-data dates: the next concrete occurrence in America/Chicago (DST-aware) ---
+function centralOffset(dateISO: string): string {
+  const d = new Date(dateISO + 'T12:00:00Z');
+  const tz = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', timeZoneName: 'longOffset' }).formatToParts(d).find((p) => p.type === 'timeZoneName')?.value || 'GMT-06:00';
+  const m = tz.match(/([+-]\d{2}):?(\d{2})/);
+  return m ? `${m[1]}:${m[2]}` : '-06:00';
+}
+function addHours(hhmm: string, h: number): string {
+  const [H, M] = hhmm.split(':').map(Number);
+  const tot = H * 60 + M + h * 60;
+  if (tot >= 1440) return '23:59';
+  return `${String(Math.floor(tot / 60)).padStart(2, '0')}:${String(tot % 60).padStart(2, '0')}`;
+}
+function nextOccurrence(r: EventRow): { date: string; start: string | null; end: string | null } | null {
+  const start = r.start_time ? r.start_time.slice(0, 5) : null;
+  const end = r.end_time ? r.end_time.slice(0, 5) : null;
+  if (r.freq === 'once') return r.event_date ? { date: r.event_date, start, end } : null;
+  const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const nowHM = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+  const base = new Date(todayStr + 'T12:00:00Z');
+  for (let i = 0; i < 40; i++) {
+    const d = new Date(base.getTime() + i * 86400000);
+    const iso = d.toISOString().slice(0, 10);
+    const dow = ((d.getUTCDay() + 6) % 7) + 1;
+    const wom = Math.ceil(d.getUTCDate() / 7);
+    const isLast = d.getUTCDate() + 7 > new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+    let hit = false;
+    if (r.freq === 'weekly') hit = (r.days_of_week || []).includes(dow);
+    else if (r.freq === 'monthly_dow') hit = (r.days_of_week || []).includes(dow) && (r.week_of_month === wom || (r.week_of_month === -1 && isLast));
+    if (hit) { if (i === 0 && start && start < nowHM) continue; return { date: iso, start, end }; }
+  }
+  return null;
+}
+function eventDates(r: EventRow): { startDate: string; endDate: string } | null {
+  const n = nextOccurrence(r);
+  if (!n) return null;
+  const off = centralOffset(n.date);
+  const startDate = n.start ? `${n.date}T${n.start}:00${off}` : n.date;
+  const endT = n.end || (n.start ? addHours(n.start, 2) : null);
+  const endDate = endT ? `${n.date}T${endT}:00${off}` : n.date;
+  return { startDate, endDate };
+}
+
 const LIVE = `e.status = 'approved' and (e.expires_at is null or e.expires_at > now())`;
 
 export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
@@ -84,6 +128,7 @@ export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
   );
   return rows.map((r: EventRow) => {
     const f = freshness(r);
+    const d = eventDates(r);
     return {
       id: r.id, type: r.event_type, label: EVENT_LABELS[r.event_type] || 'Event', emoji: EVENT_EMOJI[r.event_type] || '📅',
       title: clean(r.title) || r.title, description: clean(r.description), when: fmtWhen(r), url: r.url,
@@ -94,6 +139,7 @@ export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
         endTime: r.end_time ? r.end_time.slice(0, 5) : null,
         freq: r.freq, date: r.event_date,
       },
+      startDate: d?.startDate || null, endDate: d?.endDate || null,
     };
   });
 }

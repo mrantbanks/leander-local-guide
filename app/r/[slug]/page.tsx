@@ -102,16 +102,24 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       { '@type': 'ListItem', position: 3, name: spot.name, item: `https://leanderlocalguide.com/r/${slug}` },
     ],
   };
-  const eventLd = events.map((e) => ({
+  const SITE = 'https://leanderlocalguide.com';
+  const evImage = spot.headerPhoto ? `${SITE}${spot.headerPhoto.url}?w=1200`
+    : spot.photo ? `${SITE}/img?n=${encodeURIComponent(spot.photo)}&w=1200`
+      : spot.localPhotos[0] ? `${SITE}${spot.localPhotos[0].url}?w=1200` : null;
+  // Only emit Event structured data for events with a real next date (Google requires startDate).
+  const eventLd = events.filter((e) => e.startDate).map((e) => ({
     '@context': 'https://schema.org', '@type': 'Event', name: e.title,
-    description: e.description || `${e.label} at ${spot.name}`,
-    ...(e.schedule.freq === 'once' && e.schedule.date
-      ? { startDate: e.schedule.startTime ? `${e.schedule.date}T${e.schedule.startTime}` : e.schedule.date }
-      : { eventSchedule: { '@type': 'Schedule', repeatFrequency: e.schedule.freq === 'weekly' ? 'P1W' : 'P1M', byDay: e.schedule.byDay.length ? e.schedule.byDay : undefined, startTime: e.schedule.startTime || undefined, endTime: e.schedule.endTime || undefined } }),
+    description: e.description || `${e.label} at ${spot.name}, ${addrParts[0]} in Leander, TX.`,
+    startDate: e.startDate,
+    ...(e.endDate ? { endDate: e.endDate } : {}),
+    eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    ...(evImage ? { image: [evImage] } : {}),
     location: { '@type': 'Place', name: spot.name, address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' } },
-    organizer: { '@type': 'Organization', name: spot.name },
-    url: e.url || `https://leanderlocalguide.com/r/${slug}`,
+    performer: { '@type': 'PerformingGroup', name: spot.name },
+    organizer: { '@type': 'Organization', name: spot.name, url: `${SITE}/r/${slug}` },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: e.url || `${SITE}/r/${slug}`, validFrom: e.startDate },
+    url: e.url || `${SITE}/r/${slug}`,
   }));
 
   return (
