@@ -61,12 +61,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Navbar />
         <Providers>{children}</Providers>
         {/* Google Analytics (GA4) */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-X002EB34YE" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-X002E834YE" strategy="afterInteractive" />
         <Script id="ga4-init" strategy="afterInteractive">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-X002EB34YE');`}
+gtag('config', 'G-X002E834YE');`}
         </Script>
       </body>
     </html>
