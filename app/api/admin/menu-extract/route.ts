@@ -71,6 +71,8 @@ Return ONLY minified JSON with exactly this shape:
 
 Rules:
 - Transcribe EXACTLY what is printed. Never invent, guess, or embellish dish names, descriptions, or prices.
+- LEGIBILITY BAR: only include a description if you can read EVERY word of it with certainty. If any word is blurry or ambiguous, omit the desc field entirely for that item. A missing description is correct; a garbled or guessed one is a serious error.
+- Same bar for prices: if a digit is not certain, omit the price.
 - Keep the menu's own section order and item order.
 - Dish names in Title Case even if printed ALL CAPS.
 - If a price is per-protein or sized (e.g. Chicken 14 / Beef 16, or S/M/L 3/5/8), put shared pricing in the section note and the per-item price only when the item has its own.
