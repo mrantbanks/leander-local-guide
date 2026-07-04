@@ -5,7 +5,7 @@ import { pool } from '@/lib/db';
 // or 'remote' (handed to the worker fleet — only valid for queue tasks: moderation, events).
 
 export type Provider = 'gemini' | 'claude' | 'remote';
-export type AiTask = 'moderation' | 'events' | 'happy_hour' | 'anthony_voice' | 'captions';
+export type AiTask = 'moderation' | 'events' | 'happy_hour' | 'anthony_voice' | 'captions' | 'menus';
 
 export const TASKS: { task: AiTask; label: string; desc: string; allow: Provider[]; def: Provider }[] = [
   { task: 'moderation', label: 'Review & tip moderation', desc: 'Decide if a user review/tip is genuine and on-topic. "Remote" hands it to the worker fleet (needs the worker client to poll /api/worker/moderation).', allow: ['remote', 'gemini', 'claude'], def: 'gemini' },
@@ -13,6 +13,7 @@ export const TASKS: { task: AiTask; label: string; desc: string; allow: Provider
   { task: 'happy_hour', label: 'Happy-hour scraper (weekly cron)', desc: 'Read each restaurant website and pull the happy hour. Good candidate for Claude.', allow: ['gemini', 'claude'], def: 'gemini' },
   { task: 'anthony_voice', label: "Anthony's AI voice (review composer)", desc: 'Draft reviews in the Bourdain voice. Gemini is fine here.', allow: ['gemini', 'claude'], def: 'gemini' },
   { task: 'captions', label: 'Photo captions (vision)', desc: 'Write a short caption from a photo. Vision task.', allow: ['gemini', 'claude'], def: 'gemini' },
+  { task: 'menus', label: 'Menu transcription (vision)', desc: 'Read the photos marked 📋 Menu and transcribe every section, dish, and price into structured data for the public /menu pages.', allow: ['gemini', 'claude'], def: 'gemini' },
 ];
 
 const DEFAULTS: Record<string, Provider> = Object.fromEntries(TASKS.map((t) => [t.task, t.def]));
@@ -54,14 +55,14 @@ async function geminiJSON(parts: Part[], temperature: number): Promise<unknown> 
   const t = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
   return JSON.parse(t);
 }
-async function claudeJSON(parts: Part[], temperature: number): Promise<unknown> {
+async function claudeJSON(parts: Part[], temperature: number, maxTokens = 1024): Promise<unknown> {
   const content: unknown[] = parts.map((p) => p.inlineData
     ? { type: 'image', source: { type: 'base64', media_type: p.inlineData.mimeType, data: p.inlineData.data } }
     : { type: 'text', text: p.text || '' });
   content.push({ type: 'text', text: 'Respond with ONLY the JSON object, no prose and no markdown fences.' });
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AKEY(), 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 1024, temperature, messages: [{ role: 'user', content }] }),
+    body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: maxTokens, temperature, messages: [{ role: 'user', content }] }),
   });
   const j = await r.json();
   const t = (j?.content?.find((c: { type: string; text?: string }) => c.type === 'text')?.text || '').replace(/^```json\s*|\s*```$/g, '');
@@ -70,14 +71,15 @@ async function claudeJSON(parts: Part[], temperature: number): Promise<unknown> 
 
 // Run a JSON-returning task honoring the config. Inline callers can't use 'remote' -> falls back to
 // gemini. 'claude' falls back to gemini if no key, so the site never breaks on a misconfig.
-export async function runJSON(task: AiTask, prompt: string, opts?: { temperature?: number; image?: { mimeType: string; data: string } }): Promise<unknown> {
+export async function runJSON(task: AiTask, prompt: string, opts?: { temperature?: number; image?: { mimeType: string; data: string }; images?: { mimeType: string; data: string }[]; maxTokens?: number }): Promise<unknown> {
   const provider = await getProvider(task);
   const temperature = opts?.temperature ?? 0.2;
   const parts: Part[] = [];
   if (opts?.image) parts.push({ inlineData: opts.image });
+  for (const im of opts?.images || []) parts.push({ inlineData: im });
   parts.push({ text: prompt });
   if (provider === 'claude' && AKEY()) {
-    try { return await claudeJSON(parts, temperature); } catch { return geminiJSON(parts, temperature); }
+    try { return await claudeJSON(parts, temperature, opts?.maxTokens); } catch { return geminiJSON(parts, temperature); }
   }
   return geminiJSON(parts, temperature);
 }

@@ -111,6 +111,32 @@ export async function setPhotoCaption(id: number, slug: string, caption: string)
   revalidatePath(`/r/${slug}`);
 }
 
+// Admin: save the structured menu (hand-edited or AI-extracted). Validates shape; null sections clears it.
+export async function saveMenu(slug: string, json: string): Promise<{ ok: boolean; error?: string }> {
+  if (!(await requireAdmin())) return { ok: false, error: 'forbidden' };
+  let menu: { sections?: unknown; note?: unknown } | null = null;
+  try { menu = JSON.parse(json); } catch { return { ok: false, error: 'That is not valid JSON' }; }
+  const sections = Array.isArray(menu?.sections) ? menu?.sections as { name?: unknown; items?: unknown }[] : [];
+  if (!sections.length) return { ok: false, error: 'Menu needs at least one section with items ({"sections":[...]})' };
+  for (const s of sections) {
+    if (!s || typeof s.name !== 'string' || !s.name.trim()) return { ok: false, error: 'Every section needs a "name"' };
+    if (!Array.isArray(s.items) || !s.items.length) return { ok: false, error: `Section "${s.name}" has no items` };
+    for (const it of s.items as { name?: unknown }[]) {
+      if (!it || typeof it.name !== 'string' || !it.name.trim()) return { ok: false, error: `An item in "${s.name}" is missing its "name"` };
+    }
+  }
+  const stripped = JSON.stringify(menu).replace(/[ \t]*[—–][ \t]*/g, ', ').replace(/[—–]/g, '-'); // house rule
+  await pool.query('update restaurants set menu = $2::jsonb, updated_at = now() where slug = $1', [slug, stripped]);
+  for (const p of [`/r/${slug}`, `/r/${slug}/menu`, `/admin/r/${slug}`]) revalidatePath(p);
+  return { ok: true };
+}
+
+export async function deleteMenu(slug: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query('update restaurants set menu = null, updated_at = now() where slug = $1', [slug]);
+  for (const p of [`/r/${slug}`, `/r/${slug}/menu`, `/admin/r/${slug}`]) revalidatePath(p);
+}
+
 // Mark/unmark a photo as a menu (shown in its own zoomable Menu section, kept out of the food gallery).
 export async function setPhotoMenu(id: number, slug: string, isMenu: boolean) {
   if (!(await requireAdmin())) return;

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { pool } from '@/lib/db';
-import { updateReview, deletePhoto, addEvent, deleteEvent } from '@/app/actions';
+import { updateReview, addEvent, deleteEvent } from '@/app/actions';
 import { EVENT_LABELS } from '@/lib/events';
 import { auth } from '@/auth';
-import PhotoUploader from '@/components/PhotoUploader';
+import PhotoStudio from '@/components/PhotoStudio';
+import MenuStudio from '@/components/MenuStudio';
 import ReviewComposer from '@/components/ReviewComposer';
-import { uploadUrl } from '@/lib/uploads';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,13 +16,13 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) redirect('/admin');
   const { slug } = await params;
-  const { rows } = await pool.query('select slug, name, editorial, happy_hour, attributes, owner_content, hidden from restaurants where slug = $1', [slug]);
+  const { rows } = await pool.query("select slug, name, editorial, happy_hour, attributes, owner_content, hidden, menu, photos->0->>'name' google_photo from restaurants where slug = $1", [slug]);
   const r = rows[0];
   if (!r) notFound();
   const ed = r.editorial || {};
   const attr = r.attributes || {};
   const oc = r.owner_content || {};
-  const ph = await pool.query('select id, filename from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
+  const ph = await pool.query('select id, filename, caption, is_menu, is_header from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
   const ev = await pool.query('select id, event_type, title, freq, days_of_week, start_time, status from events where place_id = (select id from restaurants where slug = $1) order by event_type', [slug]);
   const action = updateReview.bind(null, slug);
   const field = 'w-full bg-paper-raised border border-rule px-3 py-2 font-ui text-ink rounded-[2px]';
@@ -116,23 +116,14 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
       </form>
 
       <section className="mt-10 border-t border-rule pt-6">
-        <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">Photos</h2>
-        {ph.rows.length > 0 ? (
-          <div className="flex flex-wrap gap-3">
-            {ph.rows.map((p) => (
-              <div key={p.id} className="relative w-28 h-28 border border-rule overflow-hidden bg-paper-sunk">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={uploadUrl(p.filename)} alt="" className="w-full h-full object-cover" />
-                <form action={deletePhoto.bind(null, p.id as number, slug)}>
-                  <button className="absolute top-0 right-0 bg-oxblood/85 text-paper text-xs px-1.5 py-0.5" title="Delete">×</button>
-                </form>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="font-ui text-sm text-ink-soft">No photos yet.</p>
-        )}
-        <PhotoUploader slug={slug} />
+        <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-1">Photos</h2>
+        <p className="font-ui text-xs text-ink-soft mb-3">Hover a photo: <b>Edit</b> opens crop / rotate / color / AI magic-edit · <b>📋</b> marks it as a menu · <b>★</b> makes it the header · drag to reorder.</p>
+        <PhotoStudio slug={slug} googlePhoto={r.google_photo} initial={ph.rows.map((p) => ({ id: p.id, filename: p.filename, caption: p.caption, isMenu: p.is_menu, isHeader: p.is_header }))} />
+      </section>
+
+      <section className="mt-10 border-t border-rule pt-6">
+        <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-1">The Menu page (SEO)</h2>
+        <MenuStudio slug={slug} initial={(r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu : null} menuPhotoCount={ph.rows.filter((p) => p.is_menu).length} />
       </section>
 
       <section className="mt-10 border-t border-rule pt-6">

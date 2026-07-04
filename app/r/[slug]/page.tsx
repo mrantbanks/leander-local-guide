@@ -76,6 +76,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
     telephone: spot.phone || undefined,
     image: ogImg ? [ogImg] : undefined,
+    hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
     // Only claim a first-person Review by Anthony when he has ACTUALLY visited.
     // Otherwise expose Google's aggregate rating, which is what the summary reflects.
@@ -209,12 +210,28 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
         return <SpotPhotos hero={hero} gallery={gallery} name={spot.name} />;
       })()}
 
-      {spot.menus.length > 0 && (
+      {(spot.menus.length > 0 || spot.menuData) && (
         <section className="border-b border-rule bg-paper-raised">
           <div className="max-w-5xl mx-auto px-5 py-6">
-            <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm mb-1">📋 The Menu</h2>
-            <p className="font-ui text-xs text-ink-soft mb-3">Tap to view full size and zoom in.</p>
-            <MenuViewer menus={spot.menus} />
+            <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+              <h2 className="font-stamp uppercase tracking-[0.15em] text-chile text-sm">📋 The Menu</h2>
+              {spot.menuData && (
+                <Link href={`/r/${slug}/menu`} className="font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-1.5 rounded-sm hover:bg-oxblood">
+                  Read the full menu with prices →
+                </Link>
+              )}
+            </div>
+            {spot.menuData && (
+              <p className="font-ui text-xs text-ink-soft mb-2">
+                Every dish typed up and searchable: <Link href={`/r/${slug}/menu`} className="text-chile underline underline-offset-2">{spot.menuData.sections.reduce((a, s) => a + s.items.length, 0)} dishes across {spot.menuData.sections.length} sections</Link>.
+              </p>
+            )}
+            {spot.menus.length > 0 && (
+              <>
+                <p className="font-ui text-xs text-ink-soft mb-3">Tap to view full size and zoom in.</p>
+                <MenuViewer menus={spot.menus} />
+              </>
+            )}
           </div>
         </section>
       )}

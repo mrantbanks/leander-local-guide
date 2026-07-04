@@ -3,6 +3,17 @@ import { pool } from './db';
 import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
 
+// Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
+// Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
+export type MenuItem = { name: string; desc?: string; price?: string };
+export type MenuSection = { name: string; note?: string; items: MenuItem[] };
+export type MenuData = {
+  sections: MenuSection[];
+  note?: string;        // one-liner shown under the H1, Anthony's voice
+  extracted?: string;   // YYYY-MM-DD the transcription was made
+  photoIds?: number[];  // photos it was read from
+};
+
 export type Spot = {
   id: string;
   slug: string;
@@ -51,6 +62,7 @@ export type Spot = {
   skipIt: number;
   beenHere: number;
   wantToGo: number;
+  menuData: MenuData | null;
 };
 
 // Lightweight shape for cards/grid (no heavy review prose) - keeps the client payload small.
@@ -173,6 +185,7 @@ function mapRow(r: any): Spot {
     ownerBlurb: clean(oc.blurb),
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
     beenHere: r.been_here_ct || 0, wantToGo: r.want_to_go_ct || 0,
+    menuData: (r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu as MenuData : null,
   };
 }
 
