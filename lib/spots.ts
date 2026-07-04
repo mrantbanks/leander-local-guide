@@ -123,7 +123,7 @@ function mapRow(r: any): Spot {
   const todayIdx = (new Date().getDay() + 6) % 7;
   const badges: string[] = [];
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
-  if (a.chainStatus === 'chain') badges.push('Chain');
+  if (a.chainStatus === 'chain') badges.push(a.chainTier === 'regional-tx' ? 'Texas Chain' : 'Chain');
   else if (a.chainStatus === 'local') badges.push('Local');
   if (a.outdoorSeating) badges.push('Patio');
   if (a.allowsDogs) badges.push('Dog-Friendly');
