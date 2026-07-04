@@ -83,7 +83,7 @@ export default async function Home() {
               </div>
               <div className="flex md:flex-col items-center md:items-end gap-4 shrink-0">
                 {pick.ratingGoogle && <span className="font-hand text-6xl text-amber leading-none">{pick.ratingGoogle}</span>}
-                <VerdictStamp rating={pick.ratingGoogle} light className="text-lg" />
+                <VerdictStamp rating={pick.ratingGoogle} label={pick.verdict} light className="text-lg" />
               </div>
             </div>
           )}

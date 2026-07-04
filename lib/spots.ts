@@ -301,7 +301,9 @@ export type InkItem = { kind: 'new' | 'rave' | 'buzz'; slug: string; name: strin
 // FRESH INK: the home heartbeat, assembled from real activity.
 export async function getFreshInk(): Promise<InkItem[]> {
   const [fresh, raves, buzz] = await Promise.all([
-    pool.query(`select slug, name, primary_category cat from restaurants where not hidden order by created_at desc limit 4`),
+    pool.query(`select slug, name, primary_category cat from restaurants
+                where not hidden and coalesce(attributes->>'chainStatus','') <> 'chain'
+                order by created_at desc limit 4`),
     pool.query(`select slug, name, editorial->>'hook' hook from restaurants
                 where editorial->>'verdict'='WORTH THE GRAVEL' and not hidden
                 order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last limit 6`),
