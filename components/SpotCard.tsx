@@ -39,7 +39,7 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`/img?n=${encodeURIComponent(spot.photo)}&w=800`}
-                srcSet={`/img?n=${encodeURIComponent(spot.photo)}&w=400 400w, /img?n=${encodeURIComponent(spot.photo)}&w=800 800w, /img?n=${encodeURIComponent(spot.photo)}&w=1200 1200w`}
+                srcSet={`/img?n=${encodeURIComponent(spot.photo)}&w=400 400w, /img?n=${encodeURIComponent(spot.photo)}&w=800 800w`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 alt={spot.name}
                 width={800}
