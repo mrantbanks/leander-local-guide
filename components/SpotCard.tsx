@@ -10,7 +10,7 @@ const categoryIcons: Record<string, string> = {
 };
 
 // Committee priority order; max 3 editorial badges per card so the zine look stays clean.
-const BADGE_RANK = ["Anthony's Pick", 'Hidden Gem', 'Local Favorite', 'New', 'Food Truck', 'Local', 'Patio', 'Dog-Friendly', 'Veg', 'Happy Hour'];
+const BADGE_RANK = ['Coming Soon', "Anthony's Pick", 'Hidden Gem', 'Local Favorite', 'New', 'Food Truck', 'Local', 'Patio', 'Dog-Friendly', 'Veg', 'Happy Hour'];
 
 export default function SpotCard({ spot, priority = false }: { spot: CardSpot; priority?: boolean }) {
   const icon = categoryIcons[spot.category] ?? '📍';
@@ -64,7 +64,7 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
             <span className="font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
             <CardStatus periods={spot.periods} open24={spot.open24} openLate={spot.openLate} />
           </div>
-          <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
+          <VerdictStamp rating={spot.comingSoon ? undefined : spot.ratingGoogle} label={spot.comingSoon ? 'COMING SOON' : spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
         </div>
 
         <div className="relative -mt-5 mx-3 z-10">

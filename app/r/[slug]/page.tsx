@@ -143,13 +143,20 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 {spot.name}
               </h1>
               <div className="mt-3 flex items-center gap-3 flex-wrap font-ui text-sm text-ink-soft">
-                {spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
-                {spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}
+                {!spot.comingSoon && spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
+                {!spot.comingSoon && spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}
                 {spot.ratingGoogle && <span>Google: {spot.ratingGoogle}★ ({spot.ratingCount ?? 0})</span>}
                 {spot.priceTier ? <span>{'$'.repeat(spot.priceTier)}</span> : null}
               </div>
+              {spot.comingSoon && (
+                <p className="mt-3 font-hand text-xl text-chile">
+                  {spot.openingNote || 'Not open yet, but the sign is up and Leander is watching.'}
+                </p>
+              )}
             </div>
-            {spot.visited ? (
+            {spot.comingSoon ? (
+              <VerdictStamp label="COMING SOON" className="text-lg shrink-0" />
+            ) : spot.visited ? (
               <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="text-lg shrink-0" />
             ) : (
               <div className="shrink-0 text-right">

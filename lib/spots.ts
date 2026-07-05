@@ -63,13 +63,15 @@ export type Spot = {
   beenHere: number;
   wantToGo: number;
   menuData: MenuData | null;
+  comingSoon: boolean;
+  openingNote: string | null;
 };
 
 // Lightweight shape for cards/grid (no heavy review prose) - keeps the client payload small.
 export type CardSpot = Pick<Spot,
   'id' | 'slug' | 'name' | 'category' | 'cuisines' | 'ratingGoogle' | 'priceTier' | 'addressLine' |
   'hoursToday' | 'openNow' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
-  'chainStatus' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto'>;
+  'chainStatus' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
 
 // HOUSE RULE: no em/en dashes anywhere on the site. Prose -> comma; ranges -> hyphen.
 // Preserves paragraph breaks (\n\n) and real hyphens (Chick-fil-A).
@@ -145,6 +147,8 @@ function mapRow(r: any): Spot {
   const lead: string[] = [];
   const gr = ratings.google?.rating ?? 0;
   const gc = ratings.google?.count ?? 0;
+  const comingSoon = ed.openingStatus === 'coming_soon';
+  if (comingSoon) lead.push('Coming Soon'); // renders first, ahead of Hidden Gem etc.
   if (r.is_hidden_gem) lead.push('Hidden Gem');
   else if (a.chainStatus === 'local' && gr >= 4.6 && gc > 150) lead.push('Local Favorite');
   if (Array.isArray(ed.badges)) for (const b of ed.badges) if (!lead.includes(b)) lead.push(b);
@@ -186,6 +190,8 @@ function mapRow(r: any): Spot {
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
     beenHere: r.been_here_ct || 0, wantToGo: r.want_to_go_ct || 0,
     menuData: (r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu as MenuData : null,
+    comingSoon,
+    openingNote: clean(ed.openingNote),
   };
 }
 

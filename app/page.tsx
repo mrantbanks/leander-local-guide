@@ -26,8 +26,9 @@ export const metadata = {
 export default async function Home() {
   const [spots, counts, ink] = await Promise.all([getAllSpots(), countSpots(), getFreshInk()]);
   const dateline = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date());
-  const pick = spots[0];
-  const feed = spots.map((s) => ({
+  // never send anyone to a spot that isn't open yet
+  const pick = spots.find((s) => !s.comingSoon);
+  const feed = spots.filter((s) => !s.comingSoon).map((s) => ({
     slug: s.slug, name: s.name, category: s.category, hook: s.hook, rating: s.ratingGoogle, priceTier: s.priceTier,
   }));
   // trim heavy prose for the client grid payload (explicit pick = small + lint-clean)
@@ -39,6 +40,7 @@ export default async function Home() {
     verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities,
     chainStatus: s.chainStatus, beenHere: s.beenHere, worthIt: s.worthIt, itsFine: s.itsFine,
     skipIt: s.skipIt, wantToGo: s.wantToGo, visited: s.visited, happyHour: s.happyHour, localPhotos: s.localPhotos, headerPhoto: s.headerPhoto,
+    comingSoon: s.comingSoon,
   }));
 
   return (

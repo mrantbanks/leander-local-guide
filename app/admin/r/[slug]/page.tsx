@@ -46,7 +46,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <label className={`flex items-center gap-2 border-2 rounded-sm px-3 py-2.5 mb-1 cursor-pointer ${r.hidden ? 'border-oxblood bg-oxblood/5' : 'border-rule'}`}>
           <input type="checkbox" name="hidden" defaultChecked={!!r.hidden} className="w-4 h-4" />
           <span className="font-stamp uppercase tracking-[0.08em] text-xs text-ink">Hide this listing</span>
-          <span className="font-ui text-xs text-ink-soft">— closed, or coming soon / not open yet. Removes it from the whole public site.</span>
+          <span className="font-ui text-xs text-ink-soft">— closed or gone for good. Removes it from the whole public site. For a spot that just hasn&apos;t opened yet, DON&apos;T hide it; set Opening status to Coming Soon below and it shows with a Coming Soon stamp.</span>
         </label>
         {r.hidden ? <p className="font-ui text-xs text-oxblood mb-2">This listing is currently hidden from the site.</p> : null}
 
@@ -94,7 +94,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <input name="badges" defaultValue={(ed.badges || []).join(', ')} className={field} />
         <p className="font-ui text-xs text-ink-soft mt-1">Hidden Gem / Local Favorite are auto-applied to top-rated local spots; use this to pin them manually.</p>
 
-        <label className={label}>Opening status (shows on the &quot;New in Leander&quot; wire)</label>
+        <label className={label}>Opening status (Coming Soon = visible with a COMING SOON stamp + badge; also feeds the &quot;New in Leander&quot; wire)</label>
         <select name="openingStatus" defaultValue={ed.openingStatus || ''} className={field}>
           <option value="">— none —</option>
           <option value="now_open">🎉 Now Open</option>

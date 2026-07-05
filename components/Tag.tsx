@@ -5,6 +5,7 @@ interface TagProps {
 
 const accent: Record<string, string> = {
   'Food Truck': 'text-amber-700 border-amber-600/60', // amber reserved for live/mobile energy
+  'Coming Soon': 'text-chile border-chile border-2 font-bold', // loudest outline in the set: it announces, not describes
 };
 
 export default function Tag({ label }: TagProps) {
