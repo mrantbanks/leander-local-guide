@@ -82,5 +82,7 @@ async function logVerdict(b: Record<string, unknown>, id: number, venue: string,
     'insert into worker_log (worker_id, event_id, venue, event_type, decision, model, reason) values ($1,$2,$3,$4,$5,$6,$7)',
     [wid, id, String(venue || '').slice(0, 120), String(etype || '').slice(0, 40), decision.slice(0, 20), String(b.model || '').slice(0, 80), note]
   ).catch(() => {});
-  await pool.query('update worker_nodes set last_seen=now() where id=$1', [wid]).catch(() => {});
+  await pool.query(
+    `insert into worker_nodes (id, last_seen, status) values ($1, now(), 'fleet-worker')
+     on conflict (id) do update set last_seen=now()`, [wid]).catch(() => {});
 }

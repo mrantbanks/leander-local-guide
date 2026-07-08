@@ -60,8 +60,11 @@ export async function POST(req: NextRequest) {
     [limit]
   );
 
-  // Claims double as worker liveness (SPEC v1 — no separate heartbeat).
-  await pool.query('update worker_nodes set last_seen=now() where id=$1', [workerId]).catch(() => {});
+  // Claims double as worker liveness (SPEC v1 — no separate heartbeat). Upsert so
+  // brand-new fleet workers self-register; don't clobber a legacy worker's status.
+  await pool.query(
+    `insert into worker_nodes (id, last_seen, status) values ($1, now(), 'fleet-worker')
+     on conflict (id) do update set last_seen=now()`, [workerId]).catch(() => {});
 
   const jobs = rows
     .filter((ev) => ev.website)
