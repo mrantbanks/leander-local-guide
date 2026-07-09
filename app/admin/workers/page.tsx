@@ -23,8 +23,13 @@ export default async function WorkersPage() {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
   const [nodes, queue, recent, tally, scrape, coverage, mod, subs, pendingQ] = await Promise.all([
+    // Legacy workers heartbeat every 60s (3-min window). Fleet workers check in by
+    // claiming — up to ~2.5 min apart when idle, longer while chewing a browser job —
+    // so they get a wider window.
     pool.query(`select id, last_seen, first_seen, status, processed, errors,
-                  (last_seen > now() - interval '3 minutes') as online from worker_nodes order by last_seen desc`),
+                  (last_seen > now() - case when status = 'fleet-worker'
+                     then interval '12 minutes' else interval '3 minutes' end) as online
+                from worker_nodes order by last_seen desc`),
     pool.query(`select
         count(*) filter (where status='pending')::int pending,
         count(*) filter (where status='approved')::int approved,
