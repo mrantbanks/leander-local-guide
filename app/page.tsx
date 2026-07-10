@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getAllSpots, countSpots, getFreshInk } from '@/lib/spots';
 import FilterableGrid from '@/components/FilterableGrid';
 import FreshInk from '@/components/FreshInk';
@@ -26,8 +27,17 @@ export const metadata = {
 export default async function Home() {
   const [spots, counts, ink] = await Promise.all([getAllSpots(), countSpots(), getFreshInk()]);
   const dateline = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date());
+  // Tonight's Pick rotates daily (America/Chicago): Penny Royal today, Mockingbird tomorrow,
+  // then through the live Hidden Gems set. Anchored so 2026-07-10 = Penny Royal.
+  const cstParts = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const cstPart = (t: string) => cstParts.find((p) => p.type === t)?.value || '';
+  const dayNum = Math.floor(Date.parse(`${cstPart('year')}-${cstPart('month')}-${cstPart('day')}T00:00:00Z`) / 86400000);
+  const anchor = Math.floor(Date.UTC(2026, 6, 10) / 86400000); // 2026-07-10 -> index 0 (Penny Royal)
+  const LEAD = ['penny-royal-bakery', 'mockingbird-bakes'];
+  const gemSlugs = spots.filter((s) => !s.comingSoon && s.badges.includes('Hidden Gem')).map((s) => s.slug);
+  const rotation = [...LEAD, ...gemSlugs.filter((sl) => !LEAD.includes(sl))].filter((sl) => spots.some((s) => s.slug === sl && !s.comingSoon));
   // never send anyone to a spot that isn't open yet
-  const pick = spots.find((s) => !s.comingSoon);
+  const pick = (rotation.length ? spots.find((s) => s.slug === rotation[(((dayNum - anchor) % rotation.length) + rotation.length) % rotation.length]) : undefined) || spots.find((s) => !s.comingSoon);
   const feed = spots.filter((s) => !s.comingSoon).map((s) => ({
     slug: s.slug, name: s.name, category: s.category, hook: s.hook, rating: s.ratingGoogle, priceTier: s.priceTier,
   }));
@@ -69,10 +79,11 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
           <p className="font-stamp uppercase tracking-[0.22em] text-amber text-sm mb-4">Tonight&apos;s Pick</p>
           {pick && (
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-7">
+            <Link href={`/r/${pick.slug}`} className="group flex flex-col md:flex-row md:items-end md:justify-between gap-7 rounded-sm -mx-2 px-2 py-1 transition-colors hover:bg-paper/5">
               <div className="max-w-2xl">
-                <h2 className="font-display font-black leading-[0.95] tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+                <h2 className="font-display font-black leading-[0.95] tracking-tight transition-colors group-hover:text-amber" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
                   {pick.name}
+                  <span aria-hidden="true" className="inline-block ml-3 align-middle text-amber transition-transform group-hover:translate-x-1" style={{ fontSize: '0.5em' }}>→</span>
                 </h2>
                 {pick.hook ? (
                   <p className="mt-4 font-hand text-2xl text-amber">“{pick.hook}”</p>
@@ -87,7 +98,7 @@ export default async function Home() {
                 {pick.ratingGoogle && <span className="font-hand text-6xl text-amber leading-none">{pick.ratingGoogle}</span>}
                 <VerdictStamp rating={pick.ratingGoogle} label={pick.verdict} light className="text-lg" />
               </div>
-            </div>
+            </Link>
           )}
           <div className="mt-10">
             <FeedMe spots={feed} />

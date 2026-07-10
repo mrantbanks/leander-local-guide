@@ -199,7 +199,9 @@
   .ticket .venue{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.1em; font-size:12px; color:var(--chile); text-align:center}
   .ticket .deal-t{font-family:var(--font-display); font-weight:900; font-size:22px; text-align:center; line-height:1.1; margin:6px 0}
   .ticket .deal-fine{font-size:12px; color:var(--ink-soft); text-align:center}
-  .ticket .barcode{height:34px; margin:12px 0 6px; background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 9px); opacity:.85}
+  .ticket .barcode{height:34px; width:100%; display:block; margin:12px 0 2px; opacity:.9; cursor:help}
+  .ticket .barcode-hint{font-family:var(--font-hand); font-size:13.5px; color:var(--chile); text-align:center; min-height:15px; margin-bottom:4px; opacity:0; transition:opacity .2s}
+  .ticket .barcode-hint.on{opacity:1}
   .ticket .meta{display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-soft); letter-spacing:.04em}
 
   .createbtn{
@@ -409,7 +411,8 @@
           <div class="venue">Cielo Rojo Taquería</div>
           <div class="deal-t" id="tk-title">Free churro with any plate</div>
           <div class="deal-fine" id="tk-fine">One per table. Dine-in.</div>
-          <div class="barcode"></div>
+          <canvas id="tk-barcode" class="barcode" aria-label="Barcode — tap to reveal the hidden name"></canvas>
+          <div class="barcode-hint" id="tk-barcode-hint"></div>
           <div class="meta"><span id="tk-days">MON–SUN</span><span id="tk-exp">No expiry</span></div>
         </div>
       </div>
@@ -667,13 +670,57 @@
     $("#tk-fine").textContent=sel.fine;
     $("#tk-days").textContent=daysLabel();
     $("#tk-exp").textContent=expSel.replace(" ★","");
+    drawWordBarcode();
   }
+
+  /* ---- Easter egg: the barcode is secretly the restaurant's name, sliced into bars ---- */
+  var BARCODE_WORD="CIELO ROJO";
+  function drawWordBarcode(){
+    var cv=$("#tk-barcode"); if(!cv) return;
+    var W=cv.clientWidth|0, H=34;
+    if(W<=0) return; // hidden — redraw once the stamp is visible
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=W*dpr; cv.height=H*dpr;
+    var ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+    // render the word to an offscreen canvas, then read its pixels
+    var oc=document.createElement("canvas"); oc.width=W; oc.height=H;
+    var o=oc.getContext("2d");
+    o.fillStyle="#fff"; o.fillRect(0,0,W,H);
+    o.fillStyle="#000"; o.textAlign="center"; o.textBaseline="middle";
+    var fs=30, fnt=function(s){return "700 "+s+'px "Bebas Neue","Arial Narrow","Hanken Grotesk",sans-serif';};
+    o.font=fnt(fs);
+    while(o.measureText(BARCODE_WORD).width>W-6 && fs>7){ fs--; o.font=fnt(fs); }
+    o.fillText(BARCODE_WORD, W/2, H/2+1);
+    var d=o.getImageData(0,0,W,H).data;
+    ctx.fillStyle=(getComputedStyle(document.documentElement).getPropertyValue("--ink").trim())||"#16130F";
+    var barW=2, step=3;
+    for(var x=0;x<W;x+=step){
+      var top=-1,bot=-1;
+      for(var y=0;y<H;y++){
+        var covered=false;
+        for(var xx=x;xx<Math.min(W,x+barW);xx++){ if(d[(y*W+xx)*4]<128){ covered=true; break; } }
+        if(covered){ if(top<0) top=y; bot=y; }
+      }
+      if(top<0){ ctx.globalAlpha=.3; ctx.fillRect(x,H/2-1,barW,2); ctx.globalAlpha=1; } // gap → faint tick, keeps the barcode look
+      else ctx.fillRect(x,top,barW,(bot-top)+1);
+    }
+  }
+  (function(){
+    var cv=$("#tk-barcode"), hint=$("#tk-barcode-hint");
+    if(!cv||!hint) return;
+    cv.addEventListener("click",function(){
+      var on=hint.classList.toggle("on");
+      hint.textContent=on?("🔎 psst — it's the name: "+BARCODE_WORD):"";
+    });
+  })();
+  window.addEventListener("resize",drawWordBarcode,{passive:true});
   syncTicket();
 
   function openBuilder(){
     builder.classList.add("on");
     $("#newdealopen").style.display="none";
     builder.scrollIntoView({behavior:"smooth",block:"center"});
+    setTimeout(drawWordBarcode,60);
   }
   $("#newdealopen").addEventListener("click",openBuilder);
   $("#canceldeal").addEventListener("click",function(){
