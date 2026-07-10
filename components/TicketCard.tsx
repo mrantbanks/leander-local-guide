@@ -1,4 +1,5 @@
 import { scheduleLabel } from '@/lib/specials-format';
+import WordBarcode from '@/components/WordBarcode';
 
 // Presentational zine "Passport Stamp" — rendered on /ticket/[id] AND as the live preview
 // in the owner studio. No 'use client' so it works in both server and client trees.
@@ -20,6 +21,8 @@ export default function TicketCard({ restaurant, title, details, recurring, days
         <p className="font-display font-black text-ink leading-[1.05]" style={{ fontSize: 'clamp(1.5rem, 6.5vw, 2.25rem)' }}>{title || 'Your deal shows up here'}</p>
         {details && <p className="font-ui text-sm text-ink-soft mt-2">{details}</p>}
         <p className="font-stamp uppercase tracking-[0.08em] text-xs text-chile mt-3">{label}</p>
+        {/* hidden easter egg: this "barcode" is the restaurant's name sliced into bars */}
+        <WordBarcode text={restaurant} className="mt-5 opacity-90" />
       </div>
       <div className="px-6 py-4 border-t-2 border-dashed border-ink text-center bg-paper-raised">
         <p className="font-hand text-xl text-ink leading-tight">Show this at the counter.</p>
