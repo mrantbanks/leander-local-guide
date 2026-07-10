@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
   },
   // "/food" was a duplicate of the homepage directory; consolidate it onto "/".
   async redirects() {
-    return [{ source: "/food", destination: "/", permanent: true }];
+    return [
+      { source: "/food", destination: "/", permanent: true },
+      // "Locals Only" rebranded to "The Local Passport" — keep the old URL's equity.
+      { source: "/locals-only", destination: "/passport", permanent: true },
+    ];
   },
 };
 

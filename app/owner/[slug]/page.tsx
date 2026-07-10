@@ -6,6 +6,7 @@ import { getOwnerSpecials, scheduleLabel } from '@/lib/specials';
 import { removeSpecialAction } from '@/app/actions';
 import OwnerEditor from '@/components/OwnerEditor';
 import LocalsOnlyStudio from '@/components/LocalsOnlyStudio';
+import Help from '@/components/Help';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Owner desk', robots: { index: false } };
@@ -92,13 +93,14 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
         }}
       />
 
-      {/* Locals Only deals */}
+      {/* The Local Passport — owner-posted perks */}
       <section className="mt-8 border-t-2 border-ink pt-5">
         <div className="flex items-center gap-2 mb-1">
           <img src="/locals-only.webp" alt="" width={28} height={28} className="w-7 h-7" />
-          <h2 className="font-stamp uppercase tracking-[0.14em] text-ink text-base">Locals Only</h2>
+          <h2 className="font-stamp uppercase tracking-[0.14em] text-ink text-base">Local Passport</h2>
+          <Help text="A standing perk you offer to people who found you through the guide. It shows on your page under the Local Passport, and diners pull up a printable stamp to show at the counter. Honor system — you decide what to give." example="Free churro with any plate. Or $2 tacos on Tuesdays." />
         </div>
-        <p className="font-ui text-sm text-ink-soft mb-4">Post a deal just for Leander locals. They get a printable ticket to show you. Honor system, you decide what to give. Activate as many as you like.</p>
+        <p className="font-ui text-sm text-ink-soft mb-4">Add a perk to the Passport — your call what it is. Locals pull up a stamp to show you at the counter. Post as many as you like.</p>
         <LocalsOnlyStudio slug={slug} restaurant={spot.name} />
         {specials.length > 0 && (
           <ul className="mt-5 space-y-2">
@@ -109,7 +111,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
                   <p className="font-stamp uppercase tracking-[0.06em] text-[11px] text-chile">{scheduleLabel(s)}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Ticket →</Link>
+                  <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Stamp →</Link>
                   <form action={async () => { 'use server'; await removeSpecialAction(s.id); }}><button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood">End it</button></form>
                 </div>
               </li>

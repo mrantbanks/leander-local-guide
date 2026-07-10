@@ -10,7 +10,7 @@ const links = [
   { label: 'Eat', href: '/', hide: false },
   { label: 'Map', href: '/map', hide: false },
   { label: "What's On", href: '/whats-on', hide: false },
-  { label: 'Deals', href: '/locals-only', hide: true },
+  { label: 'Passport', href: '/passport', hide: true },
   { label: 'Best Of', href: '/best', hide: true },
   { label: 'New', href: '/new', hide: true },
   { label: 'Anthony', href: '/about', hide: true },

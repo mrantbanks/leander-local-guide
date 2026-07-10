@@ -299,7 +299,7 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
   return { ok: true };
 }
 
-// "Locals Only" deals — owner-created, honor-based.
+// The Local Passport — owner-created, honor-based perks.
 export async function createSpecialAction(slug: string, input: SpecialInput): Promise<{ ok: boolean; error?: string }> {
   const session = await auth();
   const email = session?.user?.email;

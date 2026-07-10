@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSpecialAction } from '@/app/actions';
 import TicketCard from '@/components/TicketCard';
+import Help from '@/components/Help';
 
-type Preset = { title: string; details?: string; recurring?: boolean; days?: number[] };
+// The Local Passport studio — owners post "perks" that locals pull up as a printable "stamp".
+type Preset = { title: string; details?: string; recurring?: boolean; days?: number[]; example?: boolean };
 const PRESETS: Preset[] = [
-  { title: '10% off for Leander locals', details: 'Show your ticket. Dine-in.' },
-  { title: 'Free chips & queso with any entree', details: 'One per table.' },
+  { title: '10% off for Leander locals', details: 'Show your stamp. Dine-in.', example: true },
+  { title: 'Free chips & queso with any entree', details: 'One per table.', example: true },
   { title: 'Free appetizer with orders over $25', details: 'Dine-in, one per table.' },
   { title: '$5 off your first visit', details: 'New locals, one time.' },
   { title: 'Buy one entree, get one half off', details: 'Equal or lesser value, dine-in.' },
@@ -66,12 +68,18 @@ export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; r
   if (!open) {
     return (
       <div>
-        <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-2">Pick a deal to activate — or write your own</p>
+        <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-2 flex items-center">
+          Pick a perk to start from — or write your own
+          <Help text="These are just examples to get you going — we don't read your menu, so change the wording to match what you actually want to offer." example="Tap '10% off', then rewrite it to 'Free churro with any plate.'" />
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {PRESETS.map((p, i) => (
             <button key={i} onClick={() => pick(p)} className="text-left bg-paper-raised border border-rule rounded-sm p-3 hover:border-ink transition-colors">
               <span className="font-display font-bold text-ink text-sm">{p.title}</span>
-              {p.recurring && <span className="block font-stamp uppercase text-[10px] tracking-[0.06em] text-chile mt-0.5">weekly</span>}
+              <span className="flex items-center gap-1.5 mt-0.5">
+                {p.example && <span className="font-stamp uppercase text-[9px] tracking-[0.08em] text-chile border border-chile rounded-[2px] px-1 py-px">example</span>}
+                {p.recurring && <span className="font-stamp uppercase text-[10px] tracking-[0.06em] text-chile">weekly</span>}
+              </span>
             </button>
           ))}
         </div>
@@ -83,25 +91,31 @@ export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; r
   return (
     <div className="grid md:grid-cols-2 gap-6 items-start">
       <div className="space-y-2">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The deal — e.g. $5 off any plate" className={field} />
-        <input value={details} onChange={(e) => setDetails(e.target.value)} placeholder="Fine print (optional)" className={field} />
-        <label className="flex items-center gap-2 font-ui text-sm text-ink-soft"><input type="checkbox" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} /> Repeats weekly</label>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The perk — e.g. free churro with any plate" className={field} />
+        <input value={details} onChange={(e) => setDetails(e.target.value)} placeholder="Fine print (optional) — e.g. dine-in, one per table" className={field} />
+        <label className="flex items-center gap-2 font-ui text-sm text-ink-soft">
+          <input type="checkbox" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} /> Repeats weekly
+          <Help text="Leave off and the perk is good every day it's running. Turn it on to limit it to certain weekdays — then pick the days below." example="Turn on and pick Tue for a Taco-Tuesday-only perk." />
+        </label>
         {recurring && <div className="flex gap-1">{DAY.map((d, i) => <button type="button" key={i} onClick={() => toggleDay(i)} className={`font-stamp uppercase text-xs px-2 py-1 border rounded-sm ${days.includes(i) ? 'bg-chile text-paper border-chile' : 'border-rule text-ink-soft hover:text-ink'}`}>{d}</button>)}</div>}
         <div>
-          <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mt-2 mb-1">Runs until</p>
+          <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mt-2 mb-1 flex items-center">
+            Runs until
+            <Help text="How long the perk stays live. 'Ongoing' runs until you end it yourself; the others auto-expire so you don't have to remember to turn them off." example="'2 weeks' for a grand-opening push; 'Ongoing' for a standing house perk." />
+          </p>
           <div className="flex flex-wrap gap-1.5">
             {EXPIRY.map((e) => <button key={e.key} onClick={() => setExpiry(e.key)} className={`font-stamp uppercase text-xs px-2.5 py-1 border rounded-sm ${expiry === e.key ? 'bg-ink text-paper border-ink' : 'border-rule text-ink-soft hover:text-ink'}`}>{e.label}{e.key === 'ongoing' ? ' ★' : ''}</button>)}
           </div>
           {expiry === 'custom' && <input type="date" value={customDate} onChange={(e) => setCustomDate(e.target.value)} className="mt-2 bg-paper border border-rule px-2 py-1 rounded-sm" />}
-          <p className="font-ui text-[11px] text-ink-soft mt-1">An ongoing deal keeps working with zero upkeep. Short ones are great for a weekend push.</p>
+          <p className="font-ui text-[11px] text-ink-soft mt-1">An ongoing perk keeps working with zero upkeep. Short ones are great for a weekend push.</p>
         </div>
         <div className="flex items-center gap-3 pt-2">
-          <button onClick={approve} disabled={busy || !title.trim()} className="font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper px-5 py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-60">{busy ? 'Posting...' : 'Approve & post'}</button>
+          <button onClick={approve} disabled={busy || !title.trim()} className="font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper px-5 py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-60">{busy ? 'Posting...' : 'Post this perk'}</button>
           <button onClick={reset} className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft hover:text-ink">Cancel</button>
         </div>
       </div>
       <div>
-        <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-2">Live preview — this is their ticket</p>
+        <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-2">Live preview — this is their stamp</p>
         <TicketCard restaurant={restaurant} title={title} details={details} recurring={recurring} daysOfWeek={days} endsOn={endsOn()} />
       </div>
     </div>

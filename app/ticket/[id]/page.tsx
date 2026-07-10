@@ -8,13 +8,13 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const s = await getSpecial(Number(id));
-  return { title: s ? `${s.title} — Locals Only` : 'Locals Only', robots: { index: false } };
+  return { title: s ? `${s.title} — Local Passport` : 'Local Passport', robots: { index: false } };
 }
 
 export default async function TicketPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const s = await getSpecial(Number(id));
-  if (!s) return <main className="min-h-[70vh] grid place-items-center font-ui text-ink-soft px-5 text-center">This deal isn&apos;t running anymore.</main>;
+  if (!s) return <main className="min-h-[70vh] grid place-items-center font-ui text-ink-soft px-5 text-center">This perk isn&apos;t running anymore.</main>;
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Chicago' });
 
   return (

@@ -1,0 +1,750 @@
+<title>Owner Desk — Cielo Rojo Taquería (Demo)</title>
+<style>
+  :root{
+    --paper:#F4EFE6; --paper-raised:#FBF7EF; --paper-sunk:#EAE0CE;
+    --ink:#16130F; --ink-soft:#4A4239; --rule:#D8CDB8;
+    --chile:#E03A1E; --oxblood:#7C1D12; --amber:#F2A516; --fern:#3E6B47;
+    --shadow:rgba(22,19,15,.14);
+    --font-display:"Fraunces","Georgia",ui-serif,serif;
+    --font-ui:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+    --font-stamp:"Bebas Neue","Oswald","Arial Narrow",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#1a1712; --paper-raised:#231e18; --paper-sunk:#14110d;
+      --ink:#F1E8D8; --ink-soft:#B6A891; --rule:#3c342a;
+      --chile:#F0563B; --oxblood:#C9422C; --shadow:rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1a1712; --paper-raised:#231e18; --paper-sunk:#14110d;
+    --ink:#F1E8D8; --ink-soft:#B6A891; --rule:#3c342a;
+    --chile:#F0563B; --oxblood:#C9422C; --shadow:rgba(0,0,0,.5);
+  }
+  :root[data-theme="light"]{
+    --paper:#F4EFE6; --paper-raised:#FBF7EF; --paper-sunk:#EAE0CE;
+    --ink:#16130F; --ink-soft:#4A4239; --rule:#D8CDB8;
+    --chile:#E03A1E; --oxblood:#7C1D12; --shadow:rgba(22,19,15,.14);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-ui);
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(124,29,18,.020), transparent 60%),
+      radial-gradient(circle at 85% 80%, rgba(22,19,15,.025), transparent 55%);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  ::selection{background:var(--chile); color:#fff}
+  a{color:var(--chile); text-decoration:none}
+  a:hover{color:var(--oxblood)}
+  button{font-family:inherit; cursor:pointer}
+  :focus-visible{outline:2px solid var(--chile); outline-offset:2px}
+
+  .stamp{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.14em; font-weight:400; line-height:1}
+  .display{font-family:var(--font-display); font-weight:800}
+  .hand{font-family:var(--font-hand)}
+
+  .wrap{max-width:640px; margin:0 auto; padding:22px 20px 120px}
+
+  /* ---- top demo bar ---- */
+  .demobar{
+    position:sticky; top:0; z-index:40;
+    background:var(--ink); color:var(--paper);
+    display:flex; align-items:center; gap:10px; justify-content:center;
+    padding:7px 14px; font-size:12px;
+  }
+  .demobar .stamp{letter-spacing:.18em; font-size:13px; color:var(--amber)}
+  .demobar span{opacity:.85}
+  .themebtn{
+    margin-left:auto; background:transparent; border:1px solid rgba(255,255,255,.35);
+    color:var(--paper); border-radius:3px; padding:3px 9px; font-size:11px;
+    font-family:var(--font-stamp); letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  /* ---- gate / sign-in ---- */
+  .gate{max-width:420px; margin:8vh auto 0; padding:0 22px; text-align:center}
+  .gate .mark{font-size:13px; color:var(--chile); letter-spacing:.22em}
+  .gate h1{font-family:var(--font-display); font-weight:900; font-size:30px; line-height:1.1; margin:14px 0 6px; text-wrap:balance}
+  .gate p{color:var(--ink-soft); font-size:15px; margin:0 auto 26px; max-width:34ch}
+  .gate .card{
+    background:var(--paper-raised); border:1px solid var(--rule); border-radius:4px;
+    padding:26px 22px; box-shadow:0 8px 30px -18px var(--shadow);
+  }
+  .gate .who{font-size:13px; color:var(--ink-soft); margin-bottom:18px}
+  .gate .who b{color:var(--ink)}
+  .gbtn{
+    display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:var(--ink); color:var(--paper); border:none; border-radius:4px;
+    padding:13px 16px; font-family:var(--font-stamp); text-transform:uppercase;
+    letter-spacing:.1em; font-size:15px;
+  }
+  .gbtn:hover{background:#000}
+  .gbtn .g{background:#fff; border-radius:2px; width:20px; height:20px; display:grid; place-items:center; font-weight:700; font-family:var(--font-ui); font-size:13px; color:#4285F4}
+  .gate .fine{font-size:12px; color:var(--ink-soft); margin-top:16px}
+
+  /* ---- desk header ---- */
+  .deskhead{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    border-bottom:2px solid var(--ink); padding-bottom:12px; margin-bottom:18px;
+  }
+  .deskhead .kick{font-size:12px; color:var(--chile); letter-spacing:.18em}
+  .deskhead h1{font-family:var(--font-display); font-weight:900; font-size:27px; line-height:1.05; margin:5px 0 3px; text-wrap:balance}
+  .deskhead .addr{font-size:12.5px; color:var(--ink-soft)}
+  .viewlive{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.08em; font-size:13px; white-space:nowrap; flex-shrink:0}
+
+  /* ---- welcome ---- */
+  .welcome{
+    border:2px dashed var(--oxblood); background:var(--paper-raised);
+    border-radius:5px; padding:14px 16px; margin-bottom:20px;
+    transform:rotate(-1deg); position:relative;
+  }
+  .welcome b{font-family:var(--font-display); font-weight:800; display:block; font-size:16px}
+  .welcome p{margin:3px 0 0; font-size:13.5px; color:var(--ink-soft)}
+  .welcome .x{position:absolute; top:6px; right:9px; border:none; background:none; color:var(--ink-soft); font-size:18px; line-height:1; padding:2px}
+
+  /* ---- stats ---- */
+  .statgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:26px}
+  .stat{border:1px solid var(--rule); border-radius:3px; padding:12px 8px; text-align:center; background:var(--paper-raised)}
+  .stat.lead{border-color:var(--chile); background:var(--paper-raised)}
+  .stat .n{font-family:var(--font-display); font-weight:900; font-size:30px; line-height:1; font-variant-numeric:tabular-nums}
+  .stat .l{font-size:11px; color:var(--ink-soft); line-height:1.25; margin-top:5px}
+  .stat .l b{color:var(--ink)}
+
+  /* ---- editor cards ---- */
+  .sectlabel{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.12em; font-size:12px; color:var(--ink-soft); margin:0 0 10px}
+  .card{background:var(--paper-raised); border:1px solid var(--rule); border-radius:4px; padding:16px; margin-bottom:12px}
+  .lbl{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.08em; font-size:12.5px; color:var(--ink-soft); margin-bottom:7px; display:block}
+  .lbl .hint{text-transform:none; letter-spacing:normal; font-family:var(--font-ui); color:var(--ink-soft); opacity:.75; font-size:12px}
+  .field{
+    width:100%; background:var(--paper); border:1px solid var(--rule); border-radius:3px;
+    padding:9px 11px; font-size:16px; color:var(--ink); font-family:var(--font-ui);
+    outline:none;
+  }
+  @media(min-width:640px){.field{font-size:14px}}
+  .field:focus{border-color:var(--chile)}
+  textarea.field{resize:vertical; min-height:66px; line-height:1.45}
+  .charct{font-size:11px; color:var(--ink-soft); text-align:right; margin-top:4px; font-variant-numeric:tabular-nums}
+  .row2{display:grid; gap:11px}
+  .row2 > div{min-width:0}
+
+  /* hours */
+  .hourtoggle{display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink); margin-bottom:2px; cursor:pointer}
+  .hourtoggle input{width:17px; height:17px; accent-color:var(--chile)}
+  .hourlist{margin-top:14px; display:none; flex-direction:column; gap:7px}
+  .hourlist.on{display:flex}
+  .hourrow{display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:8px}
+  .hourrow .day{font-family:var(--font-stamp); letter-spacing:.06em; text-transform:uppercase; font-size:14px; color:var(--ink)}
+  .hourrow .times{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-soft)}
+  .hourrow .times input{background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:5px 6px; font-size:13px; color:var(--ink); font-family:var(--font-ui)}
+  .hourrow.closed .times{opacity:.35; pointer-events:none}
+  .closedbtn{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.06em; font-size:11px; border:1px solid var(--rule); background:var(--paper); color:var(--ink-soft); border-radius:3px; padding:5px 8px; white-space:nowrap}
+  .hourrow.closed .closedbtn{border-color:var(--chile); color:var(--chile)}
+
+  .trust{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin:4px 2px 0; padding-left:11px; border-left:2px solid var(--rule)}
+
+  /* ---- locals only ---- */
+  .lo-head{display:flex; align-items:center; gap:9px; border-top:2px solid var(--ink); padding-top:20px; margin-top:34px; margin-bottom:4px}
+  .lo-badge{width:30px; height:30px; border-radius:50%; background:var(--chile); color:#fff; display:grid; place-items:center; font-family:var(--font-stamp); font-size:11px; letter-spacing:.02em; line-height:.9; text-align:center; box-shadow:0 2px 0 var(--oxblood)}
+  .lo-head h2{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.12em; font-size:19px; margin:0}
+  .lo-sub{font-size:13px; color:var(--ink-soft); margin:0 0 16px}
+
+  .deal{
+    background:var(--paper-raised); border:1px solid var(--rule); border-left:4px solid var(--chile);
+    border-radius:4px; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;
+  }
+  .deal .t{font-family:var(--font-display); font-weight:800; font-size:15px; line-height:1.15}
+  .deal .s{font-size:12px; color:var(--ink-soft); margin-top:2px}
+  .deal .acts{display:flex; align-items:center; gap:12px; flex-shrink:0}
+  .linklike{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.06em; font-size:12px}
+  .endbtn{border:none; background:none; color:var(--ink-soft); font-size:12px; text-decoration:underline; text-underline-offset:2px}
+  .endbtn:hover{color:var(--oxblood)}
+
+  .newdeal-open{
+    width:100%; border:1px dashed var(--chile); background:transparent; color:var(--chile);
+    border-radius:4px; padding:12px; font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.1em; font-size:14px; margin-top:4px;
+  }
+  .newdeal-open:hover{background:var(--paper-raised)}
+
+  .builder{display:none; margin-top:8px}
+  .builder.on{display:block}
+  .presets{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px}
+  @media(min-width:520px){.presets{grid-template-columns:1fr 1fr 1fr}}
+  .preset{
+    text-align:left; background:var(--paper); border:1px solid var(--rule); border-radius:4px;
+    padding:9px 10px; font-size:12.5px; color:var(--ink); line-height:1.25;
+  }
+  .preset:hover{border-color:var(--chile)}
+  .preset.sel{border-color:var(--chile); background:var(--paper-raised); box-shadow:inset 0 0 0 1px var(--chile)}
+  .preset b{display:block; font-family:var(--font-display); font-weight:800; font-size:13px}
+  .daypills,.exppills{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+  .pill{
+    border:1px solid var(--rule); background:var(--paper); color:var(--ink-soft);
+    border-radius:20px; padding:5px 11px; font-size:12px; font-family:var(--font-stamp); letter-spacing:.06em; text-transform:uppercase;
+  }
+  .pill.on{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+
+  /* ticket preview */
+  .ticketwrap{margin:16px 0}
+  .ticket{
+    background:var(--paper-raised); border:2px dashed var(--oxblood); border-radius:6px;
+    padding:16px 18px; transform:rotate(-.6deg); position:relative; max-width:340px; margin:0 auto;
+    box-shadow:0 10px 30px -18px var(--shadow);
+  }
+  .ticket .rip{font-size:10px; letter-spacing:.3em; color:var(--ink-soft); text-align:center; margin-bottom:8px}
+  .ticket .venue{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.1em; font-size:12px; color:var(--chile); text-align:center}
+  .ticket .deal-t{font-family:var(--font-display); font-weight:900; font-size:22px; text-align:center; line-height:1.1; margin:6px 0}
+  .ticket .deal-fine{font-size:12px; color:var(--ink-soft); text-align:center}
+  .ticket .barcode{height:34px; margin:12px 0 6px; background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 9px); opacity:.85}
+  .ticket .meta{display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-soft); letter-spacing:.04em}
+
+  .createbtn{
+    background:var(--chile); color:#fff; border:none; border-radius:4px; padding:11px 20px;
+    font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.1em; font-size:14px;
+  }
+  .createbtn:hover{background:var(--oxblood)}
+  .cancelbtn{border:none;background:none;color:var(--ink-soft);font-size:13px;text-decoration:underline;text-underline-offset:2px;margin-left:14px}
+
+  /* ---- sticky save ---- */
+  .savebar{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:linear-gradient(to top, var(--paper) 62%, transparent);
+    padding:16px 20px 20px;
+  }
+  .savebar .inner{max-width:640px; margin:0 auto; display:flex; align-items:center; gap:14px}
+  .savebtn{
+    background:var(--chile); color:#fff; border:none; border-radius:4px; padding:13px 26px;
+    font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.1em; font-size:15px;
+    box-shadow:0 8px 22px -10px var(--oxblood);
+  }
+  .savebtn:hover{background:var(--oxblood)}
+  .savebtn:disabled{opacity:.6}
+  .savemsg{font-family:var(--font-hand); font-size:21px; color:var(--fern)}
+  .savemsg.err{font-family:var(--font-ui); font-size:14px; color:var(--oxblood)}
+
+  /* ---- live-page modal ---- */
+  .modal{position:fixed; inset:0; z-index:60; display:none; background:rgba(22,19,15,.55); padding:20px; overflow:auto}
+  .modal.on{display:block}
+  .sheet{
+    max-width:520px; margin:24px auto; background:var(--paper); border:1px solid var(--rule);
+    border-radius:6px; overflow:hidden; box-shadow:0 30px 80px -30px rgba(0,0,0,.6);
+  }
+  .sheet .bar{display:flex; align-items:center; justify-content:space-between; background:var(--ink); color:var(--paper); padding:9px 14px; font-size:12px}
+  .sheet .bar .stamp{color:var(--amber); letter-spacing:.16em; font-size:12px}
+  .sheet .bar button{background:none;border:none;color:var(--paper);font-size:20px;line-height:1}
+  .hero{position:relative; height:190px; background:var(--paper-sunk)}
+  .hero svg{width:100%; height:100%; display:block}
+  .hero .tag{position:absolute; left:14px; bottom:12px; background:var(--chile); color:#fff; font-family:var(--font-stamp); letter-spacing:.1em; text-transform:uppercase; font-size:12px; padding:5px 10px; border-radius:3px}
+  .pub{padding:18px 20px 26px}
+  .pub .pk{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.16em; font-size:11px; color:var(--chile)}
+  .pub h2{font-family:var(--font-display); font-weight:900; font-size:26px; margin:5px 0 2px; line-height:1.05}
+  .pub .cat{font-size:13px; color:var(--ink-soft)}
+  .stars{color:var(--amber); font-size:16px; letter-spacing:2px; margin-top:6px}
+  .review{font-family:var(--font-hand); font-size:19px; line-height:1.35; color:var(--ink); margin:16px 0; border-left:3px solid var(--amber); padding-left:12px}
+  .fromowner{margin:18px 0}
+  .fromowner h3{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.15em; color:var(--chile); font-size:13px; margin:0 0 8px}
+  .fromowner p{font-size:14px; border-left:2px solid var(--chile); padding-left:11px; margin:0}
+  .pubdeal{margin:18px 0; border:2px dashed var(--oxblood); border-radius:5px; padding:11px 14px; display:flex; gap:10px; align-items:center; background:var(--paper-raised)}
+  .pubdeal .b{width:26px;height:26px;border-radius:50%;background:var(--chile);color:#fff;display:grid;place-items:center;font-family:var(--font-stamp);font-size:9px;line-height:.9;text-align:center;flex-shrink:0}
+  .pubdeal .t{font-family:var(--font-display); font-weight:800; font-size:15px}
+  .pubdeal .s{font-size:12px; color:var(--ink-soft)}
+  .facts{background:var(--paper-sunk); border:1px solid var(--rule); border-radius:5px; padding:15px 17px; margin-top:18px}
+  .facts h3{font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.14em; font-size:12px; color:var(--ink-soft); margin:0 0 11px}
+  .factrow{display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dotted var(--rule); font-size:13.5px}
+  .factrow:last-child{border-bottom:none}
+  .factrow .k{color:var(--ink-soft); font-family:var(--font-stamp); text-transform:uppercase; letter-spacing:.06em; font-size:12px}
+  .factrow .v{text-align:right; color:var(--ink)}
+  .factrow .v .live{color:var(--fern); font-weight:600}
+  .hoursmini{font-size:13px; line-height:1.7}
+  .hoursmini .d{display:flex; justify-content:space-between; gap:16px}
+  .hoursmini .d .cl{color:var(--ink-soft)}
+
+  /* ---- (?) help ---- */
+  .help{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--chile);color:var(--chile);background:transparent;font-size:10px;font-family:var(--font-ui);line-height:1;vertical-align:middle;margin-left:5px;padding:0;flex:none}
+  .help:hover{background:var(--chile);color:#fff}
+  .helppop{position:absolute;z-index:90;width:242px;background:var(--paper-raised);border:1px solid var(--rule);border-radius:4px;padding:11px 12px;box-shadow:0 14px 36px -14px var(--shadow);font-family:var(--font-ui)}
+  .helppop .hp-t{font-size:12.5px;color:var(--ink);line-height:1.45}
+  .helppop .hp-eg{font-size:12px;color:var(--ink-soft);margin-top:7px;line-height:1.4}
+  .helppop .hp-eg b{color:var(--chile);font-family:var(--font-stamp);letter-spacing:.06em;text-transform:uppercase;font-size:11px;margin-right:3px}
+  .egtag{display:inline-block;font-family:var(--font-stamp);text-transform:uppercase;letter-spacing:.08em;font-size:9px;color:var(--chile);border:1px solid var(--chile);border-radius:3px;padding:1px 4px;vertical-align:middle}
+  .pass-hd{font-family:var(--font-stamp);text-transform:uppercase;letter-spacing:.22em;font-size:11px;color:var(--chile);text-align:center;margin-bottom:2px}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="demobar">
+  <span class="stamp">Preview</span>
+  <span>What a verified owner sees on their desk — this is a demo, nothing here saves</span>
+  <button class="themebtn" id="themebtn" type="button">Theme</button>
+</div>
+
+<!-- ============ SIGN-IN GATE ============ -->
+<section class="gate" id="gate">
+  <div class="mark stamp">Leander Local Guide</div>
+  <h1>Cielo Rojo Taquería</h1>
+  <p>You claimed this listing. Sign in with the Google account you used, and your Owner desk opens up.</p>
+  <div class="card">
+    <div class="who">Signing in as <b>maria@cielorojotx.com</b></div>
+    <button class="gbtn" id="signin" type="button"><span class="g">G</span> Sign in with Google</button>
+    <div class="fine">The Google account you pick becomes your login. No passwords.</div>
+  </div>
+</section>
+
+<!-- ============ OWNER DESK ============ -->
+<main class="wrap" id="desk" hidden>
+
+  <div class="deskhead">
+    <div>
+      <div class="kick stamp">Owner desk</div>
+      <h1>Cielo Rojo Taquería</h1>
+      <div class="addr">1204 S Bagdad Rd · Leander, TX</div>
+    </div>
+    <a href="#" class="viewlive" id="viewlive">View live page →</a>
+  </div>
+
+  <div class="welcome" id="welcome">
+    <button class="x" id="welcomex" type="button" aria-label="Dismiss">×</button>
+    <b>Welcome in. This is your place now.</b>
+    <p>Everything below goes straight to your public page when you hit save. Take a look around.</p>
+  </div>
+
+  <div class="statgrid">
+    <div class="stat lead">
+      <div class="n">148</div>
+      <div class="l"><b>want to try</b> you</div>
+    </div>
+    <div class="stat">
+      <div class="n">63</div>
+      <div class="l">say you're <b>worth it</b></div>
+    </div>
+    <div class="stat">
+      <div class="n">211</div>
+      <div class="l">have <b>been here</b></div>
+    </div>
+  </div>
+
+  <!-- FROM THE OWNER -->
+  <div class="sectlabel">Your page</div>
+  <div class="card">
+    <label class="lbl" for="blurb">From the owner <span class="hint">— shows as a labeled note on your page</span><button class="help" type="button" data-t="A short note in your own voice. It shows on your public page under a 'From the owner' heading — separate from Anthony's review, which you can't edit. Good for the story or an off-menu tip." data-eg="Family-run since 2019. Ask for the off-menu green salsa.">?</button></label>
+    <textarea class="field" id="blurb" rows="3" maxlength="280" placeholder="Family-run since 2019. Ask for the off-menu green salsa.">Family-run since 2019. Everything's made from scratch daily — the tortillas, the three salsas, all of it. Ask for the off-menu chile de árbol if you can take the heat.</textarea>
+    <div class="charct"><span id="blurbct">0</span>/280</div>
+  </div>
+
+  <!-- CONTACT & LINKS -->
+  <div class="card">
+    <div class="lbl">Contact &amp; links</div>
+    <div class="row2">
+      <div>
+        <label class="lbl" for="phone" style="font-size:11px">Phone</label>
+        <input class="field" id="phone" type="tel" value="(512) 555-0142" placeholder="(512) 555-0000">
+      </div>
+      <div>
+        <label class="lbl" for="website" style="font-size:11px">Website</label>
+        <input class="field" id="website" type="url" value="cielorojotx.com" placeholder="yourplace.com">
+      </div>
+      <div>
+        <label class="lbl" for="menuUrl" style="font-size:11px">Menu link</label>
+        <input class="field" id="menuUrl" type="url" value="cielorojotx.com/menu" placeholder="link to your menu">
+      </div>
+      <div>
+        <label class="lbl" for="orderUrl" style="font-size:11px">Order-online link</label>
+        <input class="field" id="orderUrl" type="url" value="" placeholder="Toast, DoorDash, etc.">
+      </div>
+    </div>
+    <div style="margin-top:11px">
+      <label class="lbl" for="happyHour" style="font-size:11px">Happy hour</label>
+      <input class="field" id="happyHour" type="text" value="Mon–Fri 3–6pm · $2 off margs" placeholder="e.g. Weekdays 4–6, half-price queso">
+    </div>
+  </div>
+
+  <!-- HOURS -->
+  <div class="card">
+    <div class="lbl">Hours</div>
+    <label class="hourtoggle"><input type="checkbox" id="ownhours"> <span>Set my own hours <span style="color:var(--ink-soft); font-weight:normal">(otherwise Google's hours show)</span></span></label><button class="help" type="button" data-t="By default your page shows the hours Google has for you. Flip this on to type your own — they replace Google's everywhere on your page, including the open-now badge." data-eg="Closed Mondays; open 11am–9pm Tue–Sun.">?</button>
+    <div class="hourlist" id="hourlist"></div>
+  </div>
+
+  <p class="trust">The review, the verdict, and the “worth it” tally are Anthony's and the public's — you can't edit those. This desk is for your facts: the note, your links, your hours, and your Passport perks.</p>
+
+  <!-- ============ LOCALS ONLY ============ -->
+  <div class="lo-head">
+    <div class="lo-badge">LOCALS<br>ONLY</div>
+    <h2>Local Passport</h2>
+    <button class="help" type="button" data-t="A standing perk you offer to people who found you through the guide. It shows on your page under the Local Passport, and diners pull up a printable stamp to show at the counter. Honor system — you decide what to give." data-eg="Free churro with any plate. Or $2 tacos on Tuesdays.">?</button>
+  </div>
+  <p class="lo-sub">A passport to all the good stuff. Add a perk for people who found you here — they pull up a stamp and show it at the counter. No points, no apps, no gimmicks.</p>
+
+  <div id="dealwrap"></div>
+
+  <button class="newdeal-open" id="newdealopen" type="button">+ New perk</button>
+
+  <!-- builder -->
+  <div class="builder" id="builder">
+    <div class="card" style="margin-top:10px">
+      <div class="lbl">Pick a perk to start from — or write your own<button class="help" type="button" data-t="These are just examples to get you going — we don't read your menu, so change the wording to match what you actually want to offer." data-eg="Tap '$2 tacos', then rewrite it to 'Free churro with any plate.'">?</button></div>
+      <div class="presets" id="presets"></div>
+
+      <div id="customwrap" style="display:none; margin-bottom:6px">
+        <label class="lbl" for="ctitle" style="font-size:11px">Perk</label>
+        <input class="field" id="ctitle" placeholder="Free churro with any plate" style="margin-bottom:9px">
+        <label class="lbl" for="cfine" style="font-size:11px">Fine print</label>
+        <input class="field" id="cfine" placeholder="One per table. Dine-in.">
+      </div>
+
+      <div class="lbl" style="margin-top:14px">Repeats<button class="help" type="button" data-t="Leave every day off and the perk is good any day it's running. Turn on specific days to limit it — a weekday chip lights up chile-red when it's on." data-eg="Pick Tue only for a Taco-Tuesday-only perk.">?</button></div>
+      <div class="daypills" id="daypills"></div>
+
+      <div class="lbl" style="margin-top:14px">Runs until<button class="help" type="button" data-t="How long the perk stays live. 'Ongoing ★' runs until you end it yourself; the others auto-expire so you don't have to remember to turn them off." data-eg="'2 weeks' for a grand-opening push; 'Ongoing' for a standing house perk.">?</button></div>
+      <div class="exppills" id="exppills"></div>
+
+      <div class="ticketwrap">
+        <div class="ticket" id="ticket">
+          <div class="rip">✂ — — — — — — — — — — — — — —</div>
+          <div class="pass-hd">Local Passport</div>
+          <div class="venue">Cielo Rojo Taquería</div>
+          <div class="deal-t" id="tk-title">Free churro with any plate</div>
+          <div class="deal-fine" id="tk-fine">One per table. Dine-in.</div>
+          <div class="barcode"></div>
+          <div class="meta"><span id="tk-days">MON–SUN</span><span id="tk-exp">No expiry</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center">
+        <button class="createbtn" id="createdeal" type="button">Post this perk</button>
+        <button class="cancelbtn" id="canceldeal" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============ STICKY SAVE ============ -->
+<div class="savebar" id="savebar" hidden>
+  <div class="inner">
+    <button class="savebtn" id="savebtn" type="button">Save changes</button>
+    <span class="savemsg" id="savemsg"></span>
+  </div>
+</div>
+
+<!-- ============ LIVE-PAGE PREVIEW MODAL ============ -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="bar">
+      <span class="stamp">Live page preview · /r/cielo-rojo-taqueria</span>
+      <button id="modalx" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="hero">
+      <svg viewBox="0 0 520 190" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a taco plate">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7C1D12"/><stop offset="1" stop-color="#B33018"/>
+          </linearGradient>
+          <radialGradient id="plate" cx="50%" cy="45%" r="60%">
+            <stop offset="0" stop-color="#F7F1E5"/><stop offset="1" stop-color="#E4D8C1"/>
+          </radialGradient>
+        </defs>
+        <rect width="520" height="190" fill="url(#bg)"/>
+        <circle cx="260" cy="150" r="150" fill="url(#plate)"/>
+        <!-- three tacos -->
+        <g>
+          <path d="M120 150 q35 -78 70 0 z" fill="#F2C464"/>
+          <path d="M120 150 q35 -78 70 0" fill="none" stroke="#D9A63F" stroke-width="3"/>
+          <ellipse cx="155" cy="118" rx="26" ry="9" fill="#5a3220"/>
+          <circle cx="142" cy="120" r="4" fill="#8FB55B"/><circle cx="168" cy="121" r="4" fill="#8FB55B"/><circle cx="155" cy="114" r="4" fill="#E03A1E"/><circle cx="150" cy="126" r="3" fill="#F2F0E4"/><circle cx="163" cy="126" r="3" fill="#F2F0E4"/>
+        </g>
+        <g>
+          <path d="M225 152 q35 -82 70 0 z" fill="#F2C464"/>
+          <path d="M225 152 q35 -82 70 0" fill="none" stroke="#D9A63F" stroke-width="3"/>
+          <ellipse cx="260" cy="117" rx="28" ry="10" fill="#6b3a22"/>
+          <circle cx="246" cy="120" r="4.5" fill="#8FB55B"/><circle cx="274" cy="121" r="4.5" fill="#8FB55B"/><circle cx="260" cy="112" r="4.5" fill="#E03A1E"/><circle cx="253" cy="127" r="3.5" fill="#F2F0E4"/><circle cx="267" cy="127" r="3.5" fill="#F2F0E4"/>
+        </g>
+        <g>
+          <path d="M330 150 q35 -78 70 0 z" fill="#F2C464"/>
+          <path d="M330 150 q35 -78 70 0" fill="none" stroke="#D9A63F" stroke-width="3"/>
+          <ellipse cx="365" cy="118" rx="26" ry="9" fill="#5a3220"/>
+          <circle cx="352" cy="120" r="4" fill="#8FB55B"/><circle cx="378" cy="121" r="4" fill="#8FB55B"/><circle cx="365" cy="114" r="4" fill="#E03A1E"/><circle cx="360" cy="126" r="3" fill="#F2F0E4"/><circle cx="373" cy="126" r="3" fill="#F2F0E4"/>
+        </g>
+        <!-- lime wedges -->
+        <path d="M410 140 a16 16 0 0 1 22 6 z" fill="#8FB55B"/>
+        <path d="M96 140 a16 16 0 0 0 -18 8 z" fill="#8FB55B"/>
+      </svg>
+      <div class="tag">Taquería</div>
+    </div>
+    <div class="pub">
+      <div class="pk">Leander · Local pick</div>
+      <h2>Cielo Rojo Taquería</h2>
+      <div class="cat">Taquería · Tacos · $</div>
+      <div class="stars">★★★★<span style="opacity:.35">★</span></div>
+
+      <div class="review" id="pub-review">“The al pastor here has a griddle-crisped edge most places in town can't be bothered with, and the tortillas taste like someone's actually pressing them out back. This is the real thing.” — Anthony</div>
+
+      <div class="fromowner">
+        <h3>From the owner</h3>
+        <p id="pub-blurb"></p>
+      </div>
+
+      <div class="pubdeal" id="pub-deal">
+        <div class="b">LOCALS<br>ONLY</div>
+        <div>
+          <div class="t" id="pub-deal-t">—</div>
+          <div class="s" id="pub-deal-s">—</div>
+        </div>
+      </div>
+
+      <div class="facts">
+        <h3>The facts</h3>
+        <div class="factrow"><span class="k">Phone</span><span class="v" id="pub-phone">—</span></div>
+        <div class="factrow"><span class="k">Happy hour</span><span class="v" id="pub-hh">—</span></div>
+        <div class="factrow"><span class="k">Website</span><span class="v" id="pub-web">—</span></div>
+        <div class="factrow" style="align-items:flex-start"><span class="k">Hours</span><span class="v"><div class="hoursmini" id="pub-hours">—</div></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+  /* theme toggle */
+  $("#themebtn").addEventListener("click",function(){
+    var r=document.documentElement;
+    var cur=r.getAttribute("data-theme");
+    if(!cur){ cur = matchMedia("(prefers-color-scheme:dark)").matches ? "dark":"light"; }
+    r.setAttribute("data-theme", cur==="dark"?"light":"dark");
+  });
+
+  /* sign-in -> desk */
+  $("#signin").addEventListener("click",function(){
+    $("#gate").hidden=true;
+    $("#desk").hidden=false;
+    $("#savebar").hidden=false;
+    window.scrollTo(0,0);
+  });
+  $("#welcomex").addEventListener("click",function(){ $("#welcome").style.display="none"; });
+
+  /* blurb counter + dirty */
+  var blurb=$("#blurb"), blurbct=$("#blurbct");
+  function updCt(){ blurbct.textContent=blurb.value.length; }
+  blurb.addEventListener("input",function(){ updCt(); dirty(); }); updCt();
+
+  /* ---------- hours ---------- */
+  var DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var defOpen=["11:00","11:00","11:00","11:00","11:00","09:00","09:00"];
+  var defClose=["21:00","21:00","21:00","22:00","22:00","22:00","20:00"];
+  var closedDay=[false,false,false,false,false,false,false];
+  var hourlist=$("#hourlist");
+  DAYS.forEach(function(d,i){
+    var row=document.createElement("div");
+    row.className="hourrow"; row.dataset.i=i;
+    row.innerHTML='<span class="day">'+d+'</span>'+
+      '<span class="times"><input type="time" value="'+defOpen[i]+'"> <span>to</span> <input type="time" value="'+defClose[i]+'"></span>'+
+      '<button class="closedbtn" type="button">Closed?</button>';
+    hourlist.appendChild(row);
+    row.querySelector(".closedbtn").addEventListener("click",function(){
+      closedDay[i]=!closedDay[i];
+      row.classList.toggle("closed",closedDay[i]);
+      this.textContent=closedDay[i]?"Open it":"Closed?";
+      dirty();
+    });
+    $$("input",row).forEach(function(inp){inp.addEventListener("input",dirty);});
+  });
+  $("#ownhours").addEventListener("change",function(){
+    hourlist.classList.toggle("on",this.checked); dirty();
+  });
+
+  /* dirty inputs */
+  $$("#desk .field").forEach(function(f){ f.addEventListener("input",dirty); });
+
+  /* ---------- save state machine ---------- */
+  var savebtn=$("#savebtn"), savemsg=$("#savemsg"), tmr=null;
+  function dirty(){
+    savemsg.textContent=""; savemsg.className="savemsg";
+    savebtn.disabled=false; savebtn.textContent="Save changes";
+  }
+  savebtn.addEventListener("click",function(){
+    savebtn.disabled=true; savebtn.textContent="Saving...";
+    savemsg.textContent="";
+    clearTimeout(tmr);
+    setTimeout(function(){
+      savebtn.textContent="Save changes";
+      savemsg.textContent="Saved ✓ it's live"; savemsg.className="savemsg";
+      tmr=setTimeout(function(){ savemsg.textContent=""; },2600);
+    },700);
+  });
+
+  /* ---------- Locals Only ---------- */
+  var deals=[{title:"$2 street tacos, all day Tuesday",fine:"Dine-in. Show your Passport stamp.",days:"TUE",exp:"Ongoing"}];
+  var dealwrap=$("#dealwrap");
+  function renderDeals(){
+    dealwrap.innerHTML="";
+    deals.forEach(function(d,idx){
+      var el=document.createElement("div");
+      el.className="deal";
+      el.innerHTML='<div><div class="t">'+esc(d.title)+'</div><div class="s">'+esc(d.days)+' · '+esc(d.exp)+'</div></div>'+
+        '<div class="acts"><a class="linklike" href="#" data-tk="'+idx+'">Stamp →</a><button class="endbtn" type="button" data-end="'+idx+'">End it</button></div>';
+      dealwrap.appendChild(el);
+    });
+    $$("[data-end]",dealwrap).forEach(function(b){
+      b.addEventListener("click",function(){ deals.splice(+this.dataset.end,1); renderDeals(); });
+    });
+    $$("[data-tk]",dealwrap).forEach(function(a){
+      a.addEventListener("click",function(e){e.preventDefault(); openBuilder(); });
+    });
+  }
+  renderDeals();
+
+  /* builder */
+  var builder=$("#builder"), presetsEl=$("#presets"), customwrap=$("#customwrap");
+  var PRESETS=[
+    {b:"Free churro",t:"Free churro with any plate",f:"One per table. Dine-in.",ex:true},
+    {b:"$2 tacos",t:"$2 street tacos, all day",f:"Dine-in only.",ex:true},
+    {b:"Free chips + queso",t:"Free chips & queso with two entrées",f:"Dine-in. One per table."},
+    {b:"Kids eat free",t:"Kids eat free on Sundays",f:"One kids plate per adult entrée."},
+    {b:"$5 margarita",t:"$5 house margarita",f:"21+. Dine-in."},
+    {b:"10% off",t:"10% off your whole check",f:"Not valid with other offers."},
+    {b:"Free horchata",t:"Free horchata with any combo",f:"One per guest."},
+    {b:"BOGO tacos",t:"Buy 3 tacos, get 1 free",f:"Dine-in only."},
+    {b:"Write my own",t:"__custom__",f:""}
+  ];
+  var sel={title:"Free churro with any plate", fine:"One per table. Dine-in."};
+  var dayState={MON:0,TUE:0,WED:0,THU:0,FRI:0,SAT:0,SUN:0};
+  var expChoices=["Ongoing ★","3 months","1 month","2 weeks"];
+  var expSel="Ongoing ★";
+
+  PRESETS.forEach(function(p,i){
+    var b=document.createElement("button");
+    b.type="button"; b.className="preset"+(i===0?" sel":"");
+    b.innerHTML='<b>'+esc(p.b)+'</b>'+(p.t!=="__custom__"?'<span style="color:var(--ink-soft)">'+esc(p.t)+'</span>'+(p.ex?'<span class="egtag" style="margin-top:4px">example</span>':''):'<span style="color:var(--chile)">✎ custom perk</span>');
+    b.addEventListener("click",function(){
+      $$(".preset",presetsEl).forEach(function(x){x.classList.remove("sel");});
+      b.classList.add("sel");
+      if(p.t==="__custom__"){
+        customwrap.style.display="block";
+        sel={title:$("#ctitle").value||"Your perk", fine:$("#cfine").value||""};
+      }else{
+        customwrap.style.display="none";
+        sel={title:p.t, fine:p.f};
+      }
+      syncTicket();
+    });
+    presetsEl.appendChild(b);
+  });
+  $("#ctitle").addEventListener("input",function(){ sel.title=this.value||"Your perk"; syncTicket(); });
+  $("#cfine").addEventListener("input",function(){ sel.fine=this.value; syncTicket(); });
+
+  var daypills=$("#daypills");
+  Object.keys(dayState).forEach(function(d){
+    var p=document.createElement("button"); p.type="button"; p.className="pill"; p.textContent=d;
+    p.addEventListener("click",function(){ dayState[d]=!dayState[d]; p.classList.toggle("on",dayState[d]); syncTicket(); });
+    daypills.appendChild(p);
+  });
+  var exppills=$("#exppills");
+  expChoices.forEach(function(c,i){
+    var p=document.createElement("button"); p.type="button"; p.className="pill"+(i===0?" on":""); p.textContent=c;
+    p.addEventListener("click",function(){
+      $$(".pill",exppills).forEach(function(x){x.classList.remove("on");});
+      p.classList.add("on"); expSel=c; syncTicket();
+    });
+    exppills.appendChild(p);
+  });
+
+  function daysLabel(){
+    var on=Object.keys(dayState).filter(function(d){return dayState[d];});
+    if(on.length===0) return "EVERY DAY";
+    if(on.length===7) return "EVERY DAY";
+    return on.join(" · ");
+  }
+  function syncTicket(){
+    $("#tk-title").textContent=sel.title;
+    $("#tk-fine").textContent=sel.fine;
+    $("#tk-days").textContent=daysLabel();
+    $("#tk-exp").textContent=expSel.replace(" ★","");
+  }
+  syncTicket();
+
+  function openBuilder(){
+    builder.classList.add("on");
+    $("#newdealopen").style.display="none";
+    builder.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+  $("#newdealopen").addEventListener("click",openBuilder);
+  $("#canceldeal").addEventListener("click",function(){
+    builder.classList.remove("on"); $("#newdealopen").style.display="";
+  });
+  $("#createdeal").addEventListener("click",function(){
+    deals.push({title:sel.title, fine:sel.fine, days:daysLabel(), exp:expSel.replace(" ★","")});
+    renderDeals();
+    builder.classList.remove("on"); $("#newdealopen").style.display="";
+    savemsg.textContent="Perk posted ✓"; savemsg.className="savemsg";
+    setTimeout(function(){savemsg.textContent="";},2600);
+    window.scrollTo({top:dealwrap.getBoundingClientRect().top+window.scrollY-120,behavior:"smooth"});
+  });
+
+  /* ---------- live-page preview ---------- */
+  var modal=$("#modal");
+  function to12(t){ if(!t)return""; var p=t.split(":"),h=+p[0],m=p[1]; var ap=h>=12?"pm":"am"; h=h%12; if(h===0)h=12; return h+(m!=="00"?":"+m:"")+ap; }
+  $("#viewlive").addEventListener("click",function(e){
+    e.preventDefault();
+    $("#pub-blurb").textContent=blurb.value||"—";
+    $("#pub-phone").textContent=$("#phone").value||"—";
+    var hh=$("#happyHour").value; $("#pub-hh").innerHTML=hh?esc(hh):'<span style="color:var(--ink-soft)">—</span>';
+    var web=$("#website").value; $("#pub-web").textContent=web||"—";
+    // deal
+    if(deals.length){
+      $("#pub-deal").style.display="";
+      $("#pub-deal-t").textContent=deals[0].title;
+      $("#pub-deal-s").textContent=deals[0].days+" · "+deals[0].exp;
+    } else { $("#pub-deal").style.display="none"; }
+    // hours
+    var hoursEl=$("#pub-hours");
+    if($("#ownhours").checked){
+      hoursEl.innerHTML=DAYS.map(function(d,i){
+        var ins=$$(".hourrow[data-i='"+i+"'] input");
+        var txt=closedDay[i]?'<span class="cl">Closed</span>':(to12(ins[0].value)+"–"+to12(ins[1].value));
+        return '<div class="d"><span>'+d+'</span><span>'+txt+'</span></div>';
+      }).join("");
+    } else {
+      hoursEl.innerHTML='<div class="d"><span style="color:var(--ink-soft)">Showing Google\'s hours</span></div>'+
+        '<div class="d"><span>Mon–Thu</span><span>11am–9pm</span></div>'+
+        '<div class="d"><span>Fri–Sat</span><span>11am–10pm</span></div>'+
+        '<div class="d"><span>Sun</span><span>9am–8pm</span></div>';
+    }
+    modal.classList.add("on");
+  });
+  $("#modalx").addEventListener("click",function(){ modal.classList.remove("on"); });
+  modal.addEventListener("click",function(e){ if(e.target===modal) modal.classList.remove("on"); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") modal.classList.remove("on"); });
+
+  /* ---------- (?) help popovers ---------- */
+  var hpop=document.createElement("div"); hpop.className="helppop"; hpop.style.display="none"; document.body.appendChild(hpop);
+  var hpopFor=null;
+  function hideHelp(){ hpop.style.display="none"; hpopFor=null; }
+  document.addEventListener("click",function(e){
+    var b=e.target.closest ? e.target.closest(".help") : null;
+    if(b){
+      e.preventDefault(); e.stopPropagation();
+      if(hpopFor===b){ hideHelp(); return; }
+      hpop.innerHTML='<div class="hp-t">'+esc(b.getAttribute("data-t")||"")+'</div>'+(b.getAttribute("data-eg")?'<div class="hp-eg"><b>e.g.</b>'+esc(b.getAttribute("data-eg"))+'</div>':'');
+      hpop.style.display="block";
+      var r=b.getBoundingClientRect();
+      var maxLeft=window.scrollX+document.documentElement.clientWidth-254;
+      hpop.style.top=(window.scrollY+r.bottom+6)+"px";
+      hpop.style.left=Math.max(8,Math.min(window.scrollX+r.left, maxLeft))+"px";
+      hpopFor=b; return;
+    }
+    if(!(e.target.closest && e.target.closest(".helppop"))) hideHelp();
+  });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") hideHelp(); });
+  window.addEventListener("scroll",hideHelp,{passive:true});
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+})();
+</script>

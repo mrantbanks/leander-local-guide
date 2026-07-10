@@ -1,4 +1,4 @@
-// Pure, client-safe helpers for Locals Only deals (no DB imports — usable in client previews).
+// Pure, client-safe helpers for Local Passport perks (no DB imports — usable in client previews).
 export type Special = {
   id: number; slug?: string; restaurant?: string; category?: string;
   title: string; details: string | null; recurring: boolean; daysOfWeek: number[] | null;

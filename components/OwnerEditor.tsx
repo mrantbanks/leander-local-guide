@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveOwnerEdits } from '@/app/actions';
 import type { OwnerContent, OwnerHours } from '@/lib/owner';
+import Help from '@/components/Help';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -38,7 +39,9 @@ export default function OwnerEditor({ slug, initial, googleWeek }: { slug: strin
   return (
     <div className="space-y-4">
       <div className={card}>
-        <span className={lbl}>From the owner <span className="normal-case tracking-normal text-ink-soft/70">(shows as a labeled note on your page)</span></span>
+        <span className={lbl}>From the owner <span className="normal-case tracking-normal text-ink-soft/70">(shows as a labeled note on your page)</span>
+          <Help text="A short note in your own voice. It shows on your public page under a 'From the owner' heading — separate from Anthony's review, which you can't edit. Good for the story or an off-menu tip." example="Family-run since 2019. Ask for the off-menu green salsa." />
+        </span>
         <textarea value={f.blurb} onChange={set('blurb')} rows={3} maxLength={280} placeholder="Family-run since 2019. Ask for the off-menu green salsa." className={field} />
       </div>
 
@@ -55,7 +58,9 @@ export default function OwnerEditor({ slug, initial, googleWeek }: { slug: strin
 
       <div className={card}>
         <div className="flex items-center justify-between">
-          <span className={lbl + ' mb-0'}>Hours</span>
+          <span className={lbl + ' mb-0'}>Hours
+            <Help text="By default your page shows the hours Google has for you. Flip 'Set my own' to type your own — they replace Google's everywhere on your page, including the open-now badge." example="Closed Mondays; open 11am–9pm Tue–Sun." />
+          </span>
           <label className="font-ui text-xs text-ink-soft flex items-center gap-1.5 cursor-pointer">
             <input type="checkbox" checked={editHours} onChange={(e) => setEditHours(e.target.checked)} /> Set my own
           </label>

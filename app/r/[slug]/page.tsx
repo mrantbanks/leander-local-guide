@@ -185,7 +185,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             <div className="flex items-center gap-2 mb-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/locals-only.webp" alt="" width={24} height={24} className="w-6 h-6" />
-              <h2 className="font-stamp uppercase tracking-[0.14em] text-chile text-sm">Locals Only</h2>
+              <h2 className="font-stamp uppercase tracking-[0.14em] text-chile text-sm">Local Passport</h2>
             </div>
             <ul className="space-y-2">
               {specials.map((s) => (
@@ -195,11 +195,11 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                     {s.details && <p className="font-ui text-xs text-ink-soft">{s.details}</p>}
                     <p className="font-stamp uppercase tracking-[0.06em] text-[11px] text-ink-soft">{scheduleLabel(s)}</p>
                   </div>
-                  <Link href={`/ticket/${s.id}`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the ticket →</Link>
+                  <Link href={`/ticket/${s.id}`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
                 </li>
               ))}
             </ul>
-            <p className="font-ui text-[11px] text-ink-soft mt-2">A perk from the owner for Leander locals. Show your ticket in-house. <Link href="/locals-only" className="text-chile">See every Leander deal →</Link></p>
+            <p className="font-ui text-[11px] text-ink-soft mt-2">A standing perk from the owner to people who found them here. Pull the stamp, show it at the counter. <Link href="/passport" className="text-chile">See the whole Passport →</Link></p>
           </div>
         </div>
       )}
