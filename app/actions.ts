@@ -8,7 +8,7 @@ import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
-import { createSpecial, removeSpecial, specialOwnerSlug, type SpecialInput } from '@/lib/specials';
+import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -17,18 +17,28 @@ const COUNTER: Record<string, string> = {
 
 type Counts = { worth_it_ct: number; its_fine_ct: number; skip_it_ct: number; been_here_ct: number; want_to_go_ct: number };
 
+/**
+ * The anonymous per-device id. A random UUID in an httpOnly cookie: never an account, never
+ * joined to email/name/IP. It exists only to tell "63 distinct locals" apart from "3 people
+ * tapping 21 times". Minted lazily on first use, so anything that needs it must call this
+ * rather than read the cookie directly (a visitor who lands straight on /passport has none yet).
+ */
+async function anonId(): Promise<string> {
+  const jar = await cookies();
+  const existing = jar.get('llg_anon')?.value;
+  if (existing) return existing;
+  const anon = randomUUID();
+  jar.set('llg_anon', anon, { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' });
+  return anon;
+}
+
 // Anonymous one-tap signal (verdict / been-here / want-to-go). Deduped per device.
 export async function recordSignal(
   placeId: string,
   type: 'verdict' | 'been_here' | 'want_to_go',
   verdict?: 'worth_it' | 'its_fine' | 'skip_it'
 ): Promise<Counts | null> {
-  const jar = await cookies();
-  let anon = jar.get('llg_anon')?.value;
-  if (!anon) {
-    anon = randomUUID();
-    jar.set('llg_anon', anon, { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' });
-  }
+  const anon = await anonId();
   const col = type === 'verdict' ? COUNTER[verdict || ''] : COUNTER[type];
   if (!col) return null;
   const ins = await pool.query(
@@ -305,7 +315,7 @@ export async function createSpecialAction(slug: string, input: SpecialInput): Pr
   const email = session?.user?.email;
   if (!email || !(await isVerifiedOwner(slug, email))) return { ok: false, error: 'Not authorized' };
   const title = clean(input.title);
-  if (!title) return { ok: false, error: 'Add the deal' };
+  if (!title) return { ok: false, error: 'Add the perk' };
   await createSpecial(slug, email, {
     title, details: clean(input.details ?? null), recurring: !!input.recurring,
     daysOfWeek: Array.isArray(input.daysOfWeek) ? input.daysOfWeek.filter((n) => n >= 0 && n <= 6) : null,
@@ -325,4 +335,85 @@ export async function removeSpecialAction(id: number): Promise<{ ok: boolean }> 
   revalidatePath(`/r/${slug}`);
   revalidatePath(`/owner/${slug}`);
   return { ok: true };
+}
+
+// A perk the Guide funds and honors itself. Admin only, and it needs no business to agree to it,
+// which is the whole point: it puts something real on /passport today.
+export async function createGuideSpecialAction(input: GuideSpecialInput): Promise<{ ok: boolean; error?: string }> {
+  if (!(await requireAdmin())) return { ok: false, error: 'Not authorized' };
+  const session = await auth();
+  const title = clean(input.title);
+  if (!title) return { ok: false, error: 'Add the perk' };
+  await createGuideSpecial(session?.user?.email || 'guide', {
+    title, details: clean(input.details ?? null), recurring: !!input.recurring,
+    daysOfWeek: Array.isArray(input.daysOfWeek) ? input.daysOfWeek.filter((n) => n >= 0 && n <= 6) : null,
+    endsOn: input.endsOn || null,
+    redeemType: input.redeemType,
+  });
+  revalidatePath('/passport');
+  revalidatePath('/admin/passport');
+  return { ok: true };
+}
+
+export async function removeGuideSpecialAction(id: number): Promise<{ ok: boolean }> {
+  if (!(await requireAdmin())) return { ok: false };
+  await removeSpecial(id);
+  revalidatePath('/passport');
+  revalidatePath('/admin/passport');
+  return { ok: true };
+}
+
+// ── Local Passport attribution ────────────────────────────────────────────────────────────────
+// Append-only. We never update these rows; counts are derived. See sql/008_passport_events.sql.
+// This is the evidence that the Guide put a body in someone's store, so it has to be recorded as
+// it happens: there is no way to backfill an event we did not capture.
+
+const PULL_SOURCES = new Set(['listing', 'passport', 'map', 'direct']);
+
+/**
+ * Someone opened the stamp on their device. Intent, not yet a visit.
+ *
+ * Called from a client island rather than the /ticket page body, for two reasons: the llg_anon
+ * cookie is httpOnly (so the browser cannot send it itself), and a server-render hook would count
+ * every crawler as a person.
+ */
+export async function recordStampPull(specialId: number, source?: string): Promise<void> {
+  // Coerce, don't just check: this crosses the client/server boundary and specials.id originates
+  // as a bigserial, which node-pg surfaces as a string. A bare Number.isInteger() here silently
+  // dropped every single pull.
+  const id = Number(specialId);
+  if (!Number.isInteger(id) || id <= 0) return;
+  const anon = await anonId();
+  const src = source && PULL_SOURCES.has(source) ? source : 'direct';
+  // place_id is read from the perk itself, so a Guide perk (place_id null) logs correctly and a
+  // later edit to the perk cannot rewrite what we already recorded.
+  await pool.query(
+    `insert into passport_stamp_events (place_id, special_id, event_type, visitor_token, source)
+     select place_id, id, 'pull', $2::uuid, $3 from specials where id = $1 and status = 'active'`,
+    [id, anon, src]
+  );
+}
+
+/**
+ * The owner confirmed the stamp at the counter. This is the number that closes the sale: "they
+ * pulled a stamp" invites "but did they show up?" and this is the answer.
+ *
+ * Internally 'redeem'; every user-facing surface says "stamp it" (brand ban list).
+ */
+export async function recordStampRedeem(specialId: number): Promise<{ ok: boolean; total?: number }> {
+  const session = await auth();
+  const email = session?.user?.email;
+  const slug = await specialOwnerSlug(specialId);
+  if (!email || !slug || !(await isVerifiedOwner(slug, email))) return { ok: false };
+  await pool.query(
+    `insert into passport_stamp_events (place_id, special_id, event_type, redeemed_by, source)
+     select place_id, id, 'redeem', 'owner', 'listing' from specials where id = $1 and status = 'active'`,
+    [specialId]
+  );
+  const { rows } = await pool.query(
+    `select count(*)::int as n from passport_stamp_events where special_id = $1 and event_type = 'redeem'`,
+    [specialId]
+  );
+  revalidatePath(`/owner/${slug}`);
+  return { ok: true, total: rows[0]?.n ?? 0 };
 }

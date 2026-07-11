@@ -6,6 +6,7 @@ import { getOwnerSpecials, scheduleLabel } from '@/lib/specials';
 import { removeSpecialAction } from '@/app/actions';
 import OwnerEditor from '@/components/OwnerEditor';
 import LocalsOnlyStudio from '@/components/LocalsOnlyStudio';
+import StampItButton from '@/components/StampItButton';
 import Help from '@/components/Help';
 
 export const dynamic = 'force-dynamic';
@@ -111,6 +112,8 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
                   <p className="font-stamp uppercase tracking-[0.06em] text-sm text-chile">{scheduleLabel(s)}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
+                  {/* Tap when a local actually shows you the stamp. That is the proof we sent them. */}
+                  <StampItButton specialId={s.id} />
                   <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Stamp →</Link>
                   <form action={async () => { 'use server'; await removeSpecialAction(s.id); }}><button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood">End it</button></form>
                 </div>

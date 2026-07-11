@@ -14,6 +14,7 @@ import TipContribute from '@/components/TipContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
+import { snippetFor, faqLd } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -28,15 +29,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const spot = await getSpot(slug);
   if (!spot) return { title: 'Not found' };
-  const desc = (spot.hook || spot.summary || `${spot.name}, a ${spot.category.toLowerCase()} in Leander, Texas. Anthony's take, hours, menu, and map.`).slice(0, 160);
+  const { title, description } = snippetFor(spot);
   const img = spot.localPhotos[0]
     ? `/uploads/${spot.localPhotos[0].filename}`
     : spot.photo ? `/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
   return {
-    title: `${spot.name}, Leander TX`,
-    description: desc,
+    // `absolute` bypasses the root template ("%s · The Leander Local Guide"): the snippet already
+    // carries the brand, and the template would push the title past what Google renders.
+    title: { absolute: title },
+    description,
     alternates: { canonical: `/r/${slug}` },
-    openGraph: { title: `${spot.name} · The Leander Local Guide`, description: desc, type: 'article', images: img ? [img] : undefined },
+    // Social cards keep the editorial voice; only the search snippet is optimised for the SERP.
+    openGraph: { title: `${spot.name} · The Leander Local Guide`, description: spot.hook || description, type: 'article', images: img ? [img] : undefined },
   };
 }
 
@@ -64,7 +68,13 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const VERDICT_RATING: Record<string, number> = {
     'WORTH THE GRAVEL': 5, 'WORTH IT': 4.5, 'SOLID': 4, "IT'S FINE": 3.5, 'SKIP IT': 2,
   };
-  const ratingValue = spot.verdict ? (VERDICT_RATING[spot.verdict.toUpperCase()] ?? 4) : 4;
+  // No invented fallback: an unmapped verdict emits no rating at all rather than a made-up 4.
+  const ratingValue: number | null = VERDICT_RATING[(spot.verdict || '').toUpperCase()] ?? null;
+  // Anthony authors the review only where he actually ate. Everywhere else the Guide is the author,
+  // because the write-up is our synthesis of what Leander reviewers say, not a first-person visit.
+  const reviewAuthor = spot.visited
+    ? { '@type': 'Person', '@id': 'https://leanderlocalguide.com/about#anthony-martinez', name: 'Anthony Martinez', url: 'https://leanderlocalguide.com/about' }
+    : { '@id': 'https://leanderlocalguide.com/#org' };
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -78,13 +88,18 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     image: ogImg ? [ogImg] : undefined,
     hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
-    // Only claim a first-person Review by Anthony when he has ACTUALLY visited.
-    // Otherwise expose Google's aggregate rating, which is what the summary reflects.
-    review: spot.visited && spot.review
+    // Our own published review of the place: a verdict plus a written justification, on every spot.
+    // The author varies (Anthony when he went, the Guide when the write-up is our synthesis), which
+    // is what keeps this honest and inside Google's rules for critic reviews.
+    //
+    // We deliberately do NOT emit aggregateRating. It used to carry spot.ratingGoogle, i.e. GOOGLE's
+    // star average, which we did not collect and are not entitled to mark up as structured data on
+    // our own page. That is a policy violation and a plausible reason we get no rich result today.
+    review: spot.review
       ? {
           '@type': 'Review',
-          reviewRating: { '@type': 'Rating', ratingValue, bestRating: 5, worstRating: 1 },
-          author: { '@type': 'Person', '@id': 'https://leanderlocalguide.com/about#anthony-martinez', name: 'Anthony Martinez', url: 'https://leanderlocalguide.com/about' },
+          ...(ratingValue ? { reviewRating: { '@type': 'Rating', ratingValue, bestRating: 5, worstRating: 1 } } : {}),
+          author: reviewAuthor,
           publisher: { '@id': 'https://leanderlocalguide.com/#org' },
           name: spot.hook || undefined,
           reviewBody: spot.review,
@@ -92,10 +107,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           dateModified: updatedISO,
         }
       : undefined,
-    aggregateRating: !spot.visited && spot.ratingGoogle
-      ? { '@type': 'AggregateRating', ratingValue: spot.ratingGoogle, reviewCount: spot.ratingCount || 1, bestRating: 5, worstRating: 1 }
-      : undefined,
   };
+  const faqLdJson = faqLd(spot, `https://leanderlocalguide.com/r/${slug}`);
   const crumbLd = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanderlocalguide.com/' },
@@ -127,6 +140,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
+      {faqLdJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLdJson) }} />}
       {eventLd.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventLd) }} />}
       {/* Hero */}
       <header className="border-b-2 border-ink">
@@ -159,10 +173,15 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             ) : spot.visited ? (
               <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="text-lg shrink-0" />
             ) : (
+              // The verdict shows here too, because it already shows on every card across the site
+              // and now in the search snippet. What stays honest is the line under it: this call
+              // comes from what reviewers say, not from a visit of Anthony's.
               <div className="shrink-0 text-right">
-                <div className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft">Summary of reviews</div>
-                {spot.ratingGoogle && <div className="font-display font-black text-2xl text-ink leading-none mt-0.5">{spot.ratingGoogle}★</div>}
-                <div className="font-stamp uppercase tracking-[0.08em] text-xs text-chile mt-0.5">Not yet visited</div>
+                <VerdictStamp rating={spot.ratingGoogle} label={spot.verdict} className="text-lg" />
+                <div className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mt-1.5">
+                  Going by the reviews{spot.ratingGoogle ? ` · ${spot.ratingGoogle}★` : ''}
+                </div>
+                <div className="font-stamp uppercase tracking-[0.08em] text-xs text-chile">Not yet visited</div>
               </div>
             )}
           </div>
@@ -195,7 +214,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                     {s.details && <p className="font-ui text-xs text-ink-soft">{s.details}</p>}
                     <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft">{scheduleLabel(s)}</p>
                   </div>
-                  <Link href={`/ticket/${s.id}`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
+                  <Link href={`/ticket/${s.id}?src=listing`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
                 </li>
               ))}
             </ul>
@@ -265,7 +284,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 {spot.summaryNote || "Heads up: I haven't made it here myself yet, so I'm pulling together what Leander reviewers say. Summary coming soon."}
               </p>
               <p className="font-ui text-xs text-ink-soft mt-1.5">
-                <Link href="/about" className="text-chile underline underline-offset-2">Anthony</Link>, The Leander Local
+                <Link href="/about" className="text-chile underline underline-offset-2">Anthony</Link>, The Leander Local{updated ? ` · Last checked ${updated}` : ''}
               </p>
             </div>
           )}

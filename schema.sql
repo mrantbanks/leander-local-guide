@@ -1,3 +1,14 @@
+-- The Leander Local Guide, live schema (DR reference).
+--
+-- GENERATED, do not hand-edit. This file had drifted badly because it was patched by hand:
+-- it was missing specials, subscribers, email_*, ai_config, owner_claim_tokens, photo_cache and
+-- scraper_runs, while claiming to be the "DR source of truth". Regenerate it instead:
+--
+--   ssh web1 "docker exec llg-db pg_dump -U postgres -d postgres --schema-only --no-owner --no-privileges" > schema.sql
+--
+-- The real DR artifact is the nightly dump on web1 (/opt/backup/staging/databases/<date>/leander_*.sql.gz),
+-- pulled into the append-only restic repo. NOTE the database is named "postgres", not "leander".
+
 --
 -- PostgreSQL database dump
 --
@@ -782,6 +793,17 @@ COMMENT ON TABLE auth.users IS 'Auth: Stores user login data within a secure sch
 
 
 --
+-- Name: ai_config; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ai_config (
+    task text NOT NULL,
+    provider text NOT NULL,
+    updated_at timestamp with time zone DEFAULT now()
+);
+
+
+--
 -- Name: claims; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -793,6 +815,8 @@ CREATE TABLE public.claims (
     contact text,
     status text DEFAULT 'pending'::text,
     created_at timestamp with time zone DEFAULT now(),
+    verified_via text,
+    token_id bigint,
     ip text,
     CONSTRAINT claims_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'verified'::text, 'rejected'::text])))
 );
@@ -815,6 +839,120 @@ CREATE SEQUENCE public.claims_id_seq
 --
 
 ALTER SEQUENCE public.claims_id_seq OWNED BY public.claims.id;
+
+
+--
+-- Name: email_campaigns; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.email_campaigns (
+    id integer NOT NULL,
+    kind text DEFAULT 'broadcast'::text NOT NULL,
+    subject text NOT NULL,
+    body text NOT NULL,
+    status text DEFAULT 'draft'::text NOT NULL,
+    scheduled_at timestamp with time zone,
+    sent_at timestamp with time zone,
+    recipients integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: email_campaigns_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.email_campaigns_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: email_campaigns_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.email_campaigns_id_seq OWNED BY public.email_campaigns.id;
+
+
+--
+-- Name: email_providers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.email_providers (
+    id integer NOT NULL,
+    name text NOT NULL,
+    kind text DEFAULT 'log'::text NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    daily_quota integer DEFAULT 200 NOT NULL,
+    monthly_quota integer DEFAULT 6000 NOT NULL,
+    sent_today integer DEFAULT 0 NOT NULL,
+    sent_month integer DEFAULT 0 NOT NULL,
+    day_anchor date,
+    month_anchor date,
+    enabled boolean DEFAULT true NOT NULL,
+    priority integer DEFAULT 100 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: email_providers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.email_providers_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: email_providers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.email_providers_id_seq OWNED BY public.email_providers.id;
+
+
+--
+-- Name: email_sends; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.email_sends (
+    id bigint NOT NULL,
+    subscriber_id uuid,
+    campaign_id integer,
+    ar_step integer,
+    kind text NOT NULL,
+    provider_id integer,
+    status text DEFAULT 'queued'::text NOT NULL,
+    error text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: email_sends_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.email_sends_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: email_sends_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.email_sends_id_seq OWNED BY public.email_sends.id;
 
 
 --
@@ -847,7 +985,8 @@ CREATE TABLE public.events (
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     worker_checked_at timestamp with time zone,
-    worker_note text
+    worker_note text,
+    worker_lease_until timestamp with time zone
 );
 
 
@@ -904,6 +1043,45 @@ ALTER SEQUENCE public.feed_events_id_seq OWNED BY public.feed_events.id;
 
 
 --
+-- Name: owner_claim_tokens; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.owner_claim_tokens (
+    id bigint NOT NULL,
+    place_id text NOT NULL,
+    token_hash text NOT NULL,
+    code text,
+    status text DEFAULT 'printed'::text NOT NULL,
+    created_by text,
+    claimed_by text,
+    note text,
+    created_at timestamp with time zone DEFAULT now(),
+    claimed_at timestamp with time zone,
+    expires_at timestamp with time zone DEFAULT (now() + '120 days'::interval),
+    CONSTRAINT owner_claim_tokens_status_check CHECK ((status = ANY (ARRAY['printed'::text, 'claimed'::text, 'revoked'::text])))
+);
+
+
+--
+-- Name: owner_claim_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.owner_claim_tokens_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: owner_claim_tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.owner_claim_tokens_id_seq OWNED BY public.owner_claim_tokens.id;
+
+
+--
 -- Name: owner_responses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -936,6 +1114,57 @@ ALTER SEQUENCE public.owner_responses_id_seq OWNED BY public.owner_responses.id;
 
 
 --
+-- Name: passport_stamp_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.passport_stamp_events (
+    id bigint NOT NULL,
+    place_id text,
+    special_id bigint NOT NULL,
+    event_type text NOT NULL,
+    occurred_at timestamp with time zone DEFAULT now() NOT NULL,
+    visitor_token uuid,
+    source text,
+    redeemed_by text,
+    CONSTRAINT passport_stamp_events_event_type_check CHECK ((event_type = ANY (ARRAY['pull'::text, 'redeem'::text]))),
+    CONSTRAINT passport_stamp_events_redeemed_by_check CHECK (((redeemed_by IS NULL) OR (redeemed_by = ANY (ARRAY['owner'::text, 'staff'::text, 'self'::text])))),
+    CONSTRAINT passport_stamp_events_source_check CHECK (((source IS NULL) OR (source = ANY (ARRAY['listing'::text, 'passport'::text, 'map'::text, 'direct'::text]))))
+);
+
+
+--
+-- Name: passport_stamp_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.passport_stamp_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: passport_stamp_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.passport_stamp_events_id_seq OWNED BY public.passport_stamp_events.id;
+
+
+--
+-- Name: photo_cache; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.photo_cache (
+    resource_name text NOT NULL,
+    width integer NOT NULL,
+    content_type text NOT NULL,
+    bytes bytea NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: photos; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -950,7 +1179,9 @@ CREATE TABLE public.photos (
     sort integer DEFAULT 0,
     created_at timestamp with time zone DEFAULT now(),
     rights_ack boolean DEFAULT false,
-    rights_ack_at timestamp with time zone
+    rights_ack_at timestamp with time zone,
+    is_menu boolean DEFAULT false NOT NULL,
+    is_header boolean DEFAULT false NOT NULL
 );
 
 
@@ -1049,7 +1280,11 @@ CREATE TABLE public.restaurants (
     open_late boolean,
     opened_at date,
     closed_at date,
-    happy_hour text
+    happy_hour text,
+    owner_content jsonb DEFAULT '{}'::jsonb NOT NULL,
+    happy_hour_checked_at timestamp with time zone,
+    hidden boolean DEFAULT false NOT NULL,
+    menu jsonb
 );
 
 
@@ -1065,6 +1300,8 @@ CREATE TABLE public.reviews (
     body text,
     status text DEFAULT 'pending'::text,
     created_at timestamp with time zone DEFAULT now(),
+    worker_checked_at timestamp with time zone,
+    worker_note text,
     CONSTRAINT reviews_stars_check CHECK (((stars >= 1) AND (stars <= 5))),
     CONSTRAINT reviews_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'removed'::text])))
 );
@@ -1090,6 +1327,104 @@ ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.id;
 
 
 --
+-- Name: scraper_runs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.scraper_runs (
+    id bigint NOT NULL,
+    kind text DEFAULT 'happy_hours'::text NOT NULL,
+    started_at timestamp with time zone DEFAULT now(),
+    finished_at timestamp with time zone,
+    checked integer DEFAULT 0,
+    found integer DEFAULT 0,
+    status text DEFAULT 'running'::text NOT NULL,
+    note text,
+    CONSTRAINT scraper_runs_status_check CHECK ((status = ANY (ARRAY['running'::text, 'done'::text, 'error'::text])))
+);
+
+
+--
+-- Name: scraper_runs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.scraper_runs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: scraper_runs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.scraper_runs_id_seq OWNED BY public.scraper_runs.id;
+
+
+--
+-- Name: specials; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.specials (
+    id bigint NOT NULL,
+    place_id text,
+    title text NOT NULL,
+    details text,
+    recurring boolean DEFAULT false NOT NULL,
+    days_of_week integer[],
+    starts_on date,
+    ends_on date,
+    status text DEFAULT 'active'::text NOT NULL,
+    created_by text,
+    created_at timestamp with time zone DEFAULT now(),
+    issuer_type text DEFAULT 'business'::text NOT NULL,
+    redeem_type text DEFAULT 'counter'::text NOT NULL,
+    CONSTRAINT specials_issuer_place_ck CHECK ((((issuer_type = 'business'::text) AND (place_id IS NOT NULL)) OR ((issuer_type = 'guide'::text) AND (place_id IS NULL)))),
+    CONSTRAINT specials_issuer_type_check CHECK ((issuer_type = ANY (ARRAY['business'::text, 'guide'::text]))),
+    CONSTRAINT specials_redeem_type_check CHECK ((redeem_type = ANY (ARRAY['counter'::text, 'digital'::text, 'mail'::text]))),
+    CONSTRAINT specials_status_check CHECK ((status = ANY (ARRAY['active'::text, 'removed'::text])))
+);
+
+
+--
+-- Name: specials_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.specials_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: specials_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.specials_id_seq OWNED BY public.specials.id;
+
+
+--
+-- Name: subscribers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.subscribers (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    email text NOT NULL,
+    status text DEFAULT 'pending'::text NOT NULL,
+    source text,
+    confirm_token uuid DEFAULT gen_random_uuid() NOT NULL,
+    unsub_token uuid DEFAULT gen_random_uuid() NOT NULL,
+    ar_step integer DEFAULT 0 NOT NULL,
+    ar_next_due timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    confirmed_at timestamp with time zone
+);
+
+
+--
 -- Name: tips; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1101,6 +1436,8 @@ CREATE TABLE public.tips (
     status text DEFAULT 'pending'::text,
     ip_hash text,
     created_at timestamp with time zone DEFAULT now(),
+    worker_checked_at timestamp with time zone,
+    worker_note text,
     CONSTRAINT tips_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'removed'::text])))
 );
 
@@ -1231,6 +1568,27 @@ ALTER TABLE ONLY public.claims ALTER COLUMN id SET DEFAULT nextval('public.claim
 
 
 --
+-- Name: email_campaigns id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_campaigns ALTER COLUMN id SET DEFAULT nextval('public.email_campaigns_id_seq'::regclass);
+
+
+--
+-- Name: email_providers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_providers ALTER COLUMN id SET DEFAULT nextval('public.email_providers_id_seq'::regclass);
+
+
+--
+-- Name: email_sends id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_sends ALTER COLUMN id SET DEFAULT nextval('public.email_sends_id_seq'::regclass);
+
+
+--
 -- Name: events id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1245,10 +1603,24 @@ ALTER TABLE ONLY public.feed_events ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: owner_claim_tokens id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.owner_claim_tokens ALTER COLUMN id SET DEFAULT nextval('public.owner_claim_tokens_id_seq'::regclass);
+
+
+--
 -- Name: owner_responses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.owner_responses ALTER COLUMN id SET DEFAULT nextval('public.owner_responses_id_seq'::regclass);
+
+
+--
+-- Name: passport_stamp_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.passport_stamp_events ALTER COLUMN id SET DEFAULT nextval('public.passport_stamp_events_id_seq'::regclass);
 
 
 --
@@ -1270,6 +1642,20 @@ ALTER TABLE ONLY public.place_signals ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.reviews ALTER COLUMN id SET DEFAULT nextval('public.reviews_id_seq'::regclass);
+
+
+--
+-- Name: scraper_runs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scraper_runs ALTER COLUMN id SET DEFAULT nextval('public.scraper_runs_id_seq'::regclass);
+
+
+--
+-- Name: specials id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.specials ALTER COLUMN id SET DEFAULT nextval('public.specials_id_seq'::regclass);
 
 
 --
@@ -1335,6 +1721,14 @@ ALTER TABLE ONLY auth.users
 
 
 --
+-- Name: ai_config ai_config_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_config
+    ADD CONSTRAINT ai_config_pkey PRIMARY KEY (task);
+
+
+--
 -- Name: claims claims_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1348,6 +1742,30 @@ ALTER TABLE ONLY public.claims
 
 ALTER TABLE ONLY public.claims
     ADD CONSTRAINT claims_place_id_user_email_key UNIQUE (place_id, user_email);
+
+
+--
+-- Name: email_campaigns email_campaigns_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_campaigns
+    ADD CONSTRAINT email_campaigns_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: email_providers email_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_providers
+    ADD CONSTRAINT email_providers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: email_sends email_sends_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_sends
+    ADD CONSTRAINT email_sends_pkey PRIMARY KEY (id);
 
 
 --
@@ -1367,11 +1785,51 @@ ALTER TABLE ONLY public.feed_events
 
 
 --
+-- Name: owner_claim_tokens owner_claim_tokens_code_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.owner_claim_tokens
+    ADD CONSTRAINT owner_claim_tokens_code_key UNIQUE (code);
+
+
+--
+-- Name: owner_claim_tokens owner_claim_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.owner_claim_tokens
+    ADD CONSTRAINT owner_claim_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: owner_claim_tokens owner_claim_tokens_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.owner_claim_tokens
+    ADD CONSTRAINT owner_claim_tokens_token_hash_key UNIQUE (token_hash);
+
+
+--
 -- Name: owner_responses owner_responses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.owner_responses
     ADD CONSTRAINT owner_responses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: passport_stamp_events passport_stamp_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.passport_stamp_events
+    ADD CONSTRAINT passport_stamp_events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: photo_cache photo_cache_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.photo_cache
+    ADD CONSTRAINT photo_cache_pkey PRIMARY KEY (resource_name, width);
 
 
 --
@@ -1420,6 +1878,30 @@ ALTER TABLE ONLY public.reviews
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_place_id_user_email_key UNIQUE (place_id, user_email);
+
+
+--
+-- Name: scraper_runs scraper_runs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scraper_runs
+    ADD CONSTRAINT scraper_runs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: specials specials_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.specials
+    ADD CONSTRAINT specials_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subscribers subscribers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subscribers
+    ADD CONSTRAINT subscribers_pkey PRIMARY KEY (id);
 
 
 --
@@ -1521,6 +2003,20 @@ CREATE INDEX users_instance_id_idx ON auth.users USING btree (instance_id);
 
 
 --
+-- Name: email_sends_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX email_sends_kind ON public.email_sends USING btree (kind, created_at);
+
+
+--
+-- Name: email_sends_sub; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX email_sends_sub ON public.email_sends USING btree (subscriber_id);
+
+
+--
 -- Name: events_live; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1532,6 +2028,13 @@ CREATE INDEX events_live ON public.events USING btree (status, expires_at) WHERE
 --
 
 CREATE INDEX events_place ON public.events USING btree (place_id);
+
+
+--
+-- Name: events_worker_claim; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX events_worker_claim ON public.events USING btree (status, worker_checked_at) WHERE (status = ANY (ARRAY['pending'::public.event_status, 'approved'::public.event_status]));
 
 
 --
@@ -1549,6 +2052,34 @@ CREATE INDEX idx_restaurants_geom ON public.restaurants USING gist (geom);
 
 
 --
+-- Name: owner_claim_tokens_one_live; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX owner_claim_tokens_one_live ON public.owner_claim_tokens USING btree (place_id) WHERE (status = 'printed'::text);
+
+
+--
+-- Name: owner_claim_tokens_place; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX owner_claim_tokens_place ON public.owner_claim_tokens USING btree (place_id);
+
+
+--
+-- Name: passport_events_place_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX passport_events_place_idx ON public.passport_stamp_events USING btree (place_id, event_type, occurred_at DESC);
+
+
+--
+-- Name: passport_events_special_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX passport_events_special_idx ON public.passport_stamp_events USING btree (special_id, event_type);
+
+
+--
 -- Name: photos_place; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1560,6 +2091,34 @@ CREATE INDEX photos_place ON public.photos USING btree (place_id);
 --
 
 CREATE UNIQUE INDEX place_signals_dedup ON public.place_signals USING btree (place_id, signal_type, COALESCE((user_id)::text, (anon_id)::text));
+
+
+--
+-- Name: scraper_runs_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX scraper_runs_kind ON public.scraper_runs USING btree (kind, started_at DESC);
+
+
+--
+-- Name: specials_place; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX specials_place ON public.specials USING btree (place_id, status);
+
+
+--
+-- Name: subscribers_ar; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX subscribers_ar ON public.subscribers USING btree (status, ar_next_due);
+
+
+--
+-- Name: subscribers_email_lc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX subscribers_email_lc ON public.subscribers USING btree (lower(email));
 
 
 --
@@ -1606,6 +2165,22 @@ ALTER TABLE ONLY public.claims
 
 
 --
+-- Name: claims claims_token_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.claims
+    ADD CONSTRAINT claims_token_id_fkey FOREIGN KEY (token_id) REFERENCES public.owner_claim_tokens(id);
+
+
+--
+-- Name: email_sends email_sends_subscriber_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_sends
+    ADD CONSTRAINT email_sends_subscriber_id_fkey FOREIGN KEY (subscriber_id) REFERENCES public.subscribers(id) ON DELETE CASCADE;
+
+
+--
 -- Name: events events_place_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1622,11 +2197,35 @@ ALTER TABLE ONLY public.feed_events
 
 
 --
+-- Name: owner_claim_tokens owner_claim_tokens_place_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.owner_claim_tokens
+    ADD CONSTRAINT owner_claim_tokens_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.restaurants(id);
+
+
+--
 -- Name: owner_responses owner_responses_place_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.owner_responses
     ADD CONSTRAINT owner_responses_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.restaurants(id);
+
+
+--
+-- Name: passport_stamp_events passport_stamp_events_place_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.passport_stamp_events
+    ADD CONSTRAINT passport_stamp_events_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.restaurants(id);
+
+
+--
+-- Name: passport_stamp_events passport_stamp_events_special_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.passport_stamp_events
+    ADD CONSTRAINT passport_stamp_events_special_id_fkey FOREIGN KEY (special_id) REFERENCES public.specials(id);
 
 
 --
@@ -1651,6 +2250,14 @@ ALTER TABLE ONLY public.place_signals
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.restaurants(id);
+
+
+--
+-- Name: specials specials_place_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.specials
+    ADD CONSTRAINT specials_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.restaurants(id);
 
 
 --

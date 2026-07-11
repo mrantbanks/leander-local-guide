@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { getAllActiveSpecials, scheduleLabel } from '@/lib/specials';
+import { getAllActiveSpecials, scheduleLabel, issuerLabel } from '@/lib/specials';
 import SiteFooter from '@/components/SiteFooter';
+import Subscribe from '@/components/Subscribe';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ export const metadata = {
 
 export default async function PassportRoundup() {
   const perks = await getAllActiveSpecials();
+  const siteKey = process.env.TURNSTILE_SITE_KEY || '';
   return (
     <main>
       <header className="border-b-2 border-ink">
@@ -33,16 +35,25 @@ export default async function PassportRoundup() {
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {perks.map((s) => (
                 <li key={s.id} className="border border-rule bg-paper-raised rounded-sm p-4 flex flex-col">
-                  <Link href={`/r/${s.slug}`} className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">{s.restaurant}</Link>
+                  {/* A Guide perk has no business behind it, so there is nowhere to link and we say so plainly. */}
+                  {s.issuerType === 'guide' ? (
+                    <span className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">{issuerLabel(s)}</span>
+                  ) : (
+                    <Link href={`/r/${s.slug}`} className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">{s.restaurant}</Link>
+                  )}
                   <p className="font-display font-black text-ink text-xl leading-tight mt-1">{s.title}</p>
                   {s.details && <p className="font-ui text-sm text-ink-soft mt-0.5">{s.details}</p>}
                   <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft mt-1">{scheduleLabel(s)}</p>
-                  <Link href={`/ticket/${s.id}`} className="mt-3 self-start font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
+                  <Link href={`/ticket/${s.id}?src=passport`} className="mt-3 self-start font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
                 </li>
               ))}
             </ul>
           </>
         )}
+        {/* The highest-intent page on the site had no way to capture an email. It does now. */}
+        <div className="mt-8 border-t border-rule pt-6">
+          <Subscribe source="passport" siteKey={siteKey} />
+        </div>
         <p className="font-ui text-sm text-ink-soft text-center mt-8 border-t border-rule pt-5">Own a Leander spot? <Link href="/claim" className="text-chile underline">Make your listing yours</Link> and add your own perk to the Passport.</p>
       </div>
       <SiteFooter />

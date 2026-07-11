@@ -8,6 +8,7 @@ const ITEMS: [string, string][] = [
   ['/admin', 'Dashboard'],
   ['/admin/spots', 'Spots'],
   ['/admin/moderation', 'Moderation'],
+  ['/admin/passport', 'Passport'],
   ['/admin/owner-desk', 'Owner Desk'],
   ['/admin/workers', 'Workers'],
   ['/admin/ai', 'AI Engines'],

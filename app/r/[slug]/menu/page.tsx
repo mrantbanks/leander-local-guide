@@ -4,6 +4,7 @@ import { getSpot } from '@/lib/spots';
 import MenuViewer from '@/components/MenuViewer';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
+import { menuSnippet } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // The menu page: every dish and price as crawlable text + Menu structured data.
@@ -31,15 +32,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!spot || !spot.menuData) return { title: 'Not found' };
   const m = spot.menuData;
   const items = m.sections.reduce((a, s) => a + s.items.length, 0);
-  const secNames = m.sections.map((s) => s.name).slice(0, 5).join(', ');
-  const desc = `The full ${spot.name} menu in Leander, TX with prices: ${items} dishes across ${secNames}. Photographed in person at ${spot.addressLine.split(',')[0]}, transcribed so you can actually read (and search) it.`.slice(0, 300);
+  // We will never outrank the restaurant's own menu on "[name] menu". But a big share of those
+  // searchers are really asking "what should I order here?", and that is the one question we
+  // answer better than anyone, so the snippet leads with The Order.
+  const { title, description } = menuSnippet(spot, items, m.sections.map((s) => s.name));
   const img = spot.menus[0] ? `${SITE}${spot.menus[0].url}` : undefined;
   return {
-    title: `${spot.name} Menu with Prices · Leander, TX`,
-    description: desc,
+    title: { absolute: title },
+    description,
     alternates: { canonical: `/r/${slug}/menu` },
-    openGraph: { title: `${spot.name} Menu · Leander, TX · The Leander Local Guide`, description: desc, type: 'article', images: img ? [img] : undefined },
-    twitter: { card: 'summary_large_image', title: `${spot.name} Menu with Prices`, description: desc },
+    openGraph: { title: `${spot.name} Menu · Leander, TX · The Leander Local Guide`, description, type: 'article', images: img ? [img] : undefined },
+    twitter: { card: 'summary_large_image', title: `${spot.name} Menu with Prices`, description },
   };
 }
 

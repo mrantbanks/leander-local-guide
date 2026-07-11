@@ -1,0 +1,222 @@
+import type { Spot } from '@/lib/spots';
+
+// Search-result snippets. These exist to win the click in the SERP, which is a different
+// job from the on-page editorial: we sit next to Google's own star panel, so repeating a
+// star rating wastes characters. We sell the one thing the panel can't show, an opinion,
+// and back it with a specific dish.
+//
+// Nothing here writes to the DB. `hook` is the on-site card teaser and stays untouched;
+// the snippet is COMPOSED from verdict + whatToOrder + gotcha at render time.
+
+const BRAND = 'Leander Local Guide';
+const TRUST = 'No sponsors, no pay-to-play.';
+const TITLE_MAX = 62; // ~what Google renders before truncating
+const DESC_MAX = 160;
+
+// House rule: no em/en dashes anywhere (lib/spots.ts clean() strips them on read, app/actions.ts
+// on write). Our own literals must obey it too, and Google's editorialSummary can smuggle one in.
+const noDash = (s: string) => s.replace(/[ \t]*[—–][ \t]*/g, ', ').replace(/[—–]/g, '-');
+
+// Verdict -> the label in the <title>.
+// SKIP IT is deliberately absent. The page still stamps SKIP IT loud and unmissable; the search
+// result stays neutral so an owner googling themselves doesn't meet the pan in the shop window.
+// The claim below still tells the truth, it just leads with the specific detail instead of the pan.
+const TITLE_VERDICT: Record<string, string> = {
+  'WORTH THE GRAVEL': 'Worth the Gravel',
+  'WORTH IT': 'Worth It',
+  SOLID: 'Solid',
+  "IT'S FINE": "It's Fine",
+};
+
+// Verdict -> the opening claim of the description, in our voice.
+// Two sets, because 193 of our 197 spots are not yet visited in person: their verdict is drawn
+// from what Leander reviewers say, so the claim says so rather than implying Anthony ate there.
+const CLAIM_VISITED: Record<string, string> = {
+  'WORTH THE GRAVEL': 'Worth the drive.',
+  'WORTH IT': 'Worth it.',
+  SOLID: 'Solid, and here is why.',
+  "IT'S FINE": 'It is fine, and we will say so.',
+};
+const CLAIM_REVIEWED: Record<string, string> = {
+  'WORTH THE GRAVEL': 'Worth the drive, going by the reviews.',
+  'WORTH IT': 'Worth it, going by the reviews.',
+  SOLID: 'Solid, going by the reviews.',
+  "IT'S FINE": 'Fine, going by the reviews.',
+};
+
+/** Smallest number of characters worth spending on a fragment. Below this we say nothing. */
+const MIN_FRAGMENT = 32;
+
+/** First sentence (or two, if the first is stubby), never mid-word. */
+function lead(s: string | null, max: number): string {
+  if (!s || max < MIN_FRAGMENT) return ''; // a 10-char budget yields "The." Say nothing instead.
+  const txt = noDash(s).trim();
+  const parts = txt.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [txt];
+  let out = (parts[0] || '').trim();
+  if (out.length < 60 && parts[1]) out = `${out} ${parts[1].trim()}`;
+  return clip(out, max);
+}
+
+/**
+ * A shorter name for when the full one won't fit a title. Trims the location parenthetical and
+ * anything after a separator: "Wagyu On Wheels - The Fieldhouse @ The Crossover" -> "Wagyu On Wheels".
+ * Only used as a fallback, and never allowed to shrink to a stub.
+ */
+function shortName(name: string): string {
+  const base = name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  const cut = base.split(/\s+[-:@|]\s+/)[0].trim();
+  return cut.length >= 6 ? cut : base || name;
+}
+
+/** First variant that fits, else the last (shortest) one. The verdict never gets dropped. */
+function fit(variants: string[]): string {
+  return variants.find((v) => v.length <= TITLE_MAX) ?? variants[variants.length - 1];
+}
+
+/** Trim to a word boundary and close the sentence. Never leaves a dangling half-word. */
+function clip(s: string, max: number): string {
+  const txt = s.trim();
+  if (txt.length <= max) return txt;
+  const cut = txt.slice(0, max);
+  const at = cut.lastIndexOf(' ');
+  return `${cut.slice(0, at > 0 ? at : max).replace(/[,;:.\s]+$/, '')}.`;
+}
+
+/** Make sure a fragment reads as a sentence. */
+const sentence = (s: string) => (s && !/[.!?]$/.test(s) ? `${s}.` : s);
+
+export function titleVerdict(spot: Spot): string | null {
+  if (spot.comingSoon) return 'Opening Soon';
+  const v = (spot.verdict || '').toUpperCase();
+  // Not gated on `visited`: the verdict is already the stamp on every card site-wide, and the
+  // detail page now shows it too. SKIP IT and anything unmapped return null, so the title just
+  // reads "{Name} Reviews" and stays neutral.
+  return TITLE_VERDICT[v] ?? null;
+}
+
+/**
+ * The <title>. Echoes "Reviews" because that is literally the winning query, and leads with
+ * the verdict because nobody else in the results has an opinion. Drops the brand rather than
+ * the verdict when we run out of room; Google appends the site name from Organization schema.
+ */
+export function snippetTitle(spot: Spot): string {
+  const v = titleVerdict(spot);
+  const tail = v ? `, ${v}` : '';
+  const long = noDash(spot.name);
+  const short = shortName(long);
+  // Degrade in this order: give up the brand before the name, and the name's tail before the
+  // verdict. Google appends the site name itself from our Organization schema, so losing the
+  // brand suffix costs little; losing the verdict costs the whole point of the change.
+  return fit([
+    `${long} Reviews${tail} | ${BRAND}`,
+    `${long} Reviews${tail}`,
+    `${short} Reviews${tail} | ${BRAND}`,
+    `${short} Reviews${tail}`,
+  ]);
+}
+
+/**
+ * The <meta description>. {Claim}. {Specific detail}. {Trust line}
+ * Specificity is the whole pitch: "the paneer burger and fried rice" beats "great Indian food".
+ */
+export function snippetDescription(spot: Spot): string {
+  const name = noDash(spot.name);
+  const v = (spot.verdict || '').toUpperCase();
+  const skip = v === 'SKIP IT';
+  const table = spot.visited ? CLAIM_VISITED : CLAIM_REVIEWED;
+
+  const claim = spot.comingSoon
+    ? `${name} is not open yet. Here is what we know.`
+    : skip
+      ? `Our honest read on ${name}.` // truthful, but the pan stays on the page, not in the SERP
+      : (table[v] ?? `An honest local read on ${name}.`);
+
+  // Reserve room for the trust line so the brand differentiator survives the truncation.
+  const room = DESC_MAX - claim.length - TRUST.length - 2;
+
+  // Lead with the dish. For a pan, lead with the reason, since that is the specific thing.
+  const primary = skip
+    ? spot.gotcha || spot.whatToOrder || spot.hook || spot.summary
+    : spot.whatToOrder || spot.hook || spot.summary || spot.gotcha;
+
+  let detail = sentence(lead(primary, Math.max(room, 40)));
+
+  // If there is still real room, the caveat earns its place: it is the honesty signal, and it gives
+  // Google a second phrase to bold when the query is not the one we guessed. `lead` returns ''
+  // when the remaining budget is too small to hold a readable clause.
+  if (!skip && spot.whatToOrder && spot.gotcha) {
+    const extra = sentence(lead(spot.gotcha, room - detail.length - 1));
+    if (extra && detail.length + extra.length + 1 <= room) detail = `${detail} ${extra}`;
+  }
+
+  const parts = [claim, detail].filter(Boolean);
+  const body = parts.join(' ');
+  return body.length + TRUST.length + 1 <= DESC_MAX ? `${body} ${TRUST}` : clip(body, DESC_MAX);
+}
+
+export function snippetFor(spot: Spot): { title: string; description: string } {
+  return { title: snippetTitle(spot), description: snippetDescription(spot) };
+}
+
+/**
+ * The menu page. "[restaurant] menu" is a big slice of our impressions. We will never beat the
+ * restaurant's own menu on the head term, but a chunk of those searchers are really asking
+ * "what should I order here?", and that is the one question we answer better than anyone.
+ */
+export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { title: string; description: string } {
+  const name = noDash(spot.name);
+  const short = shortName(name);
+  const title = fit([
+    `${name} Menu with Prices | ${BRAND}`,
+    `${name} Menu with Prices, Leander TX`,
+    `${name} Menu with Prices`,
+    `${short} Menu with Prices, Leander TX`,
+    `${short} Menu with Prices`,
+  ]);
+
+  const head = `The full ${name} menu, ${dishes} dishes with prices, typed up and searchable.`;
+  const order = spot.whatToOrder ? sentence(lead(spot.whatToOrder, DESC_MAX - head.length - 2)) : '';
+  const body = order
+    ? `${head} What to order: ${order}`
+    : `${head} Photographed in person in Leander, TX${sections.length ? `, across ${noDash(sections.slice(0, 3).join(', '))}` : ''}.`;
+  return { title, description: clip(body, DESC_MAX) };
+}
+
+/**
+ * FAQ structured data, to compete for the People Also Ask box. Built from the same three fields
+ * as the snippet, so it never invents an answer: a question is emitted only when we actually
+ * have the copy to answer it.
+ */
+export function faqLd(spot: Spot, url: string): object | null {
+  const qa: { q: string; a: string }[] = [];
+  const name = noDash(spot.name);
+
+  if (spot.whatToOrder) qa.push({ q: `What should I order at ${name}?`, a: noDash(spot.whatToOrder) });
+
+  if (spot.verdict) {
+    const v = spot.verdict.toUpperCase();
+    const lede =
+      v === 'SKIP IT' ? 'We would skip this one.'
+        : v === 'WORTH THE GRAVEL' ? 'Yes, and it is worth the drive.'
+          : v === "IT'S FINE" ? 'It is fine, not a destination.'
+            : 'Yes.';
+    // Say where the call came from. On 193 of 197 spots it is the reviewers, not a visit.
+    const src = spot.visited ? '' : ' That is the word from Leander reviewers, not a visit of our own yet.';
+    const why = spot.hook ? ` ${sentence(noDash(spot.hook))}` : '';
+    qa.push({ q: `Is ${name} worth it?`, a: `${lede}${why}${src}` });
+  }
+
+  if (spot.gotcha) qa.push({ q: `Anything to know before going to ${name}?`, a: noDash(spot.gotcha) });
+
+  if (qa.length < 2) return null; // a one-question FAQ is not worth the markup
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: qa.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+}
