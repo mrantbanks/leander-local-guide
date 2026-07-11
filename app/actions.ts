@@ -9,6 +9,7 @@ import { pool } from '@/lib/db';
 import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
+import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -48,6 +49,9 @@ export async function recordSignal(
   );
   if (ins.rowCount && ins.rowCount > 0) {
     await pool.query(`update restaurants set ${col} = ${col} + 1 where id = $1`, [placeId]);
+    // The tapper sees their own vote immediately (SignalBar uses the counts we return below), but
+    // the cached page would keep serving the old tally to everybody else. Bust it.
+    await revalidateSpotByPlaceId(placeId);
   }
   const { rows } = await pool.query(
     `select worth_it_ct, its_fine_ct, skip_it_ct, been_here_ct, want_to_go_ct from restaurants where id = $1`,
@@ -94,7 +98,8 @@ export async function updateReview(slug: string, fd: FormData) {
        hidden = $6, primary_category = coalesce(nullif($7,''), primary_category), updated_at = now() where slug = $1`,
     [slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden, category]
   );
-  for (const p of ['/', '/map', '/best', '/new', `/r/${slug}`, '/admin', '/admin/spots']) revalidatePath(p);
+  revalidateSpot(slug);
+  revalidatePath('/admin'); revalidatePath('/admin/spots');
   redirect('/admin');
 }
 
@@ -103,7 +108,8 @@ export async function updateReview(slug: string, fd: FormData) {
 export async function setHidden(slug: string, hidden: boolean) {
   if (!(await requireAdmin())) return;
   await pool.query('update restaurants set hidden = $2, updated_at = now() where slug = $1', [slug, hidden]);
-  for (const p of ['/', '/map', '/best', '/new', `/r/${slug}`, '/admin/spots']) revalidatePath(p);
+  revalidateSpot(slug);
+  revalidatePath('/admin/spots');
 }
 
 // Admin: delete an uploaded photo.
@@ -111,8 +117,7 @@ export async function deletePhoto(id: number, slug: string) {
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) return;
   await pool.query('delete from photos where id = $1', [id]);
-  revalidatePath(`/r/${slug}`);
-  revalidatePath(`/admin/r/${slug}`);
+  revalidateSpot(slug);
 }
 
 export async function setPhotoCaption(id: number, slug: string, caption: string) {
@@ -137,22 +142,21 @@ export async function saveMenu(slug: string, json: string): Promise<{ ok: boolea
   }
   const stripped = JSON.stringify(menu).replace(/[ \t]*[—–][ \t]*/g, ', ').replace(/[—–]/g, '-'); // house rule
   await pool.query('update restaurants set menu = $2::jsonb, updated_at = now() where slug = $1', [slug, stripped]);
-  for (const p of [`/r/${slug}`, `/r/${slug}/menu`, `/admin/r/${slug}`]) revalidatePath(p);
+  revalidateSpot(slug);
   return { ok: true };
 }
 
 export async function deleteMenu(slug: string) {
   if (!(await requireAdmin())) return;
   await pool.query('update restaurants set menu = null, updated_at = now() where slug = $1', [slug]);
-  for (const p of [`/r/${slug}`, `/r/${slug}/menu`, `/admin/r/${slug}`]) revalidatePath(p);
+  revalidateSpot(slug);
 }
 
 // Mark/unmark a photo as a menu (shown in its own zoomable Menu section, kept out of the food gallery).
 export async function setPhotoMenu(id: number, slug: string, isMenu: boolean) {
   if (!(await requireAdmin())) return;
   await pool.query('update photos set is_menu = $2 where id = $1', [id, isMenu]);
-  revalidatePath(`/r/${slug}`);
-  revalidatePath('/');
+  revalidateSpot(slug);
 }
 
 // Toggle a local photo as THE header (overrides the Google image). Off = Google image is header.
@@ -164,14 +168,14 @@ export async function setHeaderPhoto(id: number, slug: string) {
   } else {
     await pool.query('update photos set is_header = (id = $1) where place_id = (select id from restaurants where slug = $2)', [id, slug]);
   }
-  revalidatePath(`/r/${slug}`); revalidatePath(`/admin/r/${slug}`); revalidatePath('/');
+  revalidateSpot(slug);
 }
 
 // Persist a new photo order (drag-to-reorder in the studio).
 export async function reorderPhotos(slug: string, ids: number[]) {
   if (!(await requireAdmin())) return;
   for (let i = 0; i < ids.length; i++) await pool.query('update photos set sort = $2 where id = $1', [ids[i], i]);
-  revalidatePath(`/r/${slug}`); revalidatePath(`/admin/r/${slug}`); revalidatePath('/');
+  revalidateSpot(slug);
 }
 
 async function requireAdmin() {
@@ -195,19 +199,22 @@ export async function setAiConfig(fd: FormData) {
 export async function approvePhoto(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update photos set status = 'approved' where id = $1", [id]);
+  await revalidateSpotByRow('photos', id); // the gallery lives on the spot page, not here
   revalidatePath('/admin/moderation');
 }
 export async function rejectPhoto(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update photos set status = 'removed' where id = $1", [id]);
+  await revalidateSpotByRow('photos', id);
   revalidatePath('/admin/moderation');
 }
 
 // Moderation: approve / reject a pending user tip or review (used by the moderation page AND the
 // inline one-click buttons on the workers panel). Refreshes the spot page + both admin views.
 async function revalidateModeration(table: 'tips' | 'reviews', id: number) {
-  const { rows } = await pool.query(`select r.slug from ${table} s join restaurants r on r.id = s.place_id where s.id = $1`, [id]);
-  if (rows[0]?.slug) revalidatePath(`/r/${rows[0].slug}`);
+  // An approved review changes the page's aggregateRating, so this has to hit every cached
+  // surface for the spot, not just /r/<slug>.
+  await revalidateSpotByRow(table, id);
   revalidatePath('/admin/moderation'); revalidatePath('/admin/workers');
 }
 export async function approveTip(id: number) {
@@ -235,11 +242,13 @@ export async function rejectReview(id: number) {
 export async function verifyClaim(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update claims set status = 'verified' where id = $1", [id]);
+  await revalidateSpotByRow('claims', id); // unlocks the owner desk + owner content on the page
   revalidatePath('/admin/moderation');
 }
 export async function rejectClaim(id: number) {
   if (!(await requireAdmin())) return;
   await pool.query("update claims set status = 'rejected' where id = $1", [id]);
+  await revalidateSpotByRow('claims', id);
   revalidatePath('/admin/moderation');
 }
 
@@ -260,13 +269,13 @@ export async function addEvent(slug: string, fd: FormData) {
      values ($1,$2,$3,$4,$5,$6,$7,'admin','approved',true,now())`,
     [rows[0].id, type, title, desc, freq, days.length ? days : null, time]
   );
-  revalidatePath(`/r/${slug}`);
+  revalidateSpot(slug);
   revalidatePath('/whats-on');
 }
 export async function deleteEvent(id: number, slug: string) {
   if (!(await requireAdmin())) return;
   await pool.query('delete from events where id = $1', [id]);
-  revalidatePath(`/r/${slug}`);
+  revalidateSpot(slug);
   revalidatePath('/whats-on');
 }
 export async function approveEvent(id: number) {
@@ -304,8 +313,7 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
     safe.hours = patch.hours.map((d) => (d && d.open && d.close) ? { open: String(d.open), close: String(d.close) } : null);
   }
   await saveOwnerContent(slug, safe, email);
-  revalidatePath(`/r/${slug}`);
-  revalidatePath(`/owner/${slug}`);
+  revalidateSpot(slug);
   return { ok: true };
 }
 
@@ -321,8 +329,7 @@ export async function createSpecialAction(slug: string, input: SpecialInput): Pr
     daysOfWeek: Array.isArray(input.daysOfWeek) ? input.daysOfWeek.filter((n) => n >= 0 && n <= 6) : null,
     endsOn: input.endsOn || null,
   });
-  revalidatePath(`/r/${slug}`);
-  revalidatePath(`/owner/${slug}`);
+  revalidateSpot(slug);
   return { ok: true };
 }
 
@@ -332,8 +339,7 @@ export async function removeSpecialAction(id: number): Promise<{ ok: boolean }> 
   const slug = await specialOwnerSlug(id);
   if (!email || !slug || !(await isVerifiedOwner(slug, email))) return { ok: false };
   await removeSpecial(id);
-  revalidatePath(`/r/${slug}`);
-  revalidatePath(`/owner/${slug}`);
+  revalidateSpot(slug);
   return { ok: true };
 }
 

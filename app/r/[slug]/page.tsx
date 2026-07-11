@@ -64,17 +64,37 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     ? `https://leanderlocalguide.com/uploads/${spot.localPhotos[0].filename}`
     : spot.photo ? `https://leanderlocalguide.com/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
   const updated = spot.updatedAt ? new Date(spot.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
-  const updatedISO = spot.updatedAt ? new Date(spot.updatedAt).toISOString().slice(0, 10) : undefined;
-  const VERDICT_RATING: Record<string, number> = {
-    'WORTH THE GRAVEL': 5, 'WORTH IT': 4.5, 'SOLID': 4, "IT'S FINE": 3.5, 'SKIP IT': 2,
-  };
-  // No invented fallback: an unmapped verdict emits no rating at all rather than a made-up 4.
-  const ratingValue: number | null = VERDICT_RATING[(spot.verdict || '').toUpperCase()] ?? null;
-  // Anthony authors the review only where he actually ate. Everywhere else the Guide is the author,
-  // because the write-up is our synthesis of what Leander reviewers say, not a first-person visit.
-  const reviewAuthor = spot.visited
-    ? { '@type': 'Person', '@id': 'https://leanderlocalguide.com/about#anthony-martinez', name: 'Anthony Martinez', url: 'https://leanderlocalguide.com/about' }
-    : { '@id': 'https://leanderlocalguide.com/#org' };
+  // RATINGS ON A LOCAL BUSINESS MUST COME FROM USERS. Google's review-snippet rules are explicit:
+  // "Ratings must be sourced directly from users" and "Don't rely on human editors to create,
+  // curate, or compile ratings information for local businesses."
+  //
+  // So Anthony's verdict, however honest, may NOT be marked up as a star rating. Neither may
+  // Google's own star average, which we did not collect. Both used to live here, and both were
+  // ineligible for a rich result AND a manual-action risk. The verdict itself loses nothing: it is
+  // still on the page, on every card, in the title and in the meta description, doing the real work.
+  //
+  // What we CAN mark up is what our own readers submitted. getReviews() already withholds the
+  // average until three people have weighed in (the house anti-single-fake-star rule), which is
+  // also the point at which an average means anything. This lights up on its own as reviews land:
+  // no code change, no manual step. Today that is zero spots; it grows with the site.
+  const ratingLd = (reviews.avg != null && reviews.count >= 3)
+    ? {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: reviews.avg,
+          reviewCount: reviews.count,
+          bestRating: 5,
+          worstRating: 1,
+        },
+        review: reviews.list.slice(0, 10).map((r) => ({
+          '@type': 'Review',
+          author: { '@type': 'Person', name: r.who },
+          reviewRating: { '@type': 'Rating', ratingValue: r.stars, bestRating: 5, worstRating: 1 },
+          ...(r.body ? { reviewBody: r.body } : {}),
+        })),
+      }
+    : {};
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -92,25 +112,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     menu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : (spot.menuUrl || undefined),
     hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
-    // Our own published review of the place: a verdict plus a written justification, on every spot.
-    // The author varies (Anthony when he went, the Guide when the write-up is our synthesis), which
-    // is what keeps this honest and inside Google's rules for critic reviews.
-    //
-    // We deliberately do NOT emit aggregateRating. It used to carry spot.ratingGoogle, i.e. GOOGLE's
-    // star average, which we did not collect and are not entitled to mark up as structured data on
-    // our own page. That is a policy violation and a plausible reason we get no rich result today.
-    review: spot.review
-      ? {
-          '@type': 'Review',
-          ...(ratingValue ? { reviewRating: { '@type': 'Rating', ratingValue, bestRating: 5, worstRating: 1 } } : {}),
-          author: reviewAuthor,
-          publisher: { '@id': 'https://leanderlocalguide.com/#org' },
-          name: spot.hook || undefined,
-          reviewBody: spot.review,
-          datePublished: spot.visitedDate || updatedISO,
-          dateModified: updatedISO,
-        }
-      : undefined,
+    // Reader-submitted ratings only, and only once three exist. See the note above ratingLd.
+    ...ratingLd,
   };
   const faqLdJson = faqLd(spot, `https://leanderlocalguide.com/r/${slug}`);
   const crumbLd = {
