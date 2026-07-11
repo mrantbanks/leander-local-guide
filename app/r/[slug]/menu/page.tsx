@@ -68,6 +68,11 @@ export default async function MenuPage({ params }: { params: Promise<{ slug: str
     telephone: spot.phone || undefined,
     image: spot.menus[0] ? [`${SITE}${spot.menus[0].url}`] : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
+    // `menu` (a plain URL) is the ONLY menu property Google actually documents, on LocalBusiness:
+    // "for food establishments, the fully-qualified URL of the menu". The rich hasMenu tree below
+    // is valid schema.org and good for AI answer engines, but Google Search has no menu rich
+    // result and will not render it. Emit both: the URL is the part Google reads.
+    menu: `${SITE}/r/${slug}/menu`,
     hasMenu: {
       '@type': 'Menu',
       '@id': `${SITE}/r/${slug}/menu#menu`,

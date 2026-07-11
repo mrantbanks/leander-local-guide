@@ -86,6 +86,10 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
     telephone: spot.phone || undefined,
     image: ogImg ? [ogImg] : undefined,
+    // `menu` is the property Google documents on LocalBusiness (a fully-qualified menu URL).
+    // Prefer our own transcribed menu page when we have one, since that is a real, crawlable menu;
+    // otherwise point at the restaurant's own. hasMenu stays for schema completeness.
+    menu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : (spot.menuUrl || undefined),
     hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
     // Our own published review of the place: a verdict plus a written justification, on every spot.

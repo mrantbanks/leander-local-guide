@@ -226,9 +226,19 @@ export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { t
 }
 
 /**
- * FAQ structured data, to compete for the People Also Ask box. Built from the same three fields
- * as the snippet, so it never invents an answer: a question is emitted only when we actually
- * have the copy to answer it.
+ * FAQ structured data.
+ *
+ * IMPORTANT, and not what you would expect: this earns NOTHING in Google Search. Google deprecated
+ * the FAQ rich result (gone from results since 7 May 2026, docs pulled 15 June 2026). It will not
+ * win a People Also Ask box, and it is not a ranking signal.
+ *
+ * It is kept because the answer engines still read it, and this site deliberately courts them:
+ * app/robots.ts explicitly welcomes GPTBot, ClaudeBot, PerplexityBot and friends. "What should I
+ * order at X" is exactly the question those engines get asked, and this hands them our answer,
+ * already parsed. If that stops being worth ~1KB a page, delete this and its two call sites.
+ *
+ * Built from the same fields as the snippet, so it never invents an answer: a question is emitted
+ * only when we actually have the copy to answer it.
  */
 export function faqLd(spot: Spot, url: string): object | null {
   const qa: { q: string; a: string }[] = [];
