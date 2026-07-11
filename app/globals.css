@@ -18,8 +18,8 @@
   --font-stamp:   var(--font-bebas), Impact, sans-serif;
 }
 
-/* Bump the whole type scale up (16px -> 18px base) — everything rem-based grows together. */
-html { font-size: 112.5%; }
+/* Bump the whole type scale up (16px -> 19px base) — everything rem-based grows together. */
+html { font-size: 118.75%; }
 
 body {
   background-color: var(--color-paper);

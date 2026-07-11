@@ -33,7 +33,7 @@ export default function Help({ text, example }: { text: string; example?: string
         aria-label="What's this?"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="inline-grid place-items-center w-[15px] h-[15px] ml-1 rounded-full border border-chile text-chile text-[12px] leading-none normal-case tracking-normal hover:bg-chile hover:text-paper align-middle"
+        className="inline-grid place-items-center w-[15px] h-[15px] ml-1 rounded-full border border-chile text-chile text-sm leading-none normal-case tracking-normal hover:bg-chile hover:text-paper align-middle"
       >
         ?
       </button>
@@ -45,7 +45,7 @@ export default function Help({ text, example }: { text: string; example?: string
           <span className="block font-ui text-xs text-ink leading-relaxed">{text}</span>
           {example && (
             <span className="block mt-1.5 font-ui text-xs text-ink-soft leading-relaxed">
-              <b className="font-stamp uppercase tracking-[0.06em] text-chile text-[12px]">e.g.</b> {example}
+              <b className="font-stamp uppercase tracking-[0.06em] text-chile text-sm">e.g.</b> {example}
             </span>
           )}
         </span>

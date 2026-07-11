@@ -68,7 +68,7 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
               {s.hook && <p className="font-hand text-lg text-oxblood leading-snug line-clamp-1">“{s.hook}”</p>}
               <p className="font-ui text-xs text-ink-soft">{[s.category, ...s.cuisines.slice(0, 2), s.ratingGoogle ? `${s.ratingGoogle}★` : null, s.beenHere > 0 ? `${s.beenHere} been here` : null].filter(Boolean).join(' · ')}</p>
             </div>
-            <VerdictStamp rating={s.ratingGoogle} label={s.verdict} className="shrink-0 hidden sm:inline-block text-[13px]" />
+            <VerdictStamp rating={s.ratingGoogle} label={s.verdict} className="shrink-0 hidden sm:inline-block text-sm" />
           </li>
         ))}
         {ranked.length === 0 && <li className="py-8 font-hand text-2xl text-oxblood">Nothing ranked here yet.</li>}

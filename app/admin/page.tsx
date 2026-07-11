@@ -49,7 +49,7 @@ export default async function AdminPage() {
   const Tile = ({ n, label, accent }: { n: number; label: string; accent?: boolean }) => (
     <div className="border border-rule bg-paper-raised p-3 text-center">
       <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{n}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-[12px] text-ink-soft mt-1">{label}</div>
+      <div className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-1">{label}</div>
     </div>
   );
   const Card = ({ href, title, desc, meta }: { href: string; title: string; desc: string; meta?: string }) => (

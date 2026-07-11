@@ -15,7 +15,7 @@ export default function MenuViewer({ menus }: { menus: Menu[] }) {
           <button key={m.id} onClick={() => { setOpen(m); setZoom(false); }} className="border border-rule rounded-sm overflow-hidden bg-paper-sunk text-left group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`/uploads/${m.filename}?w=500`} alt={m.caption || 'Menu'} className="w-full aspect-[3/4] object-cover group-hover:opacity-90" />
-            <span className="block font-stamp uppercase tracking-[0.06em] text-[12px] text-chile px-2 py-1">{m.caption || 'Tap to view'}</span>
+            <span className="block font-stamp uppercase tracking-[0.06em] text-sm text-chile px-2 py-1">{m.caption || 'Tap to view'}</span>
           </button>
         ))}
       </div>

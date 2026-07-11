@@ -55,7 +55,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
       {/* header */}
       <div className="flex items-baseline justify-between border-b-2 border-ink pb-3 mb-5">
         <div>
-          <p className="font-stamp uppercase tracking-[0.18em] text-chile text-[12px]">Owner desk</p>
+          <p className="font-stamp uppercase tracking-[0.18em] text-chile text-sm">Owner desk</p>
           <h1 className="font-display font-black text-2xl text-ink leading-tight">{spot.name}</h1>
         </div>
         <Link href={`/r/${slug}`} target="_blank" className="font-stamp uppercase tracking-[0.08em] text-xs text-chile hover:text-oxblood shrink-0">View live page →</Link>
@@ -75,7 +75,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
           {stats.map((s, i) => (
             <div key={i} className={`border rounded-sm p-3 text-center ${s.lead ? 'border-chile bg-paper-raised' : 'border-rule'}`}>
               <div className="font-display font-black text-3xl text-ink">{s.n}</div>
-              <div className="font-ui text-[12px] text-ink-soft leading-tight mt-0.5" dangerouslySetInnerHTML={{ __html: s.label }} />
+              <div className="font-ui text-sm text-ink-soft leading-tight mt-0.5" dangerouslySetInnerHTML={{ __html: s.label }} />
             </div>
           ))}
         </div>
@@ -108,7 +108,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
               <li key={s.id} className="bg-paper-raised border border-rule rounded-sm p-3 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-display font-bold text-ink truncate">{s.title}</p>
-                  <p className="font-stamp uppercase tracking-[0.06em] text-[12px] text-chile">{scheduleLabel(s)}</p>
+                  <p className="font-stamp uppercase tracking-[0.06em] text-sm text-chile">{scheduleLabel(s)}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Stamp →</Link>

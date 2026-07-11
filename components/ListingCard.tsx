@@ -18,10 +18,10 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <span aria-hidden className="absolute inset-0 grid place-items-center text-6xl opacity-25 grayscale">
           {icon}
         </span>
-        <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft">
+        <span className="absolute left-3 top-3 font-stamp uppercase tracking-[0.12em] text-sm text-ink-soft">
           {listing.category}
         </span>
-        <VerdictStamp rating={listing.rating} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
+        <VerdictStamp rating={listing.rating} className="absolute right-2 top-2 bg-paper-raised/90 text-sm" />
       </div>
 
       {/* Name, overlaps the well, on a paper sliver */}
@@ -42,7 +42,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         {listing.rating != null && (
           <span className="font-hand text-3xl text-chile leading-none">{listing.rating}</span>
         )}
-        <span className="font-stamp uppercase tracking-[0.1em] text-[12px] text-ink-soft">· Anthony's call</span>
+        <span className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft">· Anthony's call</span>
       </div>
 
       {/* Badges */}

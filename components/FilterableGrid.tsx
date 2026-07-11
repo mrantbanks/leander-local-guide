@@ -61,7 +61,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
               key={t.key}
               onClick={() => toggle(t.key)}
               aria-pressed={isOn}
-              className={`font-stamp uppercase tracking-[0.07em] text-[13px] px-3 py-1.5 border-2 rounded-[2px] transition-colors ${
+              className={`font-stamp uppercase tracking-[0.07em] text-sm px-3 py-1.5 border-2 rounded-[2px] transition-colors ${
                 isOn ? 'bg-chile text-paper border-chile' : 'text-ink border-rule hover:border-ink'
               }`}
             >
@@ -85,7 +85,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
           <option value={0}>Any price</option>
           {[1, 2, 3, 4].map((p) => <option key={p} value={p}>{'$'.repeat(p)}</option>)}
         </select>
-        <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft ml-1">Sort</span>
+        <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft ml-1">Sort</span>
         <select value={sort} onChange={(e) => setSort(e.target.value)} className={sel}>
           <option value="featured">Featured</option>
           <option value="top">Top rated</option>
@@ -93,7 +93,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
           <option value="az">A to Z</option>
         </select>
         {active && (
-          <button onClick={clear} className="font-stamp uppercase tracking-[0.08em] text-[12px] text-chile hover:text-oxblood ml-1">Clear</button>
+          <button onClick={clear} className="font-stamp uppercase tracking-[0.08em] text-sm text-chile hover:text-oxblood ml-1">Clear</button>
         )}
       </div>
 

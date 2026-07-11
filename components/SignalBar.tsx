@@ -44,7 +44,7 @@ export default function SignalBar({
       disabled={votedVerdict}
       className={`font-stamp uppercase tracking-[0.06em] border-2 rounded-[2px] px-2.5 py-1 leading-none transition-colors ${
         votedVerdict ? 'opacity-60 cursor-default text-oxblood border-oxblood/50' : 'text-oxblood border-oxblood/70 hover:bg-oxblood hover:text-paper -rotate-1'
-      } ${compact ? 'text-[12px]' : 'text-sm'}`}
+      } ${compact ? 'text-sm' : 'text-sm'}`}
     >
       {label} {n >= 3 && <span className="opacity-70">{n}</span>}
     </button>

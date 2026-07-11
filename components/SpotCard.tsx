@@ -49,22 +49,22 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
                 className="absolute inset-0 w-full h-full object-cover grayscale-[0.18] contrast-125 sepia-[0.08] transition-[filter] duration-200 ease-out group-hover:grayscale-0 group-hover:sepia-0"
               />
               {spot.photoCredit && (
-                <span className="absolute left-1.5 bottom-1 text-[12px] text-paper/80 bg-ink/45 px-1 rounded-sm">📷 {spot.photoCredit}</span>
+                <span className="absolute left-1.5 bottom-1 text-sm text-paper/80 bg-ink/45 px-1 rounded-sm">📷 {spot.photoCredit}</span>
               )}
             </>
           ) : (
             <div aria-hidden className="absolute inset-0 grid place-items-center bg-gradient-to-br from-paper-sunk to-rule/40">
               <div className="text-center px-3">
                 <div className="text-5xl opacity-45">{icon}</div>
-                <div className="font-stamp uppercase tracking-[0.18em] text-[12px] text-ink-soft mt-1.5">{spot.category}</div>
+                <div className="font-stamp uppercase tracking-[0.18em] text-sm text-ink-soft mt-1.5">{spot.category}</div>
               </div>
             </div>
           )}
           <div className="absolute left-3 top-3 z-[1] flex flex-col items-start gap-1.5">
-            <span className="font-stamp uppercase tracking-[0.12em] text-[12px] text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
+            <span className="font-stamp uppercase tracking-[0.12em] text-sm text-ink-soft bg-paper/70 px-1 rounded-sm">{spot.category}</span>
             <CardStatus periods={spot.periods} open24={spot.open24} openLate={spot.openLate} />
           </div>
-          <VerdictStamp rating={spot.comingSoon ? undefined : spot.ratingGoogle} label={spot.comingSoon ? 'COMING SOON' : spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-[13px]" />
+          <VerdictStamp rating={spot.comingSoon ? undefined : spot.ratingGoogle} label={spot.comingSoon ? 'COMING SOON' : spot.verdict} className="absolute right-2 top-2 bg-paper-raised/90 text-sm" />
         </div>
 
         <div className="relative -mt-5 mx-3 z-10">
@@ -82,12 +82,12 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           {spot.ratingGoogle != null && <span className="font-ui text-xs text-ink-soft">{spot.ratingGoogle}★ <span className="opacity-60">Google</span></span>}
           {spot.priceTier ? <span className="font-ui text-xs text-ink-soft">{'$'.repeat(spot.priceTier)}</span> : null}
           {spot.cuisines.length > 0 && <span className="font-ui text-xs text-ink-soft">{spot.cuisines.slice(0, 2).join(', ')}</span>}
-          {spot.beenHere >= 3 && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft">{spot.beenHere} been here</span>}
+          {spot.beenHere >= 3 && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft">{spot.beenHere} been here</span>}
         </div>
 
         {spot.happyHour && (
           <p className="px-3 mt-2 font-ui text-xs text-ink leading-snug line-clamp-2">
-            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[12px]">Happy Hour · </span>
+            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-sm">Happy Hour · </span>
             {spot.happyHour.replace(/^happy hour[:\s-]*/i, '')}
           </p>
         )}

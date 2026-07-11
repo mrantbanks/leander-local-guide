@@ -74,7 +74,7 @@ export default async function WorkersPage() {
   const Stat = ({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) => (
     <div className="border border-rule bg-paper-raised p-3 text-center">
       <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{value}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-[12px] text-ink-soft mt-1">{label}</div>
+      <div className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-1">{label}</div>
     </div>
   );
 
@@ -125,7 +125,7 @@ export default async function WorkersPage() {
             {queueItems.map((it) => (
               <div key={`${it.kind}-${it.id}`} className="border border-rule rounded-sm p-3 bg-paper">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-stamp uppercase tracking-[0.06em] text-[12px] bg-ink text-paper px-1.5 py-0.5 rounded-sm">{it.kind}</span>
+                  <span className="font-stamp uppercase tracking-[0.06em] text-sm bg-ink text-paper px-1.5 py-0.5 rounded-sm">{it.kind}</span>
                   <span className="font-ui text-xs text-ink-soft">{it.venue}{it.extra ? ` · ${it.extra}★` : ''}</span>
                 </div>
                 <p className="font-ui text-sm text-ink">{it.body}</p>
@@ -194,7 +194,7 @@ export default async function WorkersPage() {
                   <td className="text-ink-soft whitespace-nowrap">{r.worker_id}</td>
                   <td className="text-ink">{r.venue}</td>
                   <td className="text-ink-soft">{r.event_type}</td>
-                  <td><span className={`font-stamp uppercase tracking-[0.06em] text-[12px] px-1.5 py-0.5 ${DEC_STYLE[r.decision] || ''}`}>{r.decision}</span></td>
+                  <td><span className={`font-stamp uppercase tracking-[0.06em] text-sm px-1.5 py-0.5 ${DEC_STYLE[r.decision] || ''}`}>{r.decision}</span></td>
                   <td className="text-ink-soft text-xs whitespace-nowrap">{(r.model || '').split('/').pop()}</td>
                   <td className="text-ink-soft text-xs max-w-[16rem]">{r.reason}</td>
                 </tr>

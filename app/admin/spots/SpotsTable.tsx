@@ -57,7 +57,7 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
               <td className="py-2">
                 <span className="font-display font-semibold text-ink text-base">{r.name}</span>
                 <span className="text-ink-soft text-xs ml-2">{r.cat}</span>
-                {r.hidden ? <span className="font-stamp uppercase tracking-[0.06em] text-[12px] bg-oxblood text-paper px-1 rounded-sm ml-2">Hidden</span> : null}
+                {r.hidden ? <span className="font-stamp uppercase tracking-[0.06em] text-sm bg-oxblood text-paper px-1 rounded-sm ml-2">Hidden</span> : null}
               </td>
               <td className="text-oxblood font-stamp uppercase tracking-[0.06em]">{r.verdict || 'none'}</td>
               <td>{r.visited ? '✓' : ''}</td>

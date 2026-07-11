@@ -143,8 +143,8 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 {spot.name}
               </h1>
               <div className="mt-3 flex items-center gap-3 flex-wrap font-ui text-sm text-ink-soft">
-                {!spot.comingSoon && spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
-                {!spot.comingSoon && spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}
+                {!spot.comingSoon && spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
+                {!spot.comingSoon && spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}
                 {spot.ratingGoogle && <span>Google: {spot.ratingGoogle}★ ({spot.ratingCount ?? 0})</span>}
                 {spot.priceTier ? <span>{'$'.repeat(spot.priceTier)}</span> : null}
               </div>
@@ -193,13 +193,13 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                   <div className="min-w-0">
                     <p className="font-display font-bold text-ink leading-tight">{s.title}</p>
                     {s.details && <p className="font-ui text-xs text-ink-soft">{s.details}</p>}
-                    <p className="font-stamp uppercase tracking-[0.06em] text-[12px] text-ink-soft">{scheduleLabel(s)}</p>
+                    <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft">{scheduleLabel(s)}</p>
                   </div>
                   <Link href={`/ticket/${s.id}`} className="shrink-0 font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
                 </li>
               ))}
             </ul>
-            <p className="font-ui text-[12px] text-ink-soft mt-2">A standing perk from the owner to people who found them here. Pull the stamp, show it at the counter. <Link href="/passport" className="text-chile">See the whole Passport →</Link></p>
+            <p className="font-ui text-sm text-ink-soft mt-2">A standing perk from the owner to people who found them here. Pull the stamp, show it at the counter. <Link href="/passport" className="text-chile">See the whole Passport →</Link></p>
           </div>
         </div>
       )}
@@ -260,7 +260,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             </p>
           ) : (
             <div className="mb-5 border-l-2 border-chile/50 pl-3">
-              {spot.summaryNote && <p className="font-stamp uppercase tracking-[0.1em] text-[12px] text-chile mb-1">Here&apos;s the word going around</p>}
+              {spot.summaryNote && <p className="font-stamp uppercase tracking-[0.1em] text-sm text-chile mb-1">Here&apos;s the word going around</p>}
               <p className="font-ui text-sm text-ink-soft italic leading-relaxed">
                 {spot.summaryNote || "Heads up: I haven't made it here myself yet, so I'm pulling together what Leander reviewers say. Summary coming soon."}
               </p>
@@ -310,7 +310,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                       <span className="font-display font-semibold text-ink">{e.title}</span>
                       <span className="font-ui text-sm text-ink-soft"> · {e.when}</span>
                       {e.description && <p className="font-ui text-sm text-ink-soft">{e.description}</p>}
-                      {e.confirmedNote && <p className="font-ui text-[12px] text-ink-soft/80 mt-0.5">{e.fresh ? '✓ ' : '⚠ '}{e.confirmedNote}</p>}
+                      {e.confirmedNote && <p className="font-ui text-sm text-ink-soft/80 mt-0.5">{e.fresh ? '✓ ' : '⚠ '}{e.confirmedNote}</p>}
                     </div>
                   </li>
                 ))}
@@ -365,7 +365,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                   <li key={i} className="border-l-2 border-rule pl-3">
                     <span className="text-amber text-sm">{'★'.repeat(rv.stars)}<span className="text-rule">{'★'.repeat(5 - rv.stars)}</span></span>
                     {rv.body && <p className="font-ui text-sm text-ink mt-1">{rv.body}</p>}
-                    <p className="font-ui text-[12px] text-ink-soft mt-0.5">by {rv.who}</p>
+                    <p className="font-ui text-sm text-ink-soft mt-0.5">by {rv.who}</p>
                   </li>
                 ))}
               </ul>

@@ -36,7 +36,7 @@ export default async function PassportRoundup() {
                   <Link href={`/r/${s.slug}`} className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">{s.restaurant}</Link>
                   <p className="font-display font-black text-ink text-xl leading-tight mt-1">{s.title}</p>
                   {s.details && <p className="font-ui text-sm text-ink-soft mt-0.5">{s.details}</p>}
-                  <p className="font-stamp uppercase tracking-[0.06em] text-[12px] text-ink-soft mt-1">{scheduleLabel(s)}</p>
+                  <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft mt-1">{scheduleLabel(s)}</p>
                   <Link href={`/ticket/${s.id}`} className="mt-3 self-start font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-3 py-2 rounded-sm hover:bg-oxblood">Get the stamp →</Link>
                 </li>
               ))}

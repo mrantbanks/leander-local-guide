@@ -141,7 +141,7 @@ export default function MapView({ pins, initialSpot }: { pins: MapPin[]; initial
             </div>
           </div>
         )}
-        {userLoc && filtered.length > 0 && <div className="absolute bottom-2 left-2 z-10 bg-paper/90 border border-rule px-2 py-1 font-ui text-[12px] text-ink-soft rounded-sm">Sorted by nearest · your location stays in your browser</div>}
+        {userLoc && filtered.length > 0 && <div className="absolute bottom-2 left-2 z-10 bg-paper/90 border border-rule px-2 py-1 font-ui text-sm text-ink-soft rounded-sm">Sorted by nearest · your location stays in your browser</div>}
       </div>
     </div>
   );

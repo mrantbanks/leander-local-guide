@@ -13,7 +13,7 @@ export default function Tag({ label }: TagProps) {
   return (
     <span
       aria-label={label}
-      className={`inline-block font-stamp uppercase tracking-[0.08em] text-[13px] leading-none px-2 py-1 border rounded-[2px] -rotate-1 ${cls}`}
+      className={`inline-block font-stamp uppercase tracking-[0.08em] text-base leading-none px-3 py-1.5 border rounded-[2px] -rotate-1 ${cls}`}
     >
       {label}
     </span>
