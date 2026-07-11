@@ -67,7 +67,7 @@ export default async function Home() {
             Local Guide
           </h1>
           <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
-            {counts.total} Spots · {counts.local} Local · {counts.chain} Chains (sorted to the back) · Eat where Leander actually eats
+            {counts.total} Spots · {counts.local} Local · {counts.regional} Texas chains · {counts.chain} National (sorted to the back) · Eat where Leander actually eats
           </p>
         </div>
       </header>

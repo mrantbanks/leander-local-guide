@@ -137,7 +137,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <p className="font-stamp uppercase tracking-[0.18em] text-chile text-sm mb-2">
-                {[spot.category, spot.chainStatus === 'chain' ? 'Chain' : 'Local', ...spot.cuisines.slice(0, 2)].join(' · ')}
+                {[spot.category, spot.chainStatus === 'chain' ? 'Chain' : spot.chainStatus === 'regional' ? 'Texas Chain' : 'Local', ...spot.cuisines.slice(0, 2)].join(' · ')}
               </p>
               <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
                 {spot.name}

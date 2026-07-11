@@ -137,7 +137,8 @@ function mapRow(r: any): Spot {
   const todayIdx = (new Date().getDay() + 6) % 7;
   const badges: string[] = [];
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
-  if (a.chainStatus === 'chain') badges.push(a.chainTier === 'regional-tx' ? 'Texas Chain' : 'Chain');
+  if (a.chainStatus === 'chain') badges.push('Chain');
+  else if (a.chainStatus === 'regional') badges.push('Texas Chain');
   else if (a.chainStatus === 'local') badges.push('Local');
   if (a.outdoorSeating) badges.push('Patio');
   if (a.allowsDogs) badges.push('Dog-Friendly');
@@ -195,7 +196,8 @@ function mapRow(r: any): Spot {
   };
 }
 
-const ORDER = `order by (attributes->>'chainStatus' = 'chain'), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
+// Local first, then Texas/regional chains, then national chains (and unknowns) to the back.
+const ORDER = `order by (case attributes->>'chainStatus' when 'local' then 0 when 'regional' then 1 else 2 end), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
 const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename,'caption',caption,'is_menu',is_menu,'is_header',is_header) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
 // Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
 const GEM_WHERE = `not hidden and attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
@@ -336,10 +338,11 @@ export async function getFreshInk(): Promise<InkItem[]> {
   return items;
 }
 
-export async function countSpots(): Promise<{ total: number; local: number; chain: number }> {
+export async function countSpots(): Promise<{ total: number; local: number; regional: number; chain: number }> {
   const { rows } = await pool.query(
     `select count(*)::int total,
             count(*) filter (where attributes->>'chainStatus'='local')::int local,
+            count(*) filter (where attributes->>'chainStatus'='regional')::int regional,
             count(*) filter (where attributes->>'chainStatus'='chain')::int chain
      from restaurants where not hidden`
   );
