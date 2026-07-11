@@ -25,6 +25,11 @@ function whenStr(e: { freq: string; days_of_week: number[] | null; start_time: s
   return { text: 'recurring — day & time not detected', vague: true };
 }
 
+function fmtClaimTime(ts: string | Date | null): string {
+  if (!ts) return 'time unknown';
+  return new Date(ts).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
 const SectionNote = ({ children }: { children: ReactNode }) => (
   <p className="font-ui text-xs text-ink-soft mb-3 max-w-2xl leading-relaxed">{children}</p>
 );
@@ -35,7 +40,7 @@ export default async function ModerationPage() {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
   const [claims, reviews, tips, photos, eventsP] = await Promise.all([
-    pool.query(`select c.id, c.role, c.contact, c.user_email, r.name, r.slug from claims c join restaurants r on r.id = c.place_id where c.status='pending' order by c.created_at`),
+    pool.query(`select c.id, c.role, c.contact, c.user_email, c.created_at, c.ip, r.name, r.slug from claims c join restaurants r on r.id = c.place_id where c.status='pending' order by c.created_at`),
     pool.query(`select rv.id, rv.stars, rv.body, rv.user_email, r.name, r.slug from reviews rv join restaurants r on r.id = rv.place_id where rv.status='pending' order by rv.created_at`),
     pool.query(`select t.id, t.body, t.user_email, r.name, r.slug from tips t join restaurants r on r.id = t.place_id where t.status='pending' order by t.created_at`),
     pool.query(`select p.id, p.filename, p.uploaded_by, r.name, r.slug from photos p join restaurants r on r.id = p.place_id where p.status='pending' order by p.created_at`),
@@ -95,7 +100,8 @@ export default async function ModerationPage() {
               <div key={c.id} className="border border-rule bg-paper-raised p-3 flex items-start gap-3">
                 <div className="flex-1"><Link href={`/r/${c.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood">{c.name}</Link>
                   <p className="font-ui text-sm text-ink mt-1">Claims to be: <span className="font-semibold">{c.role}</span> · contact: {c.contact}</p>
-                  <p className="font-ui text-[11px] text-ink-soft">signed in as {c.user_email}</p></div>
+                  <p className="font-ui text-[11px] text-ink-soft">signed in as {c.user_email}</p>
+                  <p className="font-ui text-[11px] text-ink-soft">submitted {fmtClaimTime(c.created_at)}{c.ip ? <> · IP <span className="font-mono">{c.ip}</span></> : ''}</p></div>
                 <Btns approve={verifyClaim.bind(null, c.id as number)} reject={rejectClaim.bind(null, c.id as number)} />
               </div>
             ))}

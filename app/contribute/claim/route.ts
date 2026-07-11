@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   if (!email) return NextResponse.json({ error: 'Sign in to claim' }, { status: 401 });
 
   const fd = await req.formData();
-  const ip = req.headers.get('cf-connecting-ip') || undefined;
-  if (!(await verifyTurnstile(String(fd.get('turnstileToken') || ''), ip))) return NextResponse.json({ error: 'Verification failed, try again' }, { status: 400 });
+  const ip = req.headers.get('cf-connecting-ip') || req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+  if (!(await verifyTurnstile(String(fd.get('turnstileToken') || ''), ip ?? undefined))) return NextResponse.json({ error: 'Verification failed, try again' }, { status: 400 });
 
   const slug = String(fd.get('slug') || '');
   const role = String(fd.get('role') || '').trim().slice(0, 80);
@@ -22,9 +22,9 @@ export async function POST(req: NextRequest) {
   const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
   if (!rows[0]) return NextResponse.json({ error: 'no such spot' }, { status: 404 });
   await pool.query(
-    `insert into claims (place_id, user_email, role, contact, status) values ($1,$2,$3,$4,'pending')
-     on conflict (place_id, user_email) do update set role = $3, contact = $4, status = 'pending', created_at = now()`,
-    [rows[0].id, email, role, contact]
+    `insert into claims (place_id, user_email, role, contact, ip, status) values ($1,$2,$3,$4,$5,'pending')
+     on conflict (place_id, user_email) do update set role = $3, contact = $4, ip = $5, status = 'pending', created_at = now()`,
+    [rows[0].id, email, role, contact, ip]
   );
   return NextResponse.json({ ok: true });
 }

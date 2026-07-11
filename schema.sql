@@ -793,6 +793,7 @@ CREATE TABLE public.claims (
     contact text,
     status text DEFAULT 'pending'::text,
     created_at timestamp with time zone DEFAULT now(),
+    ip text,
     CONSTRAINT claims_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'verified'::text, 'rejected'::text])))
 );
 
