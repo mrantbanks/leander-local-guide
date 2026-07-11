@@ -102,7 +102,7 @@ export default async function OwnerDash({ params, searchParams }: { params: Prom
           <Help text="A standing perk you offer to people who found you through the guide. It shows on your page under the Local Passport, and diners pull up a printable stamp to show at the counter. Honor system — you decide what to give." example="Free churro with any plate. Or $2 tacos on Tuesdays." />
         </div>
         <p className="font-ui text-sm text-ink-soft mb-4">Add a perk to the Passport — your call what it is. Locals pull up a stamp to show you at the counter. Post as many as you like.</p>
-        <LocalsOnlyStudio slug={slug} restaurant={spot.name} />
+        <LocalsOnlyStudio slug={slug} restaurant={spot.name} category={spot.category} cuisines={spot.cuisines} />
         {specials.length > 0 && (
           <ul className="mt-5 space-y-2">
             {specials.map((s) => (

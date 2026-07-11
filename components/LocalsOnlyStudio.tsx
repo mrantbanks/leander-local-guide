@@ -5,20 +5,12 @@ import { useRouter } from 'next/navigation';
 import { createSpecialAction } from '@/app/actions';
 import TicketCard from '@/components/TicketCard';
 import Help from '@/components/Help';
+import { presetsFor, type Perk } from '@/lib/perkPresets';
 
 // The Local Passport studio — owners post "perks" that locals pull up as a printable "stamp".
-type Preset = { title: string; details?: string; recurring?: boolean; days?: number[]; example?: boolean };
-const PRESETS: Preset[] = [
-  { title: '10% off for Leander locals', details: 'Show your stamp. Dine-in.', example: true },
-  { title: 'Free chips & queso with any entree', details: 'One per table.', example: true },
-  { title: 'Free appetizer with orders over $25', details: 'Dine-in, one per table.' },
-  { title: '$5 off your first visit', details: 'New locals, one time.' },
-  { title: 'Buy one entree, get one half off', details: 'Equal or lesser value, dine-in.' },
-  { title: 'Free drink with any meal', details: 'Fountain drink, tea, or coffee.' },
-  { title: 'Kids eat free', details: 'One kid meal per adult entree.', recurring: true, days: [1] },
-  { title: 'Free dessert with two entrees' },
-  { title: '10% off carry-out', details: 'Call ahead or order in person.' },
-];
+// The starter list is geared to the owner's own cuisine and venue type (lib/perkPresets.ts):
+// "free chips and queso" is no help at all to a bakery.
+type Preset = Perk;
 
 const DAY = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 type Exp = { key: string; label: string; months?: number; days?: number; custom?: boolean };
@@ -33,7 +25,10 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 function addMonths(m: number) { const d = new Date(); d.setMonth(d.getMonth() + m); return iso(d); }
 function addDays(n: number) { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); }
 
-export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; restaurant: string }) {
+export default function LocalsOnlyStudio({ slug, restaurant, category, cuisines }: {
+  slug: string; restaurant: string; category?: string | null; cuisines?: string[] | null;
+}) {
+  const PRESETS = presetsFor(category, cuisines);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
@@ -69,17 +64,15 @@ export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; r
     return (
       <div>
         <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-2 flex items-center">
-          Pick a perk to start from — or write your own
-          <Help text="These are just examples to get you going — we don't read your menu, so change the wording to match what you actually want to offer." example="Tap '10% off', then rewrite it to 'Free churro with any plate.'" />
+          Pick a perk to start from, or write your own
+          <Help text="These are geared to your kind of place, but we haven't read your menu, so change the wording to whatever you actually want to hand across the counter. A perk is insider access, not a coupon: something extra for the people who found you here." example="Tap 'Free churro with any plate', then make it 'Free churro with any plate, dine-in.'" />
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {PRESETS.map((p, i) => (
             <button key={i} onClick={() => pick(p)} className="text-left bg-paper-raised border border-rule rounded-sm p-3 hover:border-ink transition-colors">
               <span className="font-display font-bold text-ink text-sm">{p.title}</span>
-              <span className="flex items-center gap-1.5 mt-0.5">
-                {p.example && <span className="font-stamp uppercase text-sm tracking-[0.08em] text-chile border border-chile rounded-[2px] px-1 py-px">example</span>}
-                {p.recurring && <span className="font-stamp uppercase text-sm tracking-[0.06em] text-chile">weekly</span>}
-              </span>
+              {p.details && <span className="block font-ui text-xs text-ink-soft mt-0.5">{p.details}</span>}
+              {p.recurring && <span className="block font-stamp uppercase text-sm tracking-[0.06em] text-chile mt-0.5">weekly</span>}
             </button>
           ))}
         </div>
