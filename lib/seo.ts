@@ -47,14 +47,33 @@ const CLAIM_REVIEWED: Record<string, string> = {
 /** Smallest number of characters worth spending on a fragment. Below this we say nothing. */
 const MIN_FRAGMENT = 32;
 
-/** First sentence (or two, if the first is stubby), never mid-word. */
+// Words a sentence must never end on. "Reviewers point to the Tandoori Chicken, and the." reads
+// like a bug, because it is one: a naive word-boundary cut leaves the reader mid-thought.
+const DANGLING = new Set([
+  'the', 'a', 'an', 'and', 'or', 'but', 'with', 'then', 'of', 'for', 'to', 'in', 'on', 'at', 'by',
+  'from', 'its', 'it', 'plus', 'that', 'this', 'as', 'so', 'their', 'his', 'her', 'your', 'our',
+  'is', 'are', 'was', 'were', 'be', 'been', 'just', 'also', 'while', 'when', 'if', 'into', 'over',
+  'under', 'about', 'up', 'out', 'off', 'per', 'via', 'plus',
+]);
+
+/**
+ * As many whole sentences as fit. Truncating is the last resort, not the default: a snippet that
+ * ends on a complete thought is worth more than one that squeezes in three more words.
+ */
 function lead(s: string | null, max: number): string {
   if (!s || max < MIN_FRAGMENT) return ''; // a 10-char budget yields "The." Say nothing instead.
   const txt = noDash(s).trim();
-  const parts = txt.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [txt];
-  let out = (parts[0] || '').trim();
-  if (out.length < 60 && parts[1]) out = `${out} ${parts[1].trim()}`;
-  return clip(out, max);
+  const parts = (txt.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [txt]).map((p) => p.trim()).filter(Boolean);
+
+  let out = '';
+  for (const p of parts) {
+    const next = out ? `${out} ${p}` : p;
+    if (next.length > max) break;
+    out = next;
+  }
+  if (out) return out; // whole sentences fit: nothing to truncate, nothing to dangle
+
+  return clip(parts[0] || txt, max); // even one sentence is too long, so cut it gracefully
 }
 
 /**
@@ -73,17 +92,39 @@ function fit(variants: string[]): string {
   return variants.find((v) => v.length <= TITLE_MAX) ?? variants[variants.length - 1];
 }
 
-/** Trim to a word boundary and close the sentence. Never leaves a dangling half-word. */
+/**
+ * Cut a too-long sentence so it still reads like a sentence.
+ *
+ * Prefer a clause boundary (a comma), because ending on a complete clause sounds deliberate.
+ * Otherwise fall back to a word boundary, then peel off any trailing connective words, so we never
+ * ship "...and the." into a search result.
+ */
 function clip(s: string, max: number): string {
   const txt = s.trim();
   if (txt.length <= max) return txt;
-  const cut = txt.slice(0, max);
-  const at = cut.lastIndexOf(' ');
-  return `${cut.slice(0, at > 0 ? at : max).replace(/[,;:.\s]+$/, '')}.`;
+
+  const head = txt.slice(0, max);
+  const comma = Math.max(head.lastIndexOf(', '), head.lastIndexOf('; '));
+  const space = head.lastIndexOf(' ');
+  // Only honour a comma that lands somewhere useful; a comma at character 8 of 130 is not a clause.
+  const cut = comma > max * 0.5 ? head.slice(0, comma) : head.slice(0, space > 0 ? space : max);
+
+  const words = cut.split(/\s+/);
+  while (words.length > 1 && DANGLING.has(words[words.length - 1].toLowerCase().replace(/[^a-z']/g, ''))) {
+    words.pop();
+  }
+  return `${words.join(' ').replace(/[,;:.\s]+$/, '')}.`;
 }
 
 /** Make sure a fragment reads as a sentence. */
 const sentence = (s: string) => (s && !/[.!?]$/.test(s) ? `${s}.` : s);
+
+/** The first complete sentence, or '' if there isn't one. Never truncates. */
+function firstSentence(s: string | null): string {
+  if (!s) return '';
+  const m = noDash(s).trim().match(/[^.!?]+[.!?]+|[^.!?]+$/);
+  return m ? sentence(m[0].trim()) : '';
+}
 
 export function titleVerdict(spot: Spot): string | null {
   if (spot.comingSoon) return 'Opening Soon';
@@ -142,10 +183,12 @@ export function snippetDescription(spot: Spot): string {
   let detail = sentence(lead(primary, Math.max(room, 40)));
 
   // If there is still real room, the caveat earns its place: it is the honesty signal, and it gives
-  // Google a second phrase to bold when the query is not the one we guessed. `lead` returns ''
-  // when the remaining budget is too small to hold a readable clause.
+  // Google a second phrase to bold when the query is not the one we guessed.
+  //
+  // It goes in WHOLE or not at all. A half-caveat is worse than no caveat: truncating it is how we
+  // ended up shipping "Service can buckle when it's." to a quarter of the site.
   if (!skip && spot.whatToOrder && spot.gotcha) {
-    const extra = sentence(lead(spot.gotcha, room - detail.length - 1));
+    const extra = firstSentence(spot.gotcha);
     if (extra && detail.length + extra.length + 1 <= room) detail = `${detail} ${extra}`;
   }
 
