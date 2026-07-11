@@ -53,21 +53,21 @@ body {
 .llg-popup .maplibregl-popup-close-button { font-size: 18px; color: #4A4239; padding: 0 6px; }
 .llg-pop-name { display: block; font-family: Georgia, 'Times New Roman', serif; font-weight: 800; font-size: 16px; line-height: 1.15; color: #16130F; text-decoration: none; }
 .llg-pop-name:hover { color: #9a3324; }
-.llg-pop-meta { font-family: Arial, sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: #9a3324; margin-top: 3px; }
-.llg-pop-blurb { font-family: Georgia, serif; font-size: 13px; color: #4A4239; margin: 7px 0 0; line-height: 1.5; }
+.llg-pop-meta { font-family: Arial, sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: .07em; color: #9a3324; margin-top: 3px; }
+.llg-pop-blurb { font-family: Georgia, serif; font-size: 14px; color: #4A4239; margin: 7px 0 0; line-height: 1.5; }
 .llg-pop-btns { display: flex; gap: 6px; margin-top: 10px; }
-.llg-pop-view, .llg-pop-dir { font-family: Arial, sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; padding: 7px 11px; text-decoration: none; border-radius: 2px; }
+.llg-pop-view, .llg-pop-dir { font-family: Arial, sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; padding: 7px 11px; text-decoration: none; border-radius: 2px; }
 .llg-pop-view { background: #E03A1E; color: #F4EFE6; }
 .llg-pop-dir { border: 1px solid #16130F; color: #16130F; }
 .llg-pop-status { margin-top: 6px; }
-.llg-pill { font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 7px; border-radius: 2px; display: inline-block; }
+.llg-pill { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 7px; border-radius: 2px; display: inline-block; }
 .llg-pill-open { background: #1f7a3d; color: #fff; }
 .llg-pill-soon { background: #E8A33D; color: #16130F; }
 .llg-pill-closed { background: #e7ded0; color: #6b5b48; }
 .llg-pill-unknown { background: transparent; color: #6b5b48; border: 1px solid #d8cbb4; }
-.llg-pop-happy { font-family: Arial, sans-serif; font-size: 12px; color: #16130F; background: #faf3e2; border-left: 3px solid #E8A33D; padding: 5px 8px; margin-top: 7px; }
-.llg-pop-hours { font-family: Arial, sans-serif; font-size: 12px; color: #4A4239; margin-top: 6px; }
-.llg-tip .maplibregl-popup-content { background: #16130F; color: #F4EFE6; padding: 4px 9px; border-radius: 2px; font-family: Arial, sans-serif; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+.llg-pop-happy { font-family: Arial, sans-serif; font-size: 14px; color: #16130F; background: #faf3e2; border-left: 3px solid #E8A33D; padding: 5px 8px; margin-top: 7px; }
+.llg-pop-hours { font-family: Arial, sans-serif; font-size: 14px; color: #4A4239; margin-top: 6px; }
+.llg-tip .maplibregl-popup-content { background: #16130F; color: #F4EFE6; padding: 4px 9px; border-radius: 2px; font-family: Arial, sans-serif; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
 .llg-tip .maplibregl-popup-tip { display: none; }
 .llg-here { width: 20px; height: 20px; position: relative; }
 .llg-here-dot { position: absolute; inset: 4px; background: #2563eb; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.2); }
