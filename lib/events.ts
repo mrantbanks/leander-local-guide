@@ -150,7 +150,8 @@ export type WhatsOnDay = { iso: string; date: string; label: string; items: What
 // Expand recurring + one-off events across the next 7 days (America/Chicago).
 export async function getWhatsOn(): Promise<WhatsOnDay[]> {
   const { rows } = await pool.query(
-    `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id where ${LIVE}`
+    // What's On is a local-first board — national chains stay off it (their own page still shows their events).
+    `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id where ${LIVE} and coalesce(r.attributes->>'chainStatus','') <> 'chain'`
   );
   const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   const base = new Date(todayStr + 'T12:00:00Z');

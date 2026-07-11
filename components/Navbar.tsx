@@ -54,7 +54,7 @@ export default function Navbar() {
                 <li key={href} className={`shrink-0 ${hide ? 'hidden sm:list-item' : ''}`}>
                   <Link
                     href={href}
-                    className={`font-stamp uppercase tracking-[0.06em] text-[13px] sm:text-sm px-2 sm:px-2.5 py-1 transition-colors duration-150 ${isActive ? 'text-chile' : 'text-ink-soft hover:text-ink'}`}
+                    className={`font-stamp uppercase tracking-[0.06em] text-sm sm:text-base px-2 sm:px-2.5 py-1 transition-colors duration-150 ${isActive ? 'text-chile' : 'text-ink-soft hover:text-ink'}`}
                   >
                     {label}
                   </Link>
@@ -70,7 +70,7 @@ export default function Navbar() {
               aria-haspopup="menu"
               aria-expanded={moreOpen}
               onClick={() => setMoreOpen((o) => !o)}
-              className={`flex items-center gap-0.5 font-stamp uppercase tracking-[0.06em] text-[13px] px-2 py-1 transition-colors duration-150 ${moreOpen ? 'text-chile' : 'text-ink-soft hover:text-ink'}`}
+              className={`flex items-center gap-0.5 font-stamp uppercase tracking-[0.06em] text-sm px-2 py-1 transition-colors duration-150 ${moreOpen ? 'text-chile' : 'text-ink-soft hover:text-ink'}`}
             >
               More <span aria-hidden="true" className={`inline-block text-[10px] transition-transform duration-150 ${moreOpen ? 'rotate-180' : ''}`}>▾</span>
             </button>
