@@ -1,10 +1,25 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth, signIn, signOut } from '@/auth';
+import StatTile from '@/components/StatTile';
 
 export const dynamic = 'force-dynamic';
 
 type AdminUser = { email?: string; name?: string; isAdmin?: boolean };
+
+// Module scope, like StatTile: a component declared inside render is a new component type on every
+// render, so React rebuilds it instead of reconciling it. It closes over nothing.
+function Card({ href, title, desc, meta }: { href: string; title: string; desc: string; meta?: string }) {
+  return (
+    <Link href={href} className="group block border border-rule bg-paper-raised p-5 hover:border-ink transition-colors">
+      <div className="flex items-baseline justify-between">
+        <h2 className="font-display font-bold text-xl text-ink group-hover:text-oxblood transition-colors">{title}</h2>
+        {meta && <span className="font-stamp uppercase tracking-[0.08em] text-xs text-chile">{meta}</span>}
+      </div>
+      <p className="font-ui text-sm text-ink-soft mt-1.5 leading-relaxed">{desc}</p>
+    </Link>
+  );
+}
 
 export default async function AdminPage() {
   const session = await auth();
@@ -46,32 +61,17 @@ export default async function AdminPage() {
   const s = rows[0];
   const pendingTotal = s.p_photos + s.p_tips + s.p_reviews + s.p_claims + s.p_events;
 
-  const Tile = ({ n, label, accent }: { n: number; label: string; accent?: boolean }) => (
-    <div className="border border-rule bg-paper-raised p-3 text-center">
-      <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{n}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-1">{label}</div>
-    </div>
-  );
-  const Card = ({ href, title, desc, meta }: { href: string; title: string; desc: string; meta?: string }) => (
-    <Link href={href} className="group block border border-rule bg-paper-raised p-5 hover:border-ink transition-colors">
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-display font-bold text-xl text-ink group-hover:text-oxblood transition-colors">{title}</h2>
-        {meta && <span className="font-stamp uppercase tracking-[0.08em] text-xs text-chile">{meta}</span>}
-      </div>
-      <p className="font-ui text-sm text-ink-soft mt-1.5 leading-relaxed">{desc}</p>
-    </Link>
-  );
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
       <p className="font-ui text-xs text-ink-soft mb-5">Signed in as {user.email}. This is the control room for The Leander Local Guide — everything the public sees, plus the machines that keep it fresh.</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
-        <Tile n={s.spots} label="Spots" />
-        <Tile n={pendingTotal} label="Awaiting review" accent={pendingTotal > 0} />
-        <Tile n={s.workers_online} label="Workers online" accent={s.workers_online > 0} />
-        <Tile n={s.live_events} label="Live events" />
-        <Tile n={s.visited} label="Anthony visited" />
+        <StatTile value={s.spots} label="Spots" />
+        <StatTile value={pendingTotal} label="Awaiting review" accent={pendingTotal > 0} />
+        <StatTile value={s.workers_online} label="Workers online" accent={s.workers_online > 0} />
+        <StatTile value={s.live_events} label="Live events" />
+        <StatTile value={s.visited} label="Anthony visited" />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

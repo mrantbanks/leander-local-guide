@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
 import { addProvider, toggleProvider, deleteProvider, createBroadcast } from './actions';
+import StatTile from '@/components/StatTile';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,12 +22,6 @@ export default async function EmailAdminPage() {
     pool.query("select count(*) filter (where status='confirmed' and ar_next_due is not null)::int active, count(*) filter (where status='confirmed' and ar_next_due is null and ar_step>0)::int graduated from subscribers"),
   ]);
   const s = subs.rows[0], se = sends.rows[0], a = ar.rows[0];
-  const Tile = ({ n, l, accent }: { n: number | string; l: string; accent?: boolean }) => (
-    <div className="border border-rule bg-paper-raised p-3 text-center">
-      <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{n}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-1">{l}</div>
-    </div>
-  );
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
@@ -34,12 +29,12 @@ export default async function EmailAdminPage() {
       <p className="font-ui text-sm text-ink-soft mt-1 mb-6 max-w-2xl leading-relaxed">Your owned audience. Capture is live across the site (double opt-in). New subscribers walk a 6-month welcome drip automatically; you can also send one-off broadcasts. Delivery routes through the providers below in priority order, each capped by its own daily and monthly quota.</p>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8">
-        <Tile n={s.confirmed} l="Confirmed" accent={s.confirmed > 0} />
-        <Tile n={s.pending} l="Pending" />
-        <Tile n={s.unsub} l="Unsubscribed" />
-        <Tile n={a.active} l="In drip" />
-        <Tile n={se.sent} l="Emails sent" />
-        <Tile n={se.failed} l="Failed" accent={se.failed > 0} />
+        <StatTile value={s.confirmed} label="Confirmed" accent={s.confirmed > 0} />
+        <StatTile value={s.pending} label="Pending" />
+        <StatTile value={s.unsub} label="Unsubscribed" />
+        <StatTile value={a.active} label="In drip" />
+        <StatTile value={se.sent} label="Emails sent" />
+        <StatTile value={se.failed} label="Failed" accent={se.failed > 0} />
       </div>
 
       {/* Providers */}
@@ -118,7 +113,7 @@ export default async function EmailAdminPage() {
                 <tr key={c.id} className="border-b border-rule/50">
                   <td className="py-2 text-ink">{c.subject}</td>
                   <td className="text-ink-soft">{c.status}</td>
-                  <td>{c.recipients || '—'}</td>
+                  <td>{c.recipients || '-'}</td>
                   <td className="text-ink-soft text-xs">{c.sent_at ? new Date(c.sent_at).toLocaleString() : c.scheduled_at ? `scheduled ${new Date(c.scheduled_at).toLocaleString()}` : ''}</td>
                 </tr>
               ))}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { evalHours, centralNowAbs } from '@/lib/hours';
+import { useIsClient } from '@/lib/useIsClient';
 
 // One shared minute-tick for the whole grid -- 177 cards must NOT each spin a timer.
 let subs: (() => void)[] = [];
@@ -16,10 +17,12 @@ function subscribe(fn: () => void) {
 // grid reads as a dead site). Computed live vs Central time; renders only on mount so
 // the cached HTML never carries a stale status and there's no hydration mismatch.
 export default function CardStatus({ periods, open24, openLate }: { periods: number[][]; open24: boolean; openLate: boolean }) {
-  const [mounted, setMounted] = useState(false);
+  const isClient = useIsClient();
   const [, force] = useState(0);
-  useEffect(() => { setMounted(true); return subscribe(() => force((n) => n + 1)); }, []);
-  if (!mounted) return null;
+  // Only the minute-tick subscription lives in the effect now. The old version also called
+  // setMounted(true) here, which re-rendered every card on the grid one extra time on mount.
+  useEffect(() => subscribe(() => force((n) => n + 1)), []);
+  if (!isClient) return null;
 
   const now = centralNowAbs();
   const st = evalHours(periods, open24, now);

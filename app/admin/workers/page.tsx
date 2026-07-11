@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { pool } from '@/lib/db';
 import { auth } from '@/auth';
 import { approveReview, rejectReview, approveTip, rejectTip } from '@/app/actions';
+import StatTile from '@/components/StatTile';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,25 +72,18 @@ export default async function WorkersPage() {
   const tallyMap = Object.fromEntries(tally.rows.map((r) => [r.decision, r.n]));
   const totalVerdicts = tally.rows.reduce((a, r) => a + r.n, 0);
 
-  const Stat = ({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) => (
-    <div className="border border-rule bg-paper-raised p-3 text-center">
-      <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{value}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-1">{label}</div>
-    </div>
-  );
-
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
       <h1 className="font-display font-black text-3xl text-ink">Workers — the verification pipeline</h1>
       <p className="font-ui text-sm text-ink-soft mt-1 mb-6 max-w-2xl leading-relaxed">Remote AI workers pull unverified event suggestions, open each venue&apos;s website, and decide whether the event is real, fixing the day/time or rejecting it, so you don&apos;t have to. Below: which machines are connected, how much work is waiting, and every decision they&apos;ve made.</p>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8">
-        <Stat label="Online" value={online} accent={online > 0} />
-        <Stat label="Work waiting" value={q.available} accent={q.available > 0} />
-        <Stat label="Verdicts" value={totalVerdicts} />
-        <Stat label="Approved" value={tallyMap.approve || 0} />
-        <Stat label="Rejected" value={tallyMap.reject || 0} />
-        <Stat label="Live events" value={q.approved} />
+        <StatTile label="Online" value={online} accent={online > 0} />
+        <StatTile label="Work waiting" value={q.available} accent={q.available > 0} />
+        <StatTile label="Verdicts" value={totalVerdicts} />
+        <StatTile label="Approved" value={tallyMap.approve || 0} />
+        <StatTile label="Rejected" value={tallyMap.reject || 0} />
+        <StatTile label="Live events" value={q.approved} />
       </div>
 
       {/* Happy-hour scraper */}

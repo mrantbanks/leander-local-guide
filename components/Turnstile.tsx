@@ -10,8 +10,11 @@ declare global {
 export default function Turnstile({ siteKey, onToken }: { siteKey: string; onToken: (t: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | null>(null);
+  // Keep the latest callback without re-rendering the widget. Writing a ref during render (the old
+  // `cb.current = onToken`) is a side effect in the render phase, which React may run twice or
+  // throw away; the assignment belongs in an effect.
   const cb = useRef(onToken);
-  cb.current = onToken;
+  useEffect(() => { cb.current = onToken; }, [onToken]);
 
   useEffect(() => {
     function render() {

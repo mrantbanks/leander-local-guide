@@ -8,7 +8,7 @@ type R = { slug: string; name: string; cat: string };
 
 export default function SearchBar() {
   const [q, setQ] = useState('');
-  const [res, setRes] = useState<R[]>([]);
+  const [fetched, setRes] = useState<R[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [mobile, setMobile] = useState(false); // mobile expanded panel
@@ -17,12 +17,17 @@ export default function SearchBar() {
   const mInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (q.trim().length < 2) { setRes([]); return; }
+    if (q.trim().length < 2) return; // nothing to fetch, and nothing to clear: see `res` below
     const id = setTimeout(async () => {
       try { const r = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`); const j = await r.json(); setRes(j.results || []); setOpen(true); } catch { /* ignore */ }
     }, 150);
     return () => clearTimeout(id);
   }, [q]);
+
+  // Derived, not stored. The effect above used to setRes([]) whenever the query dropped below two
+  // characters, which cost a second render pass on those keystrokes. Whether we SHOW results is a
+  // function of the query, so just compute it.
+  const res = q.trim().length < 2 ? [] : fetched;
 
   useEffect(() => {
     function out(e: MouseEvent) { if (box.current && !box.current.contains(e.target as Node)) { setOpen(false); setMobile(false); } }

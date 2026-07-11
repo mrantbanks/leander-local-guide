@@ -25,8 +25,14 @@ export default function Navbar() {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
-  // Close the mobile "More" menu whenever we navigate.
-  useEffect(() => { setMoreOpen(false); }, [pathname]);
+  // Close the mobile "More" menu whenever we navigate. Adjusted during render, not in an effect:
+  // an effect would let the new route paint once with the menu still open and then snap it shut.
+  // This is React's documented "adjusting state when a prop changes" pattern.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setMoreOpen(false);
+  }
 
   // Close on outside tap / Escape while open.
   useEffect(() => {

@@ -42,7 +42,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         {listing.rating != null && (
           <span className="font-hand text-3xl text-chile leading-none">{listing.rating}</span>
         )}
-        <span className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft">· Anthony's call</span>
+        <span className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft">· Anthony&apos;s call</span>
       </div>
 
       {/* Badges */}
