@@ -24,7 +24,7 @@ export default async function EmailAdminPage() {
   const Tile = ({ n, l, accent }: { n: number | string; l: string; accent?: boolean }) => (
     <div className="border border-rule bg-paper-raised p-3 text-center">
       <div className={`font-display font-black text-3xl ${accent ? 'text-chile' : 'text-ink'}`}>{n}</div>
-      <div className="font-stamp uppercase tracking-[0.1em] text-[10px] text-ink-soft mt-1">{l}</div>
+      <div className="font-stamp uppercase tracking-[0.1em] text-[12px] text-ink-soft mt-1">{l}</div>
     </div>
   );
 

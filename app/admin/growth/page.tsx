@@ -11,7 +11,7 @@ const Section = ({ title, blurb, items }: { title: string; blurb?: string; items
     <ul className="space-y-2">
       {items.map((it, i) => (
         <li key={i} className="flex items-start gap-2 font-ui text-sm">
-          <span className={`mt-0.5 shrink-0 w-4 h-4 border ${it.done ? 'bg-amber border-amber text-ink text-[11px] text-center leading-4' : 'border-rule'}`}>{it.done ? '✓' : ''}</span>
+          <span className={`mt-0.5 shrink-0 w-4 h-4 border ${it.done ? 'bg-amber border-amber text-ink text-[12px] text-center leading-4' : 'border-rule'}`}>{it.done ? '✓' : ''}</span>
           <span className={it.done ? 'text-ink-soft line-through' : 'text-ink'}>{it.t}{it.note && <span className="block text-ink-soft text-xs no-underline">{it.note}</span>}</span>
         </li>
       ))}

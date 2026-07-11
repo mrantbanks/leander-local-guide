@@ -90,7 +90,7 @@ export default function MenuStudio({ slug, initial, menuPhotoCount }: { slug: st
             placeholder='{"sections":[{"name":"Appetizers","items":[{"name":"Egg Roll","price":"2"}]}]}' />
           <div className="flex items-center gap-3 mt-1.5">
             <button onClick={save} disabled={!!busy || !json.trim()} className={`${btn} bg-ink text-paper hover:bg-chile`}>{busy === 'save' ? 'Saving...' : 'Save menu'}</button>
-            <span className="font-ui text-[11px] text-ink-soft">Shape: sections → items → name / desc / price (price as printed, no $). A section &quot;note&quot; covers shared pricing like proteins or sizes.</span>
+            <span className="font-ui text-[12px] text-ink-soft">Shape: sections → items → name / desc / price (price as printed, no $). A section &quot;note&quot; covers shared pricing like proteins or sizes.</span>
           </div>
         </div>
       )}

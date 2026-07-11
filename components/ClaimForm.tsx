@@ -26,7 +26,7 @@ export default function ClaimForm({ slug, siteKey }: { slug: string; siteKey: st
   }
 
   if (done) return <p className="font-ui text-sm text-ink-soft">Claim submitted. We&apos;ll verify and get you set up. Claiming never affects rankings.</p>;
-  if (!open) return <button type="button" onClick={() => setOpen(true)} className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft hover:text-chile">Own this spot? Claim it →</button>;
+  if (!open) return <button type="button" onClick={() => setOpen(true)} className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft hover:text-chile">Own this spot? Claim it →</button>;
 
   return (
     <div className="mt-2 border border-rule bg-paper-raised p-4 max-w-md">

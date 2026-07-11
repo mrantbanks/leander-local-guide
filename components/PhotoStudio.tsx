@@ -91,11 +91,11 @@ export default function PhotoStudio({ slug, initial, googlePhoto }: { slug: stri
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/img?n=${encodeURIComponent(googlePhoto)}&w=400`} alt="" className="w-full aspect-[4/3] object-cover" />
-                <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-ink text-paper px-1 rounded-sm">Google</span>
-                {noLocalHeader && <span className="absolute top-1 right-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-chile text-paper px-1 rounded-sm">Header</span>}
-                {!noLocalHeader && <div className="absolute inset-x-0 bottom-0 bg-ink/75 p-1"><button onClick={useGoogleHeader} className="w-full font-stamp uppercase tracking-[0.06em] text-[10px] text-paper py-1">Use as header</button></div>}
+                <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-ink text-paper px-1 rounded-sm">Google</span>
+                {noLocalHeader && <span className="absolute top-1 right-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-chile text-paper px-1 rounded-sm">Header</span>}
+                {!noLocalHeader && <div className="absolute inset-x-0 bottom-0 bg-ink/75 p-1"><button onClick={useGoogleHeader} className="w-full font-stamp uppercase tracking-[0.06em] text-[12px] text-paper py-1">Use as header</button></div>}
               </div>
-              <div className="px-2 py-1 font-ui text-[10px] text-ink-soft border-t border-rule">From Google · the default header</div>
+              <div className="px-2 py-1 font-ui text-[12px] text-ink-soft border-t border-rule">From Google · the default header</div>
             </div>
           )}
           {photos.map((p) => (
@@ -105,12 +105,12 @@ export default function PhotoStudio({ slug, initial, googlePhoto }: { slug: stri
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img(p.filename, 400)} alt="" className="w-full aspect-[4/3] object-cover" />
                 <div className="absolute inset-x-0 bottom-0 bg-ink/75 flex gap-0.5 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => setEditing({ src: img(p.filename, 1600), id: p.id })} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[10px] text-paper py-1">Edit</button>
-                  <button onClick={() => toggleMenu(p.id, !!p.isMenu)} title={p.isMenu ? 'Unmark menu' : 'Mark as menu'} className={`font-stamp text-[11px] py-1 px-2 ${p.isMenu ? 'text-amber' : 'text-paper'}`}>📋</button>
-                  {!p.isMenu && <button onClick={() => header(p.id)} title={p.isHeader ? 'Unset header (back to Google)' : 'Make this the header image'} className={`font-stamp text-[11px] py-1 px-2 ${p.isHeader ? 'text-chile' : 'text-paper'}`}>★</button>}
-                  <button onClick={() => del(p.id)} title="Delete" className="font-stamp text-[11px] text-paper py-1 px-2">🗑</button>
+                  <button onClick={() => setEditing({ src: img(p.filename, 1600), id: p.id })} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[12px] text-paper py-1">Edit</button>
+                  <button onClick={() => toggleMenu(p.id, !!p.isMenu)} title={p.isMenu ? 'Unmark menu' : 'Mark as menu'} className={`font-stamp text-[12px] py-1 px-2 ${p.isMenu ? 'text-amber' : 'text-paper'}`}>📋</button>
+                  {!p.isMenu && <button onClick={() => header(p.id)} title={p.isHeader ? 'Unset header (back to Google)' : 'Make this the header image'} className={`font-stamp text-[12px] py-1 px-2 ${p.isHeader ? 'text-chile' : 'text-paper'}`}>★</button>}
+                  <button onClick={() => del(p.id)} title="Delete" className="font-stamp text-[12px] text-paper py-1 px-2">🗑</button>
                 </div>
-                {p.isMenu ? <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-amber text-ink px-1 rounded-sm">Menu</span> : p.isHeader && <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[9px] bg-chile text-paper px-1 rounded-sm">Header</span>}
+                {p.isMenu ? <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-amber text-ink px-1 rounded-sm">Menu</span> : p.isHeader && <span className="absolute top-1 left-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-chile text-paper px-1 rounded-sm">Header</span>}
               </div>
               <div className="flex items-center border-t border-rule">
                 <input value={p.caption || ''} onChange={(e) => setPhotos((ps) => ps.map((x) => x.id === p.id ? { ...x, caption: e.target.value } : x))} onBlur={(e) => setPhotoCaption(p.id, slug, e.target.value)} placeholder="Caption..." className="flex-1 min-w-0 bg-paper px-2 py-1 text-xs text-ink outline-none focus:bg-paper-raised" />

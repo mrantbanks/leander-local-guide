@@ -49,14 +49,14 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
                 className="absolute inset-0 w-full h-full object-cover grayscale-[0.18] contrast-125 sepia-[0.08] transition-[filter] duration-200 ease-out group-hover:grayscale-0 group-hover:sepia-0"
               />
               {spot.photoCredit && (
-                <span className="absolute left-1.5 bottom-1 text-[9px] text-paper/80 bg-ink/45 px-1 rounded-sm">📷 {spot.photoCredit}</span>
+                <span className="absolute left-1.5 bottom-1 text-[12px] text-paper/80 bg-ink/45 px-1 rounded-sm">📷 {spot.photoCredit}</span>
               )}
             </>
           ) : (
             <div aria-hidden className="absolute inset-0 grid place-items-center bg-gradient-to-br from-paper-sunk to-rule/40">
               <div className="text-center px-3">
                 <div className="text-5xl opacity-45">{icon}</div>
-                <div className="font-stamp uppercase tracking-[0.18em] text-[11px] text-ink-soft mt-1.5">{spot.category}</div>
+                <div className="font-stamp uppercase tracking-[0.18em] text-[12px] text-ink-soft mt-1.5">{spot.category}</div>
               </div>
             </div>
           )}
@@ -82,12 +82,12 @@ export default function SpotCard({ spot, priority = false }: { spot: CardSpot; p
           {spot.ratingGoogle != null && <span className="font-ui text-xs text-ink-soft">{spot.ratingGoogle}★ <span className="opacity-60">Google</span></span>}
           {spot.priceTier ? <span className="font-ui text-xs text-ink-soft">{'$'.repeat(spot.priceTier)}</span> : null}
           {spot.cuisines.length > 0 && <span className="font-ui text-xs text-ink-soft">{spot.cuisines.slice(0, 2).join(', ')}</span>}
-          {spot.beenHere >= 3 && <span className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft">{spot.beenHere} been here</span>}
+          {spot.beenHere >= 3 && <span className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft">{spot.beenHere} been here</span>}
         </div>
 
         {spot.happyHour && (
           <p className="px-3 mt-2 font-ui text-xs text-ink leading-snug line-clamp-2">
-            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[11px]">Happy Hour · </span>
+            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-[12px]">Happy Hour · </span>
             {spot.happyHour.replace(/^happy hour[:\s-]*/i, '')}
           </p>
         )}

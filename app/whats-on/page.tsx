@@ -42,12 +42,12 @@ export default async function WhatsOnPage() {
                 <ul className="divide-y divide-rule">
                   {d.items.map((it) => (
                     <li key={`${d.iso}-${it.id}`} className="py-3 flex items-baseline gap-3">
-                      <span className="font-stamp uppercase tracking-[0.06em] text-xs text-chile w-16 shrink-0">{it.time || 'TBA'}</span>
-                      <span className="text-lg shrink-0">{it.emoji}</span>
+                      <span className="font-stamp uppercase tracking-[0.06em] text-sm text-chile w-20 shrink-0">{it.time || 'TBA'}</span>
+                      <span className="text-xl shrink-0">{it.emoji}</span>
                       <div className="min-w-0">
-                        <span className="font-display font-semibold text-ink">{it.title}</span>
-                        <span className="font-ui text-sm text-ink-soft"> · <Link href={`/r/${it.slug}`} className="hover:text-oxblood">{it.spot}</Link></span>
-                        <span className="ml-2 font-stamp uppercase tracking-[0.08em] text-[10px] text-ink-soft">{it.label}{!it.fresh && ' · unconfirmed'}</span>
+                        <span className="font-display font-semibold text-ink text-lg">{it.title}</span>
+                        <span className="font-ui text-base text-ink-soft"> · <Link href={`/r/${it.slug}`} className="hover:text-oxblood">{it.spot}</Link></span>
+                        <span className="ml-2 font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft">{it.label}{!it.fresh && ' · unconfirmed'}</span>
                       </div>
                     </li>
                   ))}

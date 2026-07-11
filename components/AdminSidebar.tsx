@@ -21,7 +21,7 @@ export default function AdminSidebar({ pending }: { pending: number }) {
     <aside className="w-44 sm:w-52 shrink-0 border-r-2 border-ink bg-paper-sunk min-h-screen sticky top-0 self-start flex flex-col">
       <div className="px-4 py-4 border-b border-rule">
         <Link href="/admin" className="font-display font-black text-lg text-ink leading-tight block">The Leander Local</Link>
-        <p className="font-stamp uppercase tracking-[0.14em] text-[10px] text-chile mt-0.5">Newsroom · Admin</p>
+        <p className="font-stamp uppercase tracking-[0.14em] text-[12px] text-chile mt-0.5">Newsroom · Admin</p>
       </div>
       <nav className="flex flex-col p-2 gap-0.5">
         {ITEMS.map(([href, label]) => {

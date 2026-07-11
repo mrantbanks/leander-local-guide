@@ -81,7 +81,7 @@ export default async function ModerationPage() {
                       {' · '}<span className={w.vague ? 'text-oxblood' : 'text-ink'}>{w.vague ? '⚠ ' : ''}{w.text}</span>
                     </p>
                     {e.source_quote && <p className="font-ui text-xs text-ink-soft mt-1 italic border-l-2 border-rule pl-2">From their site: &ldquo;{e.source_quote}&rdquo;</p>}
-                    {e.source_url && <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="font-ui text-[11px] text-chile hover:underline mt-1 inline-block">view source page →</a>}
+                    {e.source_url && <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="font-ui text-[12px] text-chile hover:underline mt-1 inline-block">view source page →</a>}
                   </div>
                   <Btns approve={approveEvent.bind(null, e.id as number)} reject={rejectEvent.bind(null, e.id as number)} />
                 </div>
@@ -100,8 +100,8 @@ export default async function ModerationPage() {
               <div key={c.id} className="border border-rule bg-paper-raised p-3 flex items-start gap-3">
                 <div className="flex-1"><Link href={`/r/${c.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood">{c.name}</Link>
                   <p className="font-ui text-sm text-ink mt-1">Claims to be: <span className="font-semibold">{c.role}</span> · contact: {c.contact}</p>
-                  <p className="font-ui text-[11px] text-ink-soft">signed in as {c.user_email}</p>
-                  <p className="font-ui text-[11px] text-ink-soft">submitted {fmtClaimTime(c.created_at)}{c.ip ? <> · IP <span className="font-mono">{c.ip}</span></> : ''}</p></div>
+                  <p className="font-ui text-[12px] text-ink-soft">signed in as {c.user_email}</p>
+                  <p className="font-ui text-[12px] text-ink-soft">submitted {fmtClaimTime(c.created_at)}{c.ip ? <> · IP <span className="font-mono">{c.ip}</span></> : ''}</p></div>
                 <Btns approve={verifyClaim.bind(null, c.id as number)} reject={rejectClaim.bind(null, c.id as number)} />
               </div>
             ))}
@@ -119,7 +119,7 @@ export default async function ModerationPage() {
                 <div className="flex-1"><Link href={`/r/${rv.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood">{rv.name}</Link>
                   <p className="text-amber text-sm">{'★'.repeat(rv.stars)}<span className="text-rule">{'★'.repeat(5 - rv.stars)}</span></p>
                   {rv.body && <p className="font-ui text-sm text-ink mt-1">{rv.body}</p>}
-                  <p className="font-ui text-[11px] text-ink-soft">by {rv.user_email}</p></div>
+                  <p className="font-ui text-[12px] text-ink-soft">by {rv.user_email}</p></div>
                 <Btns approve={approveReview.bind(null, rv.id as number)} reject={rejectReview.bind(null, rv.id as number)} />
               </div>
             ))}
@@ -136,7 +136,7 @@ export default async function ModerationPage() {
               <div key={t.id} className="border border-rule bg-paper-raised p-3 flex items-start gap-3">
                 <div className="flex-1"><Link href={`/r/${t.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood">{t.name}</Link>
                   <p className="font-ui text-sm text-ink mt-1">{t.body}</p>
-                  <p className="font-ui text-[11px] text-ink-soft">by {t.user_email}</p></div>
+                  <p className="font-ui text-[12px] text-ink-soft">by {t.user_email}</p></div>
                 <Btns approve={approveTip.bind(null, t.id as number)} reject={rejectTip.bind(null, t.id as number)} />
               </div>
             ))}
@@ -154,7 +154,7 @@ export default async function ModerationPage() {
                 <div className="aspect-square overflow-hidden bg-paper-sunk">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={uploadUrl(p.filename)} alt="" className="w-full h-full object-cover" /></div>
                 <div className="p-2">
                   <Link href={`/r/${p.slug}`} className="font-display font-semibold text-ink text-sm hover:text-oxblood block truncate">{p.name}</Link>
-                  <p className="font-ui text-[11px] text-ink-soft truncate">{p.uploaded_by}</p>
+                  <p className="font-ui text-[12px] text-ink-soft truncate">{p.uploaded_by}</p>
                   <div className="mt-2 flex gap-2">
                     <form action={approvePhoto.bind(null, p.id as number)} className="flex-1"><button className="w-full font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper py-1 hover:bg-chile">Approve</button></form>
                     <form action={rejectPhoto.bind(null, p.id as number)} className="flex-1"><button className="w-full font-stamp uppercase tracking-[0.08em] text-xs text-oxblood border border-oxblood/60 py-1 hover:bg-oxblood hover:text-paper">Reject</button></form>

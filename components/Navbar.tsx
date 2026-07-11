@@ -43,7 +43,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-5 flex items-center justify-between gap-2 h-14">
         <Link href="/" className="flex items-baseline gap-2 shrink-0">
           <span className="font-display font-black text-lg sm:text-xl tracking-tight text-ink">Leander Local</span>
-          <span className="hidden md:inline font-stamp uppercase tracking-[0.18em] text-[11px] text-chile">Local First</span>
+          <span className="hidden md:inline font-stamp uppercase tracking-[0.18em] text-[12px] text-chile">Local First</span>
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2 min-w-0">
@@ -72,7 +72,7 @@ export default function Navbar() {
               onClick={() => setMoreOpen((o) => !o)}
               className={`flex items-center gap-0.5 font-stamp uppercase tracking-[0.06em] text-sm px-2 py-1 transition-colors duration-150 ${moreOpen ? 'text-chile' : 'text-ink-soft hover:text-ink'}`}
             >
-              More <span aria-hidden="true" className={`inline-block text-[10px] transition-transform duration-150 ${moreOpen ? 'rotate-180' : ''}`}>▾</span>
+              More <span aria-hidden="true" className={`inline-block text-[12px] transition-transform duration-150 ${moreOpen ? 'rotate-180' : ''}`}>▾</span>
             </button>
             {moreOpen && (
               <ul role="menu" className="absolute right-0 top-full mt-1 min-w-[9.5rem] bg-paper-raised border border-rule rounded-[2px] shadow-xl py-1 z-50">

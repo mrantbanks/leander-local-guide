@@ -45,7 +45,7 @@ export default function ReviewComposer({ slug }: { slug: string }) {
     setBusy(false);
   }
 
-  const chip = 'font-stamp uppercase text-[10px] px-2 py-1 border rounded-sm';
+  const chip = 'font-stamp uppercase text-[12px] px-2 py-1 border rounded-sm';
   return (
     <div className="border-2 border-chile rounded-sm bg-paper-raised p-4 mb-6">
       <p className="font-stamp uppercase tracking-[0.12em] text-chile text-sm mb-1">✨ Draft a review with AI</p>

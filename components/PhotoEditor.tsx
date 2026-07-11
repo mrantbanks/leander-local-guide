@@ -124,7 +124,7 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
           </div>
           <div className="space-y-4">
             <div>
-              <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft mb-1.5">Transform</p>
+              <p className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft mb-1.5">Transform</p>
               <div className="flex flex-wrap gap-1.5">
                 <button onClick={() => doRotate(-1)} disabled={!!busy} className={btn}>⟲ Left</button>
                 <button onClick={() => doRotate(1)} disabled={!!busy} className={btn}>⟳ Right</button>
@@ -132,7 +132,7 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
               </div>
             </div>
             <div>
-              <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft mb-1.5">Crop ratio</p>
+              <p className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft mb-1.5">Crop ratio</p>
               <div className="flex flex-wrap gap-1.5">
                 {([['Free', undefined], ['1:1', 1], ['4:5', 4 / 5], ['16:9', 16 / 9], ['3:2', 3 / 2]] as [string, number | undefined][]).map(([l, a]) => (
                   <button key={l} onClick={() => setAspect(a)} className={`${btn} ${aspect === a ? 'bg-ink text-paper border-ink' : ''}`}>{l}</button>
@@ -140,7 +140,7 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
               </div>
             </div>
             <div>
-              <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft mb-1.5">Color</p>
+              <p className="font-stamp uppercase tracking-[0.08em] text-[12px] text-ink-soft mb-1.5">Color</p>
               {([['Brightness', bright, setBright], ['Contrast', contrast, setContrast], ['Saturation', saturate, setSaturate]] as [string, number, (n: number) => void][]).map(([l, v, set]) => (
                 <label key={l} className="block font-ui text-xs text-ink-soft mb-1">{l}
                   <input type="range" min={50} max={150} value={v} onChange={(e) => set(Number(e.target.value))} className="w-full accent-chile" />
@@ -151,10 +151,10 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
               <button onClick={applyEdits} disabled={!!busy} className="w-full font-stamp uppercase tracking-[0.08em] text-xs border-2 border-ink text-ink py-2 rounded-sm hover:bg-ink hover:text-paper disabled:opacity-50">✓ Apply crop &amp; color (keep editing)</button>
             )}
             <div>
-              <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-chile mb-1.5">✨ Magic edit (AI)</p>
+              <p className="font-stamp uppercase tracking-[0.08em] text-[12px] text-chile mb-1.5">✨ Magic edit (AI)</p>
               <div className="flex gap-1.5 mb-2">
-                <button onClick={() => runGemini(ENHANCE)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[11px] bg-chile text-paper py-2 rounded-sm disabled:opacity-50">⚡ Auto-enhance</button>
-                <button onClick={() => runGemini(MENU_FIX)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[11px] bg-ink text-paper py-2 rounded-sm disabled:opacity-50">📋 Fix menu</button>
+                <button onClick={() => runGemini(ENHANCE)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-chile text-paper py-2 rounded-sm disabled:opacity-50">⚡ Auto-enhance</button>
+                <button onClick={() => runGemini(MENU_FIX)} disabled={!!busy} className="flex-1 font-stamp uppercase tracking-[0.06em] text-[12px] bg-ink text-paper py-2 rounded-sm disabled:opacity-50">📋 Fix menu</button>
               </div>
               <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={2} placeholder="remove the background · warm the lighting · extend the photo wider · erase the trash can" className="w-full bg-paper border border-rule px-2 py-1.5 text-sm rounded-sm outline-none focus:border-chile" />
               <button onClick={() => runGemini(prompt, true)} disabled={!!busy || !prompt.trim()} className="mt-1 w-full font-stamp uppercase tracking-[0.08em] text-xs bg-ink text-paper py-2 rounded-sm disabled:opacity-50">{busy === 'ai' ? 'Editing with AI...' : 'Apply AI edit'}</button>

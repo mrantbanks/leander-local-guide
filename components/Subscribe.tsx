@@ -50,7 +50,7 @@ export default function Subscribe({ source = 'site', siteKey, headline, sub, cta
           {state === 'sending' ? 'Sending...' : cta}
         </button>
         {state === 'err' && <p className="font-ui text-xs text-oxblood">{msg}</p>}
-        <p className="font-ui text-[11px] text-ink-soft">Just your email, just the food. One click unsubscribes you for good.</p>
+        <p className="font-ui text-[12px] text-ink-soft">Just your email, just the food. One click unsubscribes you for good.</p>
       </form>
     </div>
   );

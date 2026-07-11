@@ -77,8 +77,8 @@ export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; r
             <button key={i} onClick={() => pick(p)} className="text-left bg-paper-raised border border-rule rounded-sm p-3 hover:border-ink transition-colors">
               <span className="font-display font-bold text-ink text-sm">{p.title}</span>
               <span className="flex items-center gap-1.5 mt-0.5">
-                {p.example && <span className="font-stamp uppercase text-[9px] tracking-[0.08em] text-chile border border-chile rounded-[2px] px-1 py-px">example</span>}
-                {p.recurring && <span className="font-stamp uppercase text-[10px] tracking-[0.06em] text-chile">weekly</span>}
+                {p.example && <span className="font-stamp uppercase text-[12px] tracking-[0.08em] text-chile border border-chile rounded-[2px] px-1 py-px">example</span>}
+                {p.recurring && <span className="font-stamp uppercase text-[12px] tracking-[0.06em] text-chile">weekly</span>}
               </span>
             </button>
           ))}
@@ -107,7 +107,7 @@ export default function LocalsOnlyStudio({ slug, restaurant }: { slug: string; r
             {EXPIRY.map((e) => <button key={e.key} onClick={() => setExpiry(e.key)} className={`font-stamp uppercase text-xs px-2.5 py-1 border rounded-sm ${expiry === e.key ? 'bg-ink text-paper border-ink' : 'border-rule text-ink-soft hover:text-ink'}`}>{e.label}{e.key === 'ongoing' ? ' ★' : ''}</button>)}
           </div>
           {expiry === 'custom' && <input type="date" value={customDate} onChange={(e) => setCustomDate(e.target.value)} className="mt-2 bg-paper border border-rule px-2 py-1 rounded-sm" />}
-          <p className="font-ui text-[11px] text-ink-soft mt-1">An ongoing perk keeps working with zero upkeep. Short ones are great for a weekend push.</p>
+          <p className="font-ui text-[12px] text-ink-soft mt-1">An ongoing perk keeps working with zero upkeep. Short ones are great for a weekend push.</p>
         </div>
         <div className="flex items-center gap-3 pt-2">
           <button onClick={approve} disabled={busy || !title.trim()} className="font-stamp uppercase tracking-[0.1em] text-sm bg-chile text-paper px-5 py-2.5 rounded-sm hover:bg-oxblood disabled:opacity-60">{busy ? 'Posting...' : 'Post this perk'}</button>

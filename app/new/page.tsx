@@ -42,7 +42,7 @@ export default async function NewPage() {
             return (
               <li key={it.slug} className="py-5">
                 <div className="flex items-center gap-3 mb-1">
-                  <span className={`font-stamp uppercase tracking-[0.08em] text-[11px] px-2 py-0.5 ${s.cls}`}>{s.emoji} {s.label}</span>
+                  <span className={`font-stamp uppercase tracking-[0.08em] text-[12px] px-2 py-0.5 ${s.cls}`}>{s.emoji} {s.label}</span>
                   {it.when && <span className="font-ui text-xs text-ink-soft">{new Date(it.when).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>}
                 </div>
                 <Link href={`/r/${it.slug}`} className="font-display font-bold text-2xl text-ink hover:text-oxblood transition-colors">{it.name}</Link>

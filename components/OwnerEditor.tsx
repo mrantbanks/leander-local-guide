@@ -87,7 +87,7 @@ export default function OwnerEditor({ slug, initial, googleWeek }: { slug: strin
                   ) : (
                     <span className="font-ui text-sm text-ink-soft flex-1">Closed</span>
                   )}
-                  <button onClick={() => toggleClosed(i)} className="font-stamp uppercase text-[10px] tracking-[0.06em] text-chile ml-auto shrink-0">{d ? 'Closed?' : 'Open it'}</button>
+                  <button onClick={() => toggleClosed(i)} className="font-stamp uppercase text-[12px] tracking-[0.06em] text-chile ml-auto shrink-0">{d ? 'Closed?' : 'Open it'}</button>
                 </div>
               );
             })}
