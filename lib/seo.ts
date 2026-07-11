@@ -225,6 +225,53 @@ export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { t
   return { title, description: clip(body, DESC_MAX) };
 }
 
+/** What getReviews() in lib/spots.ts returns. The ONLY thing allowed to become a star rating. */
+export type ReaderReviews = {
+  avg: number | null;
+  count: number;
+  list: { stars: number; body: string | null; who: string }[];
+};
+
+/** Below this, an average is noise, and Google does not want it either. */
+export const MIN_REVIEWS_FOR_RATING = 3;
+
+/**
+ * The ONLY place in this codebase allowed to emit a star rating. The eslint config forbids
+ * `aggregateRating` and `reviewRating` anywhere else, on purpose.
+ *
+ * Google's review-snippet rules for local businesses are not a style preference:
+ *   "Ratings must be sourced directly from users."
+ *   "Don't rely on human editors to create, curate, or compile ratings information for local
+ *    businesses."
+ *
+ * So this function takes reader reviews and NOTHING ELSE. It cannot be handed a Spot, so it cannot
+ * be handed a verdict, so nobody can quietly turn our editorial call back into a star rating. Both
+ * of the things that used to live here (Google's own star average, and our AI-compiled verdict)
+ * were ineligible for the star feature they were reaching for, and a manual-action risk.
+ *
+ * Returns {} until three readers have weighed in, so it spreads across the site on its own as
+ * reviews land. No code change, no manual step: see lib/revalidate.ts for the cache busting that
+ * makes an approved review show up immediately.
+ */
+export function readerRatingLd(reviews: ReaderReviews): object {
+  if (reviews.avg == null || reviews.count < MIN_REVIEWS_FOR_RATING) return {};
+  return {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: reviews.avg,
+      reviewCount: reviews.count,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: reviews.list.slice(0, 10).map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.who },
+      reviewRating: { '@type': 'Rating', ratingValue: r.stars, bestRating: 5, worstRating: 1 },
+      ...(r.body ? { reviewBody: r.body } : {}),
+    })),
+  };
+}
+
 /**
  * FAQ structured data.
  *

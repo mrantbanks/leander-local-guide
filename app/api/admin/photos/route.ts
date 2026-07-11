@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
+import { revalidateSpot } from '@/lib/revalidate';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { putUpload, deleteUpload } from '@/lib/r2';
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
       await pool.query('update photos set filename = $2 where id = $1', [replaceId, fn]);
       await deleteUpload(old.rows[0].filename);
-      revalidatePath(`/r/${slug}`); revalidatePath('/');
+      revalidateSpot(slug);
       return NextResponse.json({ saved: [{ id: replaceId, filename: fn, url: uploadUrl(fn) }], replaced: true });
     }
     for (const file of files.slice(0, 24)) {

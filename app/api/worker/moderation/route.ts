@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { revalidateSpot } from '@/lib/revalidate';
 import { pool } from '@/lib/db';
 import { screenSubmission } from '@/lib/moderate';
 
@@ -55,7 +56,9 @@ export async function POST(req: NextRequest) {
       [wid, String(b.venue || '').slice(0, 120), b.kind, decision, String(b.model || '').slice(0, 80), note]);
     await pool.query('update worker_nodes set last_seen=now() where id=$1', [wid]);
   }
-  if (decision === 'approve' && rows[0].slug) revalidatePath(`/r/${rows[0].slug}`);
+  // The fleet worker auto-approves tips and REVIEWS. An approved review changes the page's
+  // aggregateRating, so this has to bust every cached surface, not just /r/<slug>.
+  if ((decision === 'approve' || decision === 'reject') && rows[0].slug) revalidateSpot(rows[0].slug);
   revalidatePath('/admin/workers');
   return NextResponse.json({ ok: true, decision });
 }

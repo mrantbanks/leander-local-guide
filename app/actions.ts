@@ -123,7 +123,7 @@ export async function deletePhoto(id: number, slug: string) {
 export async function setPhotoCaption(id: number, slug: string, caption: string) {
   if (!(await requireAdmin())) return;
   await pool.query('update photos set caption = $2 where id = $1', [id, caption.trim() || null]);
-  revalidatePath(`/r/${slug}`);
+  revalidateSpot(slug);
 }
 
 // Admin: save the structured menu (hand-edited or AI-extracted). Validates shape; null sections clears it.
@@ -296,7 +296,7 @@ export async function claimRestaurant(tokenId: number): Promise<{ ok: boolean; s
   const email = session?.user?.email;
   if (!email) return { ok: false, reason: 'Please sign in first.' };
   const res = await consumeClaim(tokenId, email);
-  if (res.ok && res.slug) revalidatePath(`/r/${res.slug}`);
+  if (res.ok && res.slug) revalidateSpot(res.slug);
   return res;
 }
 

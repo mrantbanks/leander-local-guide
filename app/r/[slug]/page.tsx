@@ -14,7 +14,7 @@ import TipContribute from '@/components/TipContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
-import { snippetFor, faqLd } from '@/lib/seo';
+import { snippetFor, faqLd, readerRatingLd } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -64,36 +64,10 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     ? `https://leanderlocalguide.com/uploads/${spot.localPhotos[0].filename}`
     : spot.photo ? `https://leanderlocalguide.com/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
   const updated = spot.updatedAt ? new Date(spot.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
-  // RATINGS ON A LOCAL BUSINESS MUST COME FROM USERS. Google's review-snippet rules are explicit:
-  // "Ratings must be sourced directly from users" and "Don't rely on human editors to create,
-  // curate, or compile ratings information for local businesses."
-  //
-  // So Anthony's verdict, however honest, may NOT be marked up as a star rating. Neither may
-  // Google's own star average, which we did not collect. Both used to live here, and both were
-  // ineligible for a rich result AND a manual-action risk. The verdict itself loses nothing: it is
-  // still on the page, on every card, in the title and in the meta description, doing the real work.
-  //
-  // What we CAN mark up is what our own readers submitted. getReviews() already withholds the
-  // average until three people have weighed in (the house anti-single-fake-star rule), which is
-  // also the point at which an average means anything. This lights up on its own as reviews land:
-  // no code change, no manual step. Today that is zero spots; it grows with the site.
-  const ratingLd = (reviews.avg != null && reviews.count >= 3)
-    ? {
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: reviews.avg,
-          reviewCount: reviews.count,
-          bestRating: 5,
-          worstRating: 1,
-        },
-        review: reviews.list.slice(0, 10).map((r) => ({
-          '@type': 'Review',
-          author: { '@type': 'Person', name: r.who },
-          reviewRating: { '@type': 'Rating', ratingValue: r.stars, bestRating: 5, worstRating: 1 },
-          ...(r.body ? { reviewBody: r.body } : {}),
-        })),
-      }
-    : {};
+  // Stars come from readers, never from our verdict. readerRatingLd() is the only function allowed
+  // to emit a rating, and it takes reader reviews and nothing else, so a verdict physically cannot
+  // get in. See the long note on it in lib/seo.ts for the Google rule this enforces.
+  const ratingLd = readerRatingLd(reviews);
 
   const jsonLd = {
     '@context': 'https://schema.org',
