@@ -59,6 +59,7 @@ export type Spot = {
   visitedDate: string | null;
   happyHour: string | null;
   ownerBlurb: string | null;
+  logo: string | null; // owner-uploaded logo, already cleaned up. Full URL.
   worthIt: number;
   itsFine: number;
   skipIt: number;
@@ -187,6 +188,7 @@ function mapRow(r: any): Spot {
     visited: !!ed.visited, visitedDate: ed.visitedDate || null,
     happyHour: cleanHappyHour(oc.happyHour || r.happy_hour),
     ownerBlurb: clean(oc.blurb),
+    logo: oc.logo ? uploadUrl(oc.logo) : null,
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
     beenHere: r.been_here_ct || 0, wantToGo: r.want_to_go_ct || 0,
     menuData: (r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu as MenuData : null,

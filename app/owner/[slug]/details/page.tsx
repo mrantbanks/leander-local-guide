@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getSpotAny } from '@/lib/spots';
 import { getOwnerContent, ownerGate } from '@/lib/owner';
 import OwnerEditor from '@/components/OwnerEditor';
+import LogoStudio from '@/components/LogoStudio';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,15 @@ export default async function OwnerDetails({ params }: { params: Promise<{ slug:
         The facts about your business. These override whatever Google told us, because you know and Google guesses.
         Saves go live on your page within about a minute.
       </p>
+
+      <div className="border border-rule bg-paper-raised rounded-sm p-4 mb-8">
+        <LogoStudio
+          slug={slug}
+          name={spot.name}
+          current={spot.logo}
+          headerPhoto={spot.headerPhoto?.url || spot.localPhotos[0]?.url || null}
+        />
+      </div>
 
       <OwnerEditor
         slug={slug}

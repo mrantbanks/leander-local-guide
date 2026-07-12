@@ -71,6 +71,8 @@ export type OwnerHours = ({ open: string; close: string } | null)[]; // 7, Monda
 export type OwnerContent = {
   blurb?: string; phone?: string; website?: string; menuUrl?: string; orderUrl?: string; happyHour?: string;
   hours?: OwnerHours; updatedBy?: string; updatedAt?: string;
+  /** Uploaded filename of the owner's logo. Rendered in the spot page hero. */
+  logo?: string;
 };
 
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

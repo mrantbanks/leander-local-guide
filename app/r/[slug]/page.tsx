@@ -144,9 +144,21 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                       : spot.chainStatus === 'local' ? 'Local Owned' : null,
                   ...spot.cuisines.slice(0, 2)].filter(Boolean).join(' · ')}
               </p>
-              <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
-                {spot.name}
-              </h1>
+              <div className="flex items-center gap-4">
+                {/* The owner's own logo, if they have put one up. Background already knocked out, so it
+                    sits on the paper rather than in a white box. */}
+                {spot.logo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={spot.logo}
+                    alt={`${spot.name} logo`}
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0"
+                  />
+                )}
+                <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
+                  {spot.name}
+                </h1>
+              </div>
               <div className="mt-3 flex items-center gap-3 flex-wrap font-ui text-sm text-ink-soft">
                 {!spot.comingSoon && spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
                 {!spot.comingSoon && spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}

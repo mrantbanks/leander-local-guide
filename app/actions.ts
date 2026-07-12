@@ -496,6 +496,34 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
 }
 
 // The Local Passport — owner-created, honor-based perks.
+/**
+ * Put a logo on the page, or take it off. Owner or admin.
+ *
+ * The filename is validated against the uploads we just wrote (a logo- prefix and a uuid), because
+ * this takes a filename from the client and an unchecked one would let anybody point their listing at
+ * any file in the bucket.
+ */
+export async function saveOwnerLogo(slug: string, filename: string | null): Promise<{ ok: boolean; error?: string }> {
+  const email = await canManage(slug);
+  if (!email) return { ok: false, error: 'Not authorized' };
+
+  if (filename !== null && !/^logo-[0-9a-f-]{36}\.(png|jpg|webp)$/i.test(filename)) {
+    return { ok: false, error: 'That file does not look right.' };
+  }
+
+  await pool.query(
+    `update restaurants
+        set owner_content = coalesce(owner_content, '{}'::jsonb)
+                            || case when $2::text is null then jsonb_build_object('logo', null)
+                                    else jsonb_build_object('logo', $2::text) end,
+            updated_at = now()
+      where slug = $1`,
+    [slug, filename]
+  );
+  revalidateSpot(slug);
+  return { ok: true };
+}
+
 export async function createSpecialAction(slug: string, input: SpecialInput): Promise<{ ok: boolean; error?: string }> {
   const email = await canManage(slug);
   if (!email) return { ok: false, error: 'Not authorized' };
