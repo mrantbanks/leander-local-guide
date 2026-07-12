@@ -11,23 +11,30 @@ export type SpotRow = {
   verdict: string | null;
   visited: boolean;
   hidden: boolean;
+  /** Another live listing shares this one's Place ID, its name, or its street address. */
+  dup: boolean;
 };
 
 // Client-side search + table. The list is long (200+ spots), so filter by
 // name / category / verdict instead of scrolling.
 export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
   const [q, setQ] = useState('');
+  const [dupsOnly, setDupsOnly] = useState(false);
+  const dupCount = useMemo(() => rows.filter((r) => r.dup).length, [rows]);
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return rows;
-    return rows.filter(
-      (r) =>
-        r.name.toLowerCase().includes(s) ||
-        (r.cat || '').toLowerCase().includes(s) ||
-        (r.verdict || '').toLowerCase().includes(s)
-    );
-  }, [rows, q]);
+    let out = dupsOnly ? rows.filter((r) => r.dup) : rows;
+    if (s) {
+      out = out.filter(
+        (r) =>
+          r.name.toLowerCase().includes(s) ||
+          (r.cat || '').toLowerCase().includes(s) ||
+          (r.verdict || '').toLowerCase().includes(s)
+      );
+    }
+    return out;
+  }, [rows, q, dupsOnly]);
 
   return (
     <div>
@@ -40,9 +47,21 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
           autoFocus
           className="w-full bg-paper-raised border-2 border-rule focus:border-ink outline-none px-3 py-2 font-ui text-sm text-ink rounded-[2px]"
         />
-        <p className="font-stamp uppercase tracking-[0.1em] text-ink-soft text-xs mt-2">
-          {q.trim() ? `${filtered.length} of ${rows.length} match` : `${rows.length} spots`}
-        </p>
+        <div className="flex flex-wrap items-center gap-3 mt-2">
+          <p className="font-stamp uppercase tracking-[0.1em] text-ink-soft text-xs">
+            {q.trim() || dupsOnly ? `${filtered.length} of ${rows.length}` : `${rows.length} spots`}
+          </p>
+          {dupCount > 0 && (
+            <button
+              onClick={() => setDupsOnly((v) => !v)}
+              className={`font-stamp uppercase tracking-[0.06em] text-xs px-2 py-1 rounded-sm border-2 transition-colors ${
+                dupsOnly ? 'bg-amber text-ink border-amber' : 'border-amber text-ink hover:bg-amber/20'
+              }`}
+            >
+              ⚠ {dupCount} suspected duplicate{dupCount === 1 ? '' : 's'}
+            </button>
+          )}
+        </div>
       </div>
 
       <table className="w-full font-ui text-sm">
@@ -58,6 +77,16 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
                 <span className="font-display font-semibold text-ink text-base">{r.name}</span>
                 <span className="text-ink-soft text-xs ml-2">{r.cat}</span>
                 {r.hidden ? <span className="font-stamp uppercase tracking-[0.06em] text-sm bg-oxblood text-paper px-1 rounded-sm ml-2">Hidden</span> : null}
+                {/* Flagged, never merged automatically: only a human knows whether two Domino's on
+                    US-183 are one shop entered twice or two actual shops. */}
+                {r.dup ? (
+                  <span
+                    title="Another live listing shares this one's Google Place ID, its name, or its street address. Check both, then archive whichever is wrong."
+                    className="font-stamp uppercase tracking-[0.06em] text-xs border-2 border-amber text-ink bg-amber/20 px-1.5 py-0.5 rounded-sm ml-2 cursor-help"
+                  >
+                    ⚠ Suspected duplicate
+                  </span>
+                ) : null}
               </td>
               <td className="text-oxblood font-stamp uppercase tracking-[0.06em]">{r.verdict || 'none'}</td>
               {/* A real stamp, not a tick. Only 4 of 197 spots have actually been visited, and that

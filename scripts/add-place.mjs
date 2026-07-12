@@ -45,7 +45,13 @@ const nameOverride = nameIdx >= 0 ? argv[nameIdx + 1] : null; // clean up messy 
 // Positional = bare args, excluding the values that follow --search / --name.
 const skipIdx = new Set([searchIdx >= 0 ? searchIdx + 1 : -1, nameIdx >= 0 ? nameIdx + 1 : -1]);
 const positional = argv.filter((a, i) => !a.startsWith('--') && !skipIdx.has(i));
-let placeId = positional.find((a) => a.startsWith('ChIJ')) || null;
+// Strip quotes and whitespace before anything else. A Place ID once arrived wrapped in literal
+// double quotes ("ChIJK9-XXM..."), which meant `on conflict (id) do nothing` did not recognise the
+// real listing as the same place. Result: a duplicate row with no rating, and a well-loved spot with
+// 540 reviews (Dog House Drinkery) showing nothing at all, because the enricher cannot look up a
+// Place ID with quotes in it.
+const cleanId = (v) => String(v ?? '').replace(/["'\s]/g, '');
+let placeId = positional.map(cleanId).find((a) => a.startsWith('ChIJ')) || null;
 
 if (!placeId && !searchQuery) {
   console.error('Usage: node scripts/add-place.mjs <PlaceID> | --search "text query"  [--json] [--db] [--commit]');
@@ -139,7 +145,7 @@ function toJsonRecord(p, slug) {
       console.log(`      ${h.formattedAddress}`);
       console.log(`      ☎ ${h.nationalPhoneNumber || '—'}   id: ${h.id}`);
     });
-    placeId = hits[0].id;
+    placeId = cleanId(hits[0].id);
     console.log(`\n→ Using top result [0]. Re-run with that explicit id if a different one is correct.\n`);
   }
 

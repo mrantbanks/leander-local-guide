@@ -11,10 +11,30 @@ export default async function AdminSpotsPage() {
     return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
   }
   const { rows } = await pool.query(
-    `select slug, name, primary_category cat, editorial->>'verdict' verdict,
-            coalesce((editorial->>'visited')::bool,false) visited, hidden
-     from restaurants where archived_at is null
-     order by (editorial->>'verdict' is null) desc, name`
+    // Suspected duplicates. Three ways the same restaurant ends up in here twice, and we have hit
+    // all three: a Place ID that arrived wrapped in quotes so `on conflict (id)` missed it, the same
+    // place added again under a slightly different name, and two rows at the same street address.
+    // Flag, never merge automatically: only a human knows whether two Domino's on US-183 are one
+    // shop entered twice or two actual shops.
+    `with n as (
+       select id, slug, name, address_formatted, hidden, primary_category, editorial, archived_at,
+              regexp_replace(lower(name), '[^a-z0-9]', '', 'g')      as name_key,
+              regexp_replace(id, '[^A-Za-z0-9_-]', '', 'g')          as id_key
+         from restaurants
+     )
+     select n.slug, n.name, n.primary_category cat, n.editorial->>'verdict' verdict,
+            coalesce((n.editorial->>'visited')::bool,false) visited, n.hidden,
+            exists (
+              select 1 from n d
+               where d.archived_at is null
+                 and d.id <> n.id
+                 and ( d.id_key = n.id_key
+                    or d.name_key = n.name_key
+                    or (n.address_formatted is not null and d.address_formatted = n.address_formatted) )
+            ) as dup
+       from n
+      where n.archived_at is null
+      order by (n.editorial->>'verdict' is null) desc, n.name`
   );
   const spots = rows as SpotRow[];
   const visited = spots.filter((r) => r.visited).length;
