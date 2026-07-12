@@ -22,6 +22,11 @@ export async function GET(req: NextRequest) {
              or (e.status = 'approved' and e.source = 'ai_scrape'
                  and (e.last_confirmed_at is null or e.last_confirmed_at < now() - interval '7 days')))
         and (e.worker_checked_at is null or e.worker_checked_at < now() - interval '20 hours')
+        -- Respect the fleet-worker lease. Without this the legacy worker STEALS rows that
+        -- /api/worker/claim has already leased: both verify the same event, both write it, and
+        -- last-writer-wins can overturn a fleet 'approve' with a legacy 'reject'. This route is
+        -- dead once the legacy worker is retired; until then it must not race the fleet.
+        and (e.worker_lease_until is null or e.worker_lease_until < now())
       order by (e.status = 'pending') desc, e.created_at
       limit 15
       for update skip locked

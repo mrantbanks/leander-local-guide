@@ -8,8 +8,8 @@ export type Provider = 'gemini' | 'claude' | 'remote';
 export type AiTask = 'moderation' | 'events' | 'happy_hour' | 'anthony_voice' | 'captions' | 'menus';
 
 export const TASKS: { task: AiTask; label: string; desc: string; allow: Provider[]; def: Provider }[] = [
-  { task: 'moderation', label: 'Review & tip moderation', desc: 'Decide if a user review/tip is genuine and on-topic. "Remote" hands it to the worker fleet (needs the worker client to poll /api/worker/moderation).', allow: ['remote', 'gemini', 'claude'], def: 'gemini' },
-  { task: 'events', label: 'Events — discover & verify', desc: 'Find and confirm trivia / live music / etc. with a real day & time. The fleet already does this via /api/worker/events.', allow: ['remote', 'gemini', 'claude'], def: 'remote' },
+  { task: 'moderation', label: 'Review & tip moderation', desc: 'Decide if a user review/tip is genuine and on-topic. "Remote" hands it to the fleet-worker pool via /api/worker/claim (spam/link/profanity guardrails still run here, server-side).', allow: ['remote', 'gemini', 'claude'], def: 'gemini' },
+  { task: 'events', label: 'Events — discover & verify', desc: 'Find and confirm trivia / live music / etc. with a real day & time. The fleet does this via /api/worker/claim.', allow: ['remote', 'gemini', 'claude'], def: 'remote' },
   { task: 'happy_hour', label: 'Happy-hour scraper (weekly cron)', desc: 'Read each restaurant website and pull the happy hour. Good candidate for Claude.', allow: ['gemini', 'claude'], def: 'gemini' },
   { task: 'anthony_voice', label: "Anthony's AI voice (review composer)", desc: 'Draft reviews in the Bourdain voice. Gemini is fine here.', allow: ['gemini', 'claude'], def: 'gemini' },
   { task: 'captions', label: 'Photo captions (vision)', desc: 'Write a short caption from a photo. Vision task.', allow: ['gemini', 'claude'], def: 'gemini' },
