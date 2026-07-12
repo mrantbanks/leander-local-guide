@@ -3,10 +3,14 @@ import { pickStampArt } from '@/lib/stampArt';
 
 // Presentational zine "Passport Stamp" — rendered on /ticket/[id] AND as the live preview
 // in the owner studio. No 'use client' so it works in both server and client trees.
-export default function TicketCard({ restaurant, title, details, recurring, daysOfWeek, endsOn, today, handoff, fromGuide = false }: {
+export default function TicketCard({ restaurant, title, details, recurring, daysOfWeek, endsOn, today, handoff, fromGuide = false, code }: {
   restaurant: string; title: string; details?: string | null; recurring: boolean; daysOfWeek: number[] | null; endsOn: string | null; today?: string;
   // A Guide perk has no business behind it, and is not always handed over at a register.
   handoff?: string; fromGuide?: boolean;
+  /** The four characters the owner taps to confirm THIS person. A node, because on the real ticket it
+      is a live client component (it has to mint the device cookie), and in the studio preview it is
+      simply absent. */
+  code?: React.ReactNode;
 }) {
   const label = scheduleLabel({ recurring, daysOfWeek, endsOn });
   const line = handoff || 'Show this at the counter.';
@@ -35,6 +39,7 @@ export default function TicketCard({ restaurant, title, details, recurring, days
         <p className="font-ui text-sm text-ink-soft mt-1">
           {fromGuide ? 'Leander locals only · one per person' : 'Leander locals only · one per visit · owner’s discretion'}
         </p>
+        {code}
         {today && <p className="font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft mt-2">Stamped {today}</p>}
       </div>
     </div>

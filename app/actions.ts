@@ -1,7 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
@@ -591,21 +591,100 @@ const PULL_SOURCES = new Set(['listing', 'passport', 'map', 'direct']);
  * cookie is httpOnly (so the browser cannot send it itself), and a server-render hook would count
  * every crawler as a person.
  */
-export async function recordStampPull(specialId: number, source?: string): Promise<void> {
+/**
+ * The four-character code printed on the stamp.
+ *
+ * Derived, not stored-and-guessed: the same device, pulling the same perk, on the same day, always
+ * sees the same code, so refreshing the ticket page does not change what is on their phone while they
+ * are stood at the counter.
+ *
+ * It is NOT a secret and it does not need to be. It is not a password, it is a way to tell two people
+ * at a counter apart. It only has to be unique among the handful of stamps pulled for one perk in the
+ * last few hours. Ambiguous letters are out of the alphabet, because someone is going to read this
+ * off a cracked phone screen in a queue.
+ */
+const CODE_ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // no 0/O, no 1/I/L
+function stampCodeFor(token: string, specialId: number, dayKey: string): string {
+  const h = createHash('sha256').update(`${token}:${specialId}:${dayKey}`).digest();
+  let out = '';
+  for (let i = 0; i < 4; i++) out += CODE_ALPHABET[h[i] % CODE_ALPHABET.length];
+  return out;
+}
+
+/** The Chicago calendar day. A stamp pulled at 11pm and shown at 11:05pm must have the same code. */
+function chicagoDay(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+}
+
+export async function recordStampPull(specialId: number, source?: string): Promise<{ code: string } | null> {
   // Coerce, don't just check: this crosses the client/server boundary and specials.id originates
   // as a bigserial, which node-pg surfaces as a string. A bare Number.isInteger() here silently
   // dropped every single pull.
   const id = Number(specialId);
-  if (!Number.isInteger(id) || id <= 0) return;
+  if (!Number.isInteger(id) || id <= 0) return null;
   const anon = await anonId();
   const src = source && PULL_SOURCES.has(source) ? source : 'direct';
+  const code = stampCodeFor(anon, id, chicagoDay());
+
   // place_id is read from the perk itself, so a Guide perk (place_id null) logs correctly and a
   // later edit to the perk cannot rewrite what we already recorded.
   await pool.query(
-    `insert into passport_stamp_events (place_id, special_id, event_type, visitor_token, source)
-     select place_id, id, 'pull', $2::uuid, $3 from specials where id = $1 and status = 'active'`,
-    [id, anon, src]
+    `insert into passport_stamp_events (place_id, special_id, event_type, visitor_token, source, stamp_code)
+     select place_id, id, 'pull', $2::uuid, $3, $4 from specials where id = $1 and status = 'active'`,
+    [id, anon, src, code]
   );
+  return { code };
+}
+
+/**
+ * The code for a stamp, WITHOUT minting a cookie.
+ *
+ * cookies().set() is illegal during a Server Component render (Next throws "Cookies can only be
+ * modified in a Server Action or Route Handler"), and the ticket page is a Server Component. So this
+ * READS the device id and returns null if there is not one yet. A first-time visitor therefore gets
+ * no code from the server, and the client island fills it in a moment later from the value
+ * recordStampPull returns, which is a Server Action and CAN mint.
+ *
+ * Reading a cookie is fine. Writing one is what is forbidden.
+ */
+export async function stampCodeIfKnown(specialId: number): Promise<string | null> {
+  const jar = await cookies();
+  const anon = jar.get('llg_anon')?.value;
+  if (!anon) return null;
+  return stampCodeFor(anon, Number(specialId), chicagoDay());
+}
+
+/**
+ * The stamps pulled for this perk in the last four hours, for the owner to tap.
+ *
+ * Four hours, not all day: the person at the counter pulled their stamp minutes ago, and a list of
+ * everybody who pulled one since breakfast is a list to scroll rather than a list to tap.
+ */
+export async function recentPulls(specialId: number): Promise<{ id: number; code: string; when: string }[]> {
+  const slug = await specialOwnerSlug(specialId);
+  if (!slug || !(await canManage(slug))) return [];
+  const { rows } = await pool.query(
+    `select e.id, e.stamp_code, e.occurred_at
+       from passport_stamp_events e
+      where e.special_id = $1
+        and e.event_type = 'pull'
+        and not e.is_bot
+        and e.stamp_code is not null
+        and e.occurred_at > now() - interval '4 hours'
+        -- not already confirmed: once you have stamped somebody, they come off the list
+        and not exists (select 1 from passport_stamp_events c where c.pull_event_id = e.id)
+      order by e.occurred_at desc limit 12`,
+    [Number(specialId)]
+  );
+  return rows.map((r) => ({
+    id: Number(r.id),
+    code: r.stamp_code as string,
+    when: new Date(r.occurred_at).toLocaleTimeString('en-US', {
+      timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit',
+    }),
+  }));
 }
 
 /**
@@ -614,18 +693,43 @@ export async function recordStampPull(specialId: number, source?: string): Promi
  *
  * Internally 'redeem'; every user-facing surface says "stamp it" (brand ban list).
  */
-export async function recordStampRedeem(specialId: number): Promise<{ ok: boolean; total?: number }> {
-  const slug = await specialOwnerSlug(specialId);
-  if (!slug || !(await canManage(slug))) return { ok: false };
-  await pool.query(
-    `insert into passport_stamp_events (place_id, special_id, event_type, redeemed_by, source)
-     select place_id, id, 'redeem', 'owner', 'listing' from specials where id = $1 and status = 'active'`,
-    [specialId]
-  );
+/**
+ * The owner confirms a specific stamp, standing in front of a specific person.
+ *
+ * This is the whole ballgame. It used to write a row with no visitor_token, no link to any pull, and
+ * source hardcoded to 'listing', which made "we sent you 63 customers" mean "the owner pressed a
+ * button 63 times". Now the confirm carries the PULL's id, the PULL's device token and the PULL's
+ * real source, so the funnel is a join and the ledger's "from your page / from the Passport" column
+ * is true. An owner cannot manufacture a walk-in without a real pull existing first.
+ */
+export async function recordStampRedeem(pullEventId: number): Promise<{ ok: boolean; error?: string }> {
+  const id = Number(pullEventId);
+  if (!Number.isInteger(id) || id <= 0) return { ok: false, error: 'Bad stamp' };
+
   const { rows } = await pool.query(
-    `select count(*)::int as n from passport_stamp_events where special_id = $1 and event_type = 'redeem'`,
-    [specialId]
+    `select e.id, e.special_id, e.place_id, e.visitor_token, e.source, r.slug
+       from passport_stamp_events e
+       left join restaurants r on r.id = e.place_id
+      where e.id = $1 and e.event_type = 'pull'`,
+    [id]
+  );
+  const pull = rows[0];
+  if (!pull) return { ok: false, error: 'No such stamp' };
+
+  const slug = await specialOwnerSlug(Number(pull.special_id));
+  if (!slug || !(await canManage(slug))) return { ok: false, error: 'Not authorized' };
+
+  // One confirm per pull. Somebody is going to double-tap.
+  const dup = await pool.query('select 1 from passport_stamp_events where pull_event_id = $1', [id]);
+  if (dup.rowCount) return { ok: false, error: 'Already stamped' };
+
+  await pool.query(
+    `insert into passport_stamp_events
+       (place_id, special_id, event_type, visitor_token, source, redeemed_by, pull_event_id, stamp_code)
+     select place_id, special_id, 'redeem', visitor_token, source, 'owner', id, stamp_code
+       from passport_stamp_events where id = $1`,
+    [id]
   );
   revalidatePath(`/owner/${slug}`);
-  return { ok: true, total: rows[0]?.n ?? 0 };
+  return { ok: true };
 }

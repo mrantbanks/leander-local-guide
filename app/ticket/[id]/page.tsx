@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { getSpecial, issuerLabel, handoffLabel } from '@/lib/specials';
+import { stampCodeIfKnown } from '@/app/actions';
 import PrintButton from '@/components/PrintButton';
 import TicketCard from '@/components/TicketCard';
-import StampPull from '@/components/StampPull';
+import StampCode from '@/components/StampCode';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,13 +25,14 @@ export default async function TicketPage({
   const s = await getSpecial(Number(id));
   if (!s) return <main className="min-h-[70vh] grid place-items-center font-ui text-ink-soft px-5 text-center">This perk isn&apos;t running anymore.</main>;
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Chicago' });
+  // The code the owner will tap. A returning device already has the cookie, so this is on screen on
+  // first paint. A first-time visitor gets null here (a page render may not SET a cookie) and the
+  // island below fills it in from the server action a moment later.
+  const code = await stampCodeIfKnown(s.id);
 
   return (
     <main className="min-h-[85vh] bg-paper-sunk px-4 py-8 flex flex-col items-center">
       <style>{`@media print { nav, .no-print { display:none !important; } body, main { background:#fff !important; } .ticket { box-shadow:none !important; } }`}</style>
-
-      {/* Attribution: this is the moment we can prove the Guide sent someone. */}
-      <StampPull specialId={s.id} source={src || 'direct'} />
 
       <TicketCard
         restaurant={issuerLabel(s)}
@@ -40,6 +42,7 @@ export default async function TicketPage({
         daysOfWeek={s.daysOfWeek}
         endsOn={s.endsOn}
         today={today}
+        code={<StampCode specialId={s.id} source={src || 'direct'} initial={code} />}
         handoff={handoffLabel(s)}
         fromGuide={s.issuerType === 'guide'}
       />
