@@ -6,6 +6,7 @@ import { signOut } from 'next-auth/react';
 
 const ITEMS: [string, string][] = [
   ['/admin', 'Dashboard'],
+  ['/admin/stats', 'The Numbers'],
   ['/admin/spots', 'Spots'],
   ['/admin/moderation', 'Moderation'],
   ['/admin/passport', 'Passport'],

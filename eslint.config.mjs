@@ -29,6 +29,17 @@ const HOUSE_RULES = {
   //    average have BOTH been marked up here before, and both were ineligible and a manual-action
   //    risk. readerRatingLd() in lib/seo.ts is the only thing allowed to emit a rating, and it
   //    accepts reader reviews and nothing else.
+  // 3. Week bucketing. Postgres date_trunc('week') is ISO-MONDAY. Restaurants think in Sunday to
+  //    Saturday weeks, and a stats page that silently disagrees with the owner's own week is a
+  //    number they cannot reconcile against their till. lib/stats.ts uses rolling windows instead
+  //    (always complete, and week-over-week compares two equal spans), so nothing needs date_trunc.
+  noIsoWeek: [
+    {
+      selector: "Literal[value=/date_trunc\\(\\s*'week'/i], TemplateElement[value.raw=/date_trunc\\(\\s*'week'/i]",
+      message:
+        "date_trunc('week') is ISO-Monday in Postgres and will silently contradict a Sunday-start week. Use the rolling windows in lib/stats.ts (windowOf) instead.",
+    },
+  ],
   noHandWrittenRatings: [
     {
       selector: "Property[key.name='aggregateRating'], Property[key.value='aggregateRating']",
@@ -61,6 +72,7 @@ const eslintConfig = defineConfig([
         "error",
         ...HOUSE_RULES.noAdHocSpotRevalidate,
         ...HOUSE_RULES.noHandWrittenRatings,
+        ...HOUSE_RULES.noIsoWeek,
       ],
     },
   },
