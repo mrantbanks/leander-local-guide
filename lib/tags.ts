@@ -128,8 +128,12 @@ export const CHAIN_STATUS: { value: Ownership | 'unknown'; label: string; help: 
 ];
 
 /** The venue types. "Food Truck" is the only one that also renders as a tag on the page. */
+// 'Coffee Shop' is deliberately absent. Google's category data put three Starbucks in 'Cafe' and one
+// in 'Coffee Shop', so the venue dropdown answered "coffee shop" with a single Starbucks and hid
+// every other coffee place in town. There is one bucket now (Cafe), and "who actually serves coffee"
+// is a FILTER, not a venue type: 75 spots serve it, including bakeries, restaurants and a brewery.
 export const CATEGORIES = [
-  'Restaurant', 'Food Truck', 'Cafe', 'Coffee Shop', 'Bakery', 'Bar', 'Brewery',
+  'Restaurant', 'Food Truck', 'Cafe', 'Bakery', 'Bar', 'Brewery',
   'Dessert', 'Ice Cream Shop', 'Donut Shop', 'Tea House',
 ];
 
