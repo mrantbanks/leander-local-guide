@@ -121,12 +121,25 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
       {/* CONTRIBUTIONS + THE BUSINESS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div>
-          <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">What people gave us</h2>
+          <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-1">What locals gave us</h2>
+          <p className="font-ui text-xs text-ink-soft mb-3">
+            Contributions from real people, not from you. Anthony&apos;s own photos are counted separately below,
+            because {s.photosFromAnthony} photos of your own is a well-stocked guide, not a community.
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatTile label="Reviews" value={s.reviews} zeroText="none" href={`/admin/stats/reviews?win=${win}`} />
-            <StatTile label="Photos" value={s.photos} zeroText="none" href={`/admin/stats/photos?win=${win}`} />
+            <StatTile label="Reviews" value={s.reviews} accent zeroText="none" href={`/admin/stats/reviews?win=${win}`} />
+            <StatTile label="Photos from locals" value={s.photosFromLocals} accent zeroText="none yet" href={`/admin/stats/photos-user?win=${win}`} />
             <StatTile label="Tips" value={s.tips} zeroText="none" href={`/admin/stats/tips?win=${win}`} />
             <StatTile label="Owner claims" value={s.claims} zeroText="none" href={`/admin/stats/claims?win=${win}`} />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+            <StatTile
+              label="Anthony's photos"
+              value={s.photosFromAnthony}
+              sub="yours, not theirs"
+              zeroText="none"
+              href={`/admin/stats/photos-anthony?win=${win}`}
+            />
           </div>
           {pendingTotal > 0 && (
             <p className="font-ui text-sm text-ink-soft mt-3">

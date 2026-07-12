@@ -77,7 +77,9 @@ export type SiteStats = {
   // the Local Passport
   pulls: number; pullers: number; stamped: number;
   // what people contributed
-  reviews: number; tips: number; photos: number; claims: number;
+  reviews: number; tips: number; claims: number;
+  // Photos split by who took them. 67 photos all from Anthony reads like a community; it is not one.
+  photos: number; photosFromLocals: number; photosFromAnthony: number;
   // the business
   subscribers: number; confirmedSubs: number;
   perksLive: number; guidePerks: number;
@@ -86,7 +88,8 @@ export type SiteStats = {
 
 const ZERO_SITE: SiteStats = {
   worthIt: 0, itsFine: 0, skipIt: 0, beenHere: 0, wantToGo: 0, signalTotal: 0, tappers: 0,
-  pulls: 0, pullers: 0, stamped: 0, reviews: 0, tips: 0, photos: 0, claims: 0,
+  pulls: 0, pullers: 0, stamped: 0, reviews: 0, tips: 0, claims: 0,
+  photos: 0, photosFromLocals: 0, photosFromAnthony: 0,
   subscribers: 0, confirmedSubs: 0, perksLive: 0, guidePerks: 0, verifiedOwners: 0, spotsAdded: 0,
 };
 
@@ -116,6 +119,8 @@ export async function siteStats(win: Win): Promise<SiteStats> {
          (select count(*) from reviews where status='approved' and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as reviews,
          (select count(*) from tips    where status='approved' and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as tips,
          (select count(*) from photos  where status='approved' and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as photos,
+         (select count(*) from photos  where status='approved' and source='user'      and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as photos_user,
+         (select count(*) from photos  where status='approved' and source='editorial' and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as photos_editorial,
          (select count(*) from claims  where status='verified' and ($1::timestamptz is null or created_at >= $1) and created_at < $2)::int as claims`, P(b)),
     pool.query(
       `select
@@ -134,7 +139,8 @@ export async function siteStats(win: Win): Promise<SiteStats> {
     beenHere: s.been_here, wantToGo: s.want_to_go,
     signalTotal: s.total, tappers: s.tappers,
     pulls: p.pulls, pullers: p.pullers, stamped: p.stamped,
-    reviews: c.reviews, tips: c.tips, photos: c.photos, claims: c.claims,
+    reviews: c.reviews, tips: c.tips, claims: c.claims,
+    photos: c.photos, photosFromLocals: c.photos_user, photosFromAnthony: c.photos_editorial,
     subscribers: z.subs, confirmedSubs: z.confirmed,
     perksLive: z.perks_live, guidePerks: z.guide_perks,
     verifiedOwners: z.owners, spotsAdded: z.spots_added,
@@ -242,7 +248,9 @@ export const METRICS = {
   pulls:        { label: 'Stamps pulled',       hint: 'Someone opened a Local Passport stamp on their phone. Intent, not a visit.' },
   stamped:      { label: 'Stamped at a counter', hint: 'An owner confirmed they served someone holding a stamp. The only number that proves the guide put a body in a dining room.' },
   reviews:      { label: 'Reviews',             hint: 'Approved reader reviews. These are the only thing that can ever earn us stars in Google.' },
-  photos:       { label: 'Photos',              hint: 'Approved reader photos.' },
+  photos:       { label: 'Photos',              hint: 'Every approved photo, from Anthony and from locals.' },
+  'photos-user':      { label: 'Photos from locals',  hint: 'Photos real locals uploaded and you approved. This is the community number: it is NOT the same as the total, most of which is Anthony.' },
+  'photos-anthony':   { label: "Anthony's photos",    hint: 'Photos Anthony shot himself. Useful, but it is not engagement.' },
   tips:         { label: 'Tips',                hint: 'Approved reader tips.' },
   claims:       { label: 'Owner claims',        hint: 'Verified owners who have taken control of their listing.' },
   subscribers:  { label: 'Subscribers',         hint: 'Newsletter signups. "spot:" sources are locals who joined from a specific restaurant page.' },
@@ -321,16 +329,30 @@ export async function metricRows(metric: Metric, win: Win, limit = 300): Promise
       }));
     }
 
-    case 'photos':
     case 'tips': {
-      const t = metric === 'photos' ? 'photos' : 'tips';
-      const col = metric === 'photos' ? 'coalesce(x.caption, x.filename)' : 'x.body';
       const { rows } = await pool.query(
-        `select x.created_at, coalesce(r.name,'(spot removed)') as name, r.slug, ${col} as detail
-           from ${t} x left join restaurants r on r.id = x.place_id
+        `select x.created_at, coalesce(r.name,'(spot removed)') as name, r.slug, x.body as detail
+           from tips x left join restaurants r on r.id = x.place_id
           where x.status='approved' and ($1::timestamptz is null or x.created_at >= $1) and x.created_at < $2
           order by x.created_at desc limit $3`, [...p, limit]);
       return rows.map((x) => ({ when: x.created_at, name: x.name, slug: x.slug, detail: (x.detail || '').slice(0, 90) }));
+    }
+
+    case 'photos':
+    case 'photos-user':
+    case 'photos-anthony': {
+      const src = metric === 'photos-user' ? "and x.source='user'" : metric === 'photos-anthony' ? "and x.source='editorial'" : '';
+      const { rows } = await pool.query(
+        `select x.created_at, coalesce(r.name,'(spot removed)') as name, r.slug,
+                coalesce(x.caption, x.filename) as detail, x.source, x.uploaded_by
+           from photos x left join restaurants r on r.id = x.place_id
+          where x.status='approved' ${src}
+            and ($1::timestamptz is null or x.created_at >= $1) and x.created_at < $2
+          order by x.created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({
+        when: x.created_at, name: x.name, slug: x.slug,
+        detail: `${x.source === 'user' ? 'from a local' : 'Anthony'} · ${(x.detail || '').slice(0, 70)}`,
+      }));
     }
 
     case 'claims': {
