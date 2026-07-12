@@ -80,7 +80,9 @@ body {
    second copy precisely where the first one started. That is what makes the loop seamless instead of
    snapping. Hover pauses it, because you cannot click a moving target. */
 .llg-ticker-track {
-  animation: llg-ticker 40s linear infinite;
+  /* Slow. This is a newspaper strap, not a stock ticker: it should read as a slow drift you can
+     follow without effort, not something you have to catch. 40s was a chase. */
+  animation: llg-ticker 110s linear infinite;
   will-change: transform;
 }
 .llg-ticker:hover .llg-ticker-track,
