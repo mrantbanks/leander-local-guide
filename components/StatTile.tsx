@@ -1,9 +1,11 @@
+import Link from 'next/link';
+
 // The little number-over-caption box used across the admin desks. It existed three times, copied
 // into app/admin/page.tsx, app/admin/workers/page.tsx and app/admin/email/page.tsx with three
 // different prop names (n/label, value/label, n/l), and all three were declared INSIDE their page's
 // render, which makes them a fresh component type every render: React tears them down and rebuilds
 // them instead of reconciling, and any state inside it resets. One component, at module scope.
-export default function StatTile({ label, value, accent = false, sub, zeroText, delta }: {
+export default function StatTile({ label, value, accent = false, sub, zeroText, delta, href }: {
   label: string;
   value: number | string;
   accent?: boolean;
@@ -20,13 +22,18 @@ export default function StatTile({ label, value, accent = false, sub, zeroText, 
   zeroText?: string;
   /** Change vs the previous equal-length window. Omit entirely when there is nothing to compare. */
   delta?: number | null;
+  /**
+   * Where the tile drills down to. A number you cannot open is a number you have to take on faith,
+   * and the whole reason we count in our own database instead of GA4 is that we can show our working.
+   */
+  href?: string;
 }) {
   const isZero = value === 0 || value === '0';
   const showZeroText = isZero && zeroText;
   const arrow = delta == null || delta === 0 ? null : delta > 0 ? '▲' : '▼';
 
-  return (
-    <div className="border border-rule bg-paper-raised p-3 text-center">
+  const body = (
+    <>
       {showZeroText ? (
         <div className="font-ui text-sm text-ink-soft py-2 leading-tight">{zeroText}</div>
       ) : (
@@ -39,6 +46,20 @@ export default function StatTile({ label, value, accent = false, sub, zeroText, 
         </div>
       )}
       {sub && <div className="font-ui text-xs text-ink-soft mt-1 leading-snug">{sub}</div>}
-    </div>
+    </>
+  );
+
+  const base = 'border border-rule bg-paper-raised p-3 text-center';
+
+  // A tile with nothing behind it does not pretend to be a button.
+  if (!href || isZero) return <div className={base}>{body}</div>;
+
+  return (
+    <Link href={href} className={`${base} group block transition-colors hover:border-ink hover:bg-paper`}>
+      {body}
+      <div className="font-stamp uppercase tracking-[0.06em] text-xs text-chile mt-1 opacity-0 transition-opacity group-hover:opacity-100">
+        Show me →
+      </div>
+    </Link>
   );
 }

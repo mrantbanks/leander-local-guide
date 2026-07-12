@@ -30,25 +30,46 @@ export default async function WhatsOnPage() {
           <p className="mt-3 font-ui text-ink-soft max-w-md mx-auto">Anthony is rounding up Leander&apos;s trivia nights, live music, and karaoke. Run a spot? <Link href="/contact" className="text-chile">Tell us what you host.</Link></p>
         </div>
       ) : (
-        <div className="max-w-4xl mx-auto px-5 py-8 space-y-8">
+        <div className="max-w-4xl mx-auto px-5 py-8 space-y-10">
           {days.map((d) => (
             <section key={d.iso}>
-              <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink-soft border-b border-rule pb-1 mb-3">
-                <span className="text-ink">{d.label}</span> · {d.date}
-              </h2>
+              {/* The day, spelled out. A listings board should tell you what day you are looking at
+                  from across the room, not in 14px grey. */}
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b-2 border-ink pb-2 mb-4">
+                <h2 className="font-display font-black text-ink text-3xl leading-none tracking-[-0.02em]">{d.label}</h2>
+                <span className="font-stamp uppercase tracking-[0.14em] text-chile text-base">{d.full}</span>
+                {d.items.length > 0 && (
+                  <span className="font-ui text-sm text-ink-soft ml-auto">{d.items.length} on</span>
+                )}
+              </div>
+
               {d.items.length === 0 ? (
-                <p className="font-ui text-sm text-ink-soft/70">Nothing listed yet.</p>
+                <p className="font-hand text-2xl text-oxblood">Nothing listed for this one yet.</p>
               ) : (
-                <ul className="divide-y divide-rule">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {d.items.map((it) => (
-                    <li key={`${d.iso}-${it.id}`} className="py-3 flex items-baseline gap-3">
-                      <span className="font-stamp uppercase tracking-[0.06em] text-sm text-chile w-20 shrink-0">{it.time || 'TBA'}</span>
-                      <span className="text-xl shrink-0">{it.emoji}</span>
-                      <div className="min-w-0">
-                        <span className="font-display font-semibold text-ink text-lg">{it.title}</span>
-                        <span className="font-ui text-base text-ink-soft"> · <Link href={`/r/${it.slug}`} className="hover:text-oxblood">{it.spot}</Link></span>
-                        <span className="ml-2 font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft">{it.label}{!it.fresh && ' · unconfirmed'}</span>
-                      </div>
+                    <li key={`${d.iso}-${it.id}`}>
+                      {/* The whole card is the link, so the hit area is the card and not four words
+                          of the venue name. */}
+                      <Link
+                        href={`/r/${it.slug}`}
+                        className="group flex gap-3 h-full border border-rule bg-paper-raised rounded-sm p-4 transition-colors hover:border-ink hover:bg-paper"
+                      >
+                        <span className="text-3xl leading-none shrink-0" aria-hidden="true">{it.emoji}</span>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-baseline gap-x-2">
+                            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-base">{it.time || 'Time TBA'}</span>
+                            <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft">{it.label}</span>
+                          </div>
+                          <p className="font-display font-bold text-ink text-xl leading-tight mt-1 transition-colors group-hover:text-oxblood">
+                            {it.title}
+                          </p>
+                          <p className="font-ui text-base text-ink-soft mt-0.5 truncate">{it.spot}</p>
+                          {!it.fresh && (
+                            <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft/80 mt-1.5">⚠ Unconfirmed, call ahead</p>
+                          )}
+                        </div>
+                      </Link>
                     </li>
                   ))}
                 </ul>

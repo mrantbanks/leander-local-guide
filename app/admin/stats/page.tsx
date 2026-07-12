@@ -82,10 +82,10 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
-            <StatTile label="Stamps pulled" value={s.pulls} delta={delta(s.pulls, prev?.pulls)} />
-            <StatTile label="Distinct people" value={s.pullers} sub="one device, however many pulls" />
-            <StatTile label="Stamped at a counter" value={s.stamped} accent zeroText="none yet" delta={delta(s.stamped, prev?.stamped)} />
-            <StatTile label="Perks live" value={s.perksLive} sub={s.guidePerks > 0 ? `${s.guidePerks} from the Guide` : undefined} zeroText="none live" />
+            <StatTile label="Stamps pulled" value={s.pulls} delta={delta(s.pulls, prev?.pulls)} href={`/admin/stats/pulls?win=${win}`} />
+            <StatTile label="Distinct people" value={s.pullers} sub="one device, however many pulls" href={`/admin/stats/pulls?win=${win}`} />
+            <StatTile label="Stamped at a counter" value={s.stamped} accent zeroText="none yet" delta={delta(s.stamped, prev?.stamped)} href={`/admin/stats/stamped?win=${win}`} />
+            <StatTile label="Perks live" value={s.perksLive} sub={s.guidePerks > 0 ? `${s.guidePerks} from the Guide` : undefined} zeroText="none live" href={`/admin/stats/perks?win=${win}`} />
           </div>
         )}
         {audit.tokens > 0 && audit.pct >= 60 && (
@@ -103,17 +103,18 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         One-tap signals from the spot pages. Full history: these have always been recorded, we had just never read them.
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-8">
-        <StatTile label="Worth it" value={s.worthIt} accent zeroText="none" />
-        <StatTile label="It's fine" value={s.itsFine} zeroText="none" />
-        <StatTile label="Skip it" value={s.skipIt} zeroText="none" />
-        <StatTile label="Been here" value={s.beenHere} zeroText="none" />
-        <StatTile label="Want to go" value={s.wantToGo} zeroText="none" />
+        <StatTile label="Worth it" value={s.worthIt} accent zeroText="none" href={`/admin/stats/worth-it?win=${win}`} />
+        <StatTile label="It's fine" value={s.itsFine} zeroText="none" href={`/admin/stats/its-fine?win=${win}`} />
+        <StatTile label="Skip it" value={s.skipIt} zeroText="none" href={`/admin/stats/skip-it?win=${win}`} />
+        <StatTile label="Been here" value={s.beenHere} zeroText="none" href={`/admin/stats/been-here?win=${win}`} />
+        <StatTile label="Want to go" value={s.wantToGo} zeroText="none" href={`/admin/stats/want-to-go?win=${win}`} />
         <StatTile
           label="Locals who tapped"
           value={s.tappers}
           delta={delta(s.tappers, prev?.tappers)}
           sub="devices, not people"
           zeroText="none"
+          href={`/admin/stats/tappers?win=${win}`}
         />
       </div>
 
@@ -122,10 +123,10 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         <div>
           <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">What people gave us</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatTile label="Reviews" value={s.reviews} zeroText="none" />
-            <StatTile label="Photos" value={s.photos} zeroText="none" />
-            <StatTile label="Tips" value={s.tips} zeroText="none" />
-            <StatTile label="Owner claims" value={s.claims} zeroText="none" />
+            <StatTile label="Reviews" value={s.reviews} zeroText="none" href={`/admin/stats/reviews?win=${win}`} />
+            <StatTile label="Photos" value={s.photos} zeroText="none" href={`/admin/stats/photos?win=${win}`} />
+            <StatTile label="Tips" value={s.tips} zeroText="none" href={`/admin/stats/tips?win=${win}`} />
+            <StatTile label="Owner claims" value={s.claims} zeroText="none" href={`/admin/stats/claims?win=${win}`} />
           </div>
           {pendingTotal > 0 && (
             <p className="font-ui text-sm text-ink-soft mt-3">
@@ -138,9 +139,9 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         <div>
           <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">The business</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatTile label="Verified owners" value={s.verifiedOwners} accent zeroText="none yet" />
-            <StatTile label="Subscribers" value={s.confirmedSubs} sub={s.subscribers > s.confirmedSubs ? `${s.subscribers - s.confirmedSubs} unconfirmed` : undefined} zeroText="none" />
-            <StatTile label="Spots added" value={s.spotsAdded} zeroText="none" />
+            <StatTile label="Verified owners" value={s.verifiedOwners} accent zeroText="none yet" href={`/admin/stats/claims?win=all`} />
+            <StatTile label="Subscribers" value={s.confirmedSubs} sub={s.subscribers > s.confirmedSubs ? `${s.subscribers - s.confirmedSubs} unconfirmed` : undefined} zeroText="none" href={`/admin/stats/subscribers?win=${win}`} />
+            <StatTile label="Spots added" value={s.spotsAdded} zeroText="none" href={`/admin/stats/spots?win=${win}`} />
             <StatTile label="Verdict votes" value={verdicts} zeroText="none" />
           </div>
         </div>

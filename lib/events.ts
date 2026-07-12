@@ -145,7 +145,9 @@ export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
 }
 
 export type WhatsOnItem = { id: number; type: string; label: string; emoji: string; title: string; when: string; time: string | null; spot: string; slug: string; fresh: boolean };
-export type WhatsOnDay = { iso: string; date: string; label: string; items: WhatsOnItem[] };
+// `label` is Tonight / Tomorrow / the weekday. `date` is the short stamp (Jul 12). `full` spells the
+// whole thing out (Saturday, July 12) because the board reads like a printed listings page.
+export type WhatsOnDay = { iso: string; date: string; full: string; label: string; items: WhatsOnItem[] };
 
 // Expand recurring + one-off events across the next 7 days (America/Chicago).
 export async function getWhatsOn(): Promise<WhatsOnDay[]> {
@@ -177,7 +179,13 @@ export async function getWhatsOn(): Promise<WhatsOnDay[]> {
     }
     items.sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
     const label = i === 0 ? 'Tonight' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
-    days.push({ iso, date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }), label, items });
+    days.push({
+      iso,
+      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      full: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }),
+      label,
+      items,
+    });
   }
   return days;
 }

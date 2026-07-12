@@ -225,6 +225,161 @@ export async function stampAudit(): Promise<{ tokens: number; singleUse: number;
   return { tokens, singleUse, pct: tokens ? Math.round((singleUse / tokens) * 100) : 0 };
 }
 
+// ── drill-down: the rows BEHIND a number ─────────────────────────────────────────────────────────
+
+/**
+ * Every tile on /admin/stats is clickable, and lands here. A number you cannot open is a number you
+ * have to take on faith, and the entire point of counting in our own database rather than in GA4 is
+ * that we can always show our working. If a tile says 34 and this list has 34 rows, the tile is true.
+ */
+export const METRICS = {
+  'worth-it':   { label: 'Worth it',            hint: 'Locals who tapped "worth it" on a spot page.' },
+  'its-fine':   { label: "It's fine",           hint: 'Locals who tapped "it\'s fine".' },
+  'skip-it':    { label: 'Skip it',             hint: 'Locals who tapped "skip it".' },
+  'been-here':  { label: 'Been here',           hint: 'Locals who said they have eaten there.' },
+  'want-to-go': { label: 'Want to go',          hint: 'Locals who said they want to try it.' },
+  tappers:      { label: 'Locals who tapped',   hint: 'One row per device. A device is not a person: a cleared cookie looks like someone new, and one person on a phone and a laptop looks like two.' },
+  pulls:        { label: 'Stamps pulled',       hint: 'Someone opened a Local Passport stamp on their phone. Intent, not a visit.' },
+  stamped:      { label: 'Stamped at a counter', hint: 'An owner confirmed they served someone holding a stamp. The only number that proves the guide put a body in a dining room.' },
+  reviews:      { label: 'Reviews',             hint: 'Approved reader reviews. These are the only thing that can ever earn us stars in Google.' },
+  photos:       { label: 'Photos',              hint: 'Approved reader photos.' },
+  tips:         { label: 'Tips',                hint: 'Approved reader tips.' },
+  claims:       { label: 'Owner claims',        hint: 'Verified owners who have taken control of their listing.' },
+  subscribers:  { label: 'Subscribers',         hint: 'Newsletter signups. "spot:" sources are locals who joined from a specific restaurant page.' },
+  perks:        { label: 'Perks live',          hint: 'Live Local Passport perks. A Guide perk belongs to no business.' },
+  spots:        { label: 'Spots added',         hint: 'Restaurants added to the guide.' },
+} as const;
+
+export type Metric = keyof typeof METRICS;
+export const isMetric = (v: string): v is Metric => v in METRICS;
+
+export type Row = { when: Date | null; name: string; slug: string | null; detail: string };
+
+export async function metricRows(metric: Metric, win: Win, limit = 300): Promise<Row[]> {
+  const b = windowOf(win);
+  const p = P(b);
+
+  // place_signals: LEFT join so a signal on a since-deleted spot still shows up rather than vanishing.
+  const signal = async (where: string) => {
+    const { rows } = await pool.query(
+      `select s.created_at, coalesce(r.name, '(spot removed)') as name, r.slug
+         from place_signals s left join restaurants r on r.id = s.place_id
+        where ${where} and ($1::timestamptz is null or s.created_at >= $1) and s.created_at < $2
+        order by s.created_at desc limit $3`, [...p, limit]);
+    return rows.map((x) => ({ when: x.created_at, name: x.name, slug: x.slug, detail: '' }));
+  };
+
+  switch (metric) {
+    case 'worth-it':   return signal(`s.signal_type='verdict' and s.verdict='worth_it'`);
+    case 'its-fine':   return signal(`s.signal_type='verdict' and s.verdict='its_fine'`);
+    case 'skip-it':    return signal(`s.signal_type='verdict' and s.verdict='skip_it'`);
+    case 'been-here':  return signal(`s.signal_type='been_here'`);
+    case 'want-to-go': return signal(`s.signal_type='want_to_go'`);
+
+    case 'tappers': {
+      // Never the raw UUID. A truncated token is enough to tell two devices apart on this screen,
+      // and there is nothing here worth being able to follow a person around with.
+      const { rows } = await pool.query(
+        `select max(created_at) as last_seen, left(anon_id::text, 8) as tok, count(*)::int as taps,
+                count(distinct place_id)::int as spots
+           from place_signals
+          where ($1::timestamptz is null or created_at >= $1) and created_at < $2 and anon_id is not null
+          group by anon_id order by taps desc, last_seen desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({
+        when: x.last_seen, name: `device ${x.tok}`, slug: null,
+        detail: `${x.taps} tap${x.taps === 1 ? '' : 's'} across ${x.spots} spot${x.spots === 1 ? '' : 's'}`,
+      }));
+    }
+
+    case 'pulls':
+    case 'stamped': {
+      const type = metric === 'pulls' ? 'pull' : 'redeem';
+      const { rows } = await pool.query(
+        `select e.occurred_at, coalesce(r.name, 'The Leander Local Guide') as name, r.slug,
+                sp.title, e.source
+           from passport_stamp_events e
+           left join restaurants r on r.id = e.place_id
+           left join specials sp on sp.id = e.special_id
+          where e.event_type = $4
+            and ($1::timestamptz is null or e.occurred_at >= $1) and e.occurred_at < $2
+          order by e.occurred_at desc limit $3`, [...p, limit, type]);
+      return rows.map((x) => ({
+        when: x.occurred_at, name: x.name, slug: x.slug,
+        detail: [x.title, x.source && `from the ${x.source}`].filter(Boolean).join(' · '),
+      }));
+    }
+
+    case 'reviews': {
+      const { rows } = await pool.query(
+        `select v.created_at, coalesce(r.name,'(spot removed)') as name, r.slug, v.stars, v.body
+           from reviews v left join restaurants r on r.id = v.place_id
+          where v.status='approved' and ($1::timestamptz is null or v.created_at >= $1) and v.created_at < $2
+          order by v.created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({
+        when: x.created_at, name: x.name, slug: x.slug,
+        detail: `${x.stars}★ ${(x.body || '').slice(0, 90)}`,
+      }));
+    }
+
+    case 'photos':
+    case 'tips': {
+      const t = metric === 'photos' ? 'photos' : 'tips';
+      const col = metric === 'photos' ? 'coalesce(x.caption, x.filename)' : 'x.body';
+      const { rows } = await pool.query(
+        `select x.created_at, coalesce(r.name,'(spot removed)') as name, r.slug, ${col} as detail
+           from ${t} x left join restaurants r on r.id = x.place_id
+          where x.status='approved' and ($1::timestamptz is null or x.created_at >= $1) and x.created_at < $2
+          order by x.created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({ when: x.created_at, name: x.name, slug: x.slug, detail: (x.detail || '').slice(0, 90) }));
+    }
+
+    case 'claims': {
+      const { rows } = await pool.query(
+        `select c.created_at, coalesce(r.name,'(spot removed)') as name, r.slug, c.user_email, c.verified_via
+           from claims c left join restaurants r on r.id = c.place_id
+          where c.status='verified' and ($1::timestamptz is null or c.created_at >= $1) and c.created_at < $2
+          order by c.created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({
+        when: x.created_at, name: x.name, slug: x.slug,
+        detail: `${x.user_email}${x.verified_via ? ` · verified by ${x.verified_via}` : ''}`,
+      }));
+    }
+
+    case 'subscribers': {
+      const { rows } = await pool.query(
+        `select created_at, email, status, coalesce(nullif(source,''),'unknown') as source
+           from subscribers
+          where ($1::timestamptz is null or created_at >= $1) and created_at < $2
+          order by created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({
+        when: x.created_at, name: x.email, slug: null,
+        detail: `${x.status} · from ${x.source}`,
+      }));
+    }
+
+    case 'perks': {
+      // LEFT join: a first-party Guide perk has no business, and an inner join would hide it.
+      const { rows } = await pool.query(
+        `select s.created_at, coalesce(r.name, 'The Leander Local Guide') as name, r.slug, s.title, s.issuer_type
+           from specials s left join restaurants r on r.id = s.place_id
+          where s.status='active' order by s.created_at desc limit $1`, [limit]);
+      return rows.map((x) => ({
+        when: x.created_at, name: x.name, slug: x.slug,
+        detail: `${x.title}${x.issuer_type === 'guide' ? ' · from the Guide' : ''}`,
+      }));
+    }
+
+    case 'spots': {
+      const { rows } = await pool.query(
+        `select created_at, name, slug, primary_category
+           from restaurants
+          where not hidden and ($1::timestamptz is null or created_at >= $1) and created_at < $2
+          order by created_at desc limit $3`, [...p, limit]);
+      return rows.map((x) => ({ when: x.created_at, name: x.name, slug: x.slug, detail: x.primary_category }));
+    }
+  }
+}
+
 // ── one spot (used by admin now, and by the owner desk in phase 3) ───────────────────────────────
 
 export type SpotStats = {
