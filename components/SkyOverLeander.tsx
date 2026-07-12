@@ -1,183 +1,192 @@
 import type { Sky } from '@/lib/sky';
 
 /**
- * The sky over Leander, right now, drawn rather than photographed.
+ * The sky over Leander, bled into the top right corner of the masthead.
  *
- * The guide is a newspaper, so this is an engraving: flat ink, hatched rays, no gradients pretending
- * to be a photograph. It reads what Open-Meteo says the weather is doing and draws THAT: sun in the
- * day, moon at night with its real phase (the terminator is a scaled ellipse, so a waxing crescent
- * genuinely looks like a waxing crescent), clouds when it is cloudy, hatching when it rains.
+ * It used to be a bordered box, and a bordered box in the corner of a newspaper masthead is a
+ * WIDGET: it sits on the page rather than being part of it. So there is no box now. There is a soft
+ * radial wash coming in from the corner, tinted by what the sky is actually doing, with the sun or
+ * moon floating inside it and the masthead's own type reading straight through. The colour is the
+ * point: a clear night pulls a deep indigo into the corner of the cream paper, a storm pulls slate,
+ * and the golden hour genuinely glows, because sunrise and sunset come from Open-Meteo for THIS
+ * date rather than a hardcoded hour.
  *
- * It tells the truth or it says nothing. If the weather fetch fails we still draw the sky by the
- * clock and the moon by the calendar, and we simply do not print a temperature, rather than guessing
- * one and being wrong on the front page.
+ * Everything here is decoration over the real headline, so it is aria-hidden and pointer-events-none.
+ * The temperature and the moon phase are announced once, in text, by the caption underneath.
  */
+
+// The wash. Two stops, from a tinted corner out to nothing, so it dissolves into the paper.
+function washFor(sky: Sky): string {
+  const { part, condition } = sky;
+  const storm = condition === 'storm';
+  const grey = condition === 'cloudy' || condition === 'fog' || condition === 'rain' || condition === 'snow';
+
+  if (part === 'night') {
+    // Deep indigo, not black: a night sky over a cream page should feel like ink diluted in water.
+    return storm
+      ? 'radial-gradient(95% 165% at 100% 0%, rgba(26,29,45,0.95) 0%, rgba(26,29,45,0.7) 26%, rgba(244,239,230,0) 62%)'
+      : grey
+        ? 'radial-gradient(95% 165% at 100% 0%, rgba(32,36,48,0.9) 0%, rgba(32,36,48,0.58) 28%, rgba(244,239,230,0) 64%)'
+        : 'radial-gradient(95% 165% at 100% 0%, rgba(20,24,44,0.96) 0%, rgba(28,32,58,0.64) 28%, rgba(244,239,230,0) 64%)';
+  }
+  if (part === 'dawn' || part === 'dusk') {
+    // The good hour. Chile into amber into paper.
+    return 'radial-gradient(95% 165% at 100% 0%, rgba(154,51,36,0.6) 0%, rgba(232,163,61,0.4) 26%, rgba(244,239,230,0) 62%)';
+  }
+  if (storm) return 'radial-gradient(95% 165% at 100% 0%, rgba(74,90,110,0.66) 0%, rgba(74,90,110,0.32) 28%, rgba(244,239,230,0) 64%)';
+  if (grey) return 'radial-gradient(95% 165% at 100% 0%, rgba(120,132,146,0.46) 0%, rgba(120,132,146,0.2) 28%, rgba(244,239,230,0) 64%)';
+  // A clear Texas day: warm, high, and bright.
+  return 'radial-gradient(95% 165% at 100% 0%, rgba(232,163,61,0.55) 0%, rgba(232,163,61,0.22) 28%, rgba(244,239,230,0) 64%)';
+}
+
 export default function SkyOverLeander({ sky }: { sky: Sky }) {
-  const night = !sky.isDay;
+  const night = sky.part === 'night';
   const { condition } = sky;
   const wet = condition === 'rain' || condition === 'storm';
   const snowy = condition === 'snow';
   const clouded = condition === 'cloudy' || condition === 'partly' || condition === 'fog' || wet || snowy;
   const heavy = condition === 'cloudy' || condition === 'fog' || condition === 'storm';
 
-  // The moon, properly.
-  //
-  // lit = 0 at new, 1 at full. Waxing means the RIGHT limb is lit (northern hemisphere).
-  //
-  // The mask is: the full disc in white, then HALF of it blacked out with a rectangle (a half-plane,
-  // not an offset circle: an offset circle carves a lens and gives you a bitten biscuit, which is
-  // what the first version drew), then the terminator ellipse laid over the middle. The ellipse is
-  // BLACK below half-lit (carving the crescent thinner) and WHITE above it (filling the gibbous
-  // back out). Its x-radius goes to zero at the quarters, which is exactly when the terminator is a
-  // straight line.
-  const R = 10.5;
+  // The moon at its real phase. The terminator is an ellipse over a half-plane: an offset circle
+  // carves a lens and draws a bitten biscuit instead of a crescent.
+  const R = 22;
   const lit = sky.moonLit;
   const waxing = sky.moonPhase < 0.5;
   const rx = Math.abs(1 - 2 * lit) * R;
 
-  const ink = night ? '#F4EFE6' : '#16130F'; // draw in paper on ink, ink on paper
-  const bg = night ? '#16130F' : '#F4EFE6';
-  const hills = night ? '#070605' : '#16130F'; // a silhouette must be DARKER than the sky behind it
-  const accent = night ? '#E8A33D' : '#9a3324'; // amber at night, chile by day
+  const glow = night ? '#E8E0D2' : '#E8A33D';
 
   return (
-    <figure
-      className="w-full sm:w-56 shrink-0 border-2 border-ink rounded-[2px] overflow-hidden"
-      style={{ backgroundColor: bg }}
-      aria-label={`The sky over Leander: ${sky.description || (night ? 'night' : 'day')}${sky.tempF != null ? `, ${sky.tempF} degrees` : ''}`}
-    >
-      <svg viewBox="0 0 120 70" className="w-full block" role="img">
-        {/* Stars, only when there is sky to see them through. */}
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* The wash. It IS the sky: no border, no card, just weather coming into the corner. */}
+      <div className="absolute inset-0" style={{ background: washFor(sky) }} />
+
+      {/* The body: sun or moon, up in the corner, floating. */}
+      <svg
+        viewBox="0 0 200 130"
+        className="absolute top-0 right-0 h-[150px] sm:h-[190px] w-auto"
+        preserveAspectRatio="xMaxYMin meet"
+      >
         {night && !heavy && (
-          <g fill={ink} opacity="0.75">
-            {[[14, 12], [30, 22], [46, 9], [66, 17], [88, 11], [102, 25], [22, 34], [110, 40], [76, 31]].map(([x, y], i) => (
-              <circle key={i} cx={x} cy={y} r={i % 3 === 0 ? 0.9 : 0.6}>
-                <animate
-                  attributeName="opacity"
-                  values="0.25;0.9;0.25"
-                  dur={`${3 + (i % 4)}s`}
-                  begin={`${i * 0.4}s`}
-                  repeatCount="indefinite"
-                />
+          <g fill="#F4EFE6">
+            {[[24, 30], [52, 16], [78, 42], [104, 22], [132, 52], [156, 18], [172, 66], [118, 78], [44, 62], [190, 38]].map(([x, y], i) => (
+              <circle key={i} cx={x} cy={y} r={i % 3 === 0 ? 1.5 : 1} opacity="0.85">
+                <animate attributeName="opacity" values="0.2;0.95;0.2" dur={`${3 + (i % 5)}s`} begin={`${i * 0.5}s`} repeatCount="indefinite" />
               </circle>
             ))}
           </g>
         )}
 
-        {/* The sun: a disc with hatched rays, the way a newspaper would cut it. */}
+        {/* Sun */}
         {!night && (
-          <g transform="translate(40 30)">
-            <g stroke={accent} strokeWidth="1.6" strokeLinecap="round">
+          <g transform="translate(146 42)">
+            <circle r={R + 20} fill={glow} opacity="0.14" />
+            <circle r={R + 10} fill={glow} opacity="0.18" />
+            <g stroke={glow} strokeWidth="2.4" strokeLinecap="round" opacity="0.9">
               {Array.from({ length: 12 }).map((_, i) => {
                 const a = (i * Math.PI) / 6;
-                const r1 = 13.5, r2 = i % 2 === 0 ? 19 : 16.5;
-                return (
-                  <line
-                    key={i}
-                    x1={Math.cos(a) * r1}
-                    y1={Math.sin(a) * r1}
-                    x2={Math.cos(a) * r2}
-                    y2={Math.sin(a) * r2}
-                  />
-                );
+                const r1 = R + 6, r2 = i % 2 === 0 ? R + 20 : R + 13;
+                return <line key={i} x1={Math.cos(a) * r1} y1={Math.sin(a) * r1} x2={Math.cos(a) * r2} y2={Math.sin(a) * r2} />;
               })}
-              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="120s" repeatCount="indefinite" />
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="180s" repeatCount="indefinite" />
             </g>
-            <circle r="10.5" fill={accent} />
-            <circle r="10.5" fill="none" stroke={ink} strokeWidth="1.2" />
+            <circle r={R} fill={glow} />
           </g>
         )}
 
-        {/* The moon, at its actual phase. */}
+        {/* Moon, at its actual phase */}
         {night && (
-          <g transform="translate(40 30)">
+          <g transform="translate(146 46)">
             <defs>
-              <mask id="moonlight" maskUnits="userSpaceOnUse" x={-R - 2} y={-R - 2} width={2 * R + 4} height={2 * R + 4}>
-                <rect x={-R - 2} y={-R - 2} width={2 * R + 4} height={2 * R + 4} fill="black" />
+              <mask id="llg-moon" maskUnits="userSpaceOnUse" x={-R - 4} y={-R - 4} width={2 * R + 8} height={2 * R + 8}>
+                <rect x={-R - 4} y={-R - 4} width={2 * R + 8} height={2 * R + 8} fill="black" />
                 <circle r={R} fill="white" />
-                {/* Black out the unlit HALF. A half-plane, not an offset circle. */}
-                <rect x={waxing ? -R - 1 : 0} y={-R - 1} width={R + 1} height={2 * R + 2} fill="black" />
+                {/* Black out the unlit HALF: a half-plane, not an offset circle. */}
+                <rect x={waxing ? -R - 2 : 0} y={-R - 2} width={R + 2} height={2 * R + 4} fill="black" />
                 {/* The terminator. Black carves the crescent thinner, white fills the gibbous out. */}
                 <ellipse cx="0" cy="0" rx={rx} ry={R} fill={lit > 0.5 ? 'white' : 'black'} />
               </mask>
             </defs>
-            {/* The unlit disc, faintly, so the WHOLE moon is present and only part of it is lit. */}
-            <circle r={R} fill={ink} opacity="0.1" />
-            <circle r={R} fill="#E8E0D2" mask="url(#moonlight)" />
-            {/* Craters, on the lit side only. */}
-            <g fill="#16130F" opacity="0.14" mask="url(#moonlight)">
-              <circle cx="-3" cy="-3" r="2.2" />
-              <circle cx="3.5" cy="2" r="1.6" />
-              <circle cx="-1" cy="5" r="1.1" />
+            <circle r={R + 14} fill={glow} opacity="0.1" />
+            {/* The whole disc, faintly, so the dark limb is present and only part is lit. */}
+            <circle r={R} fill="#F4EFE6" opacity="0.08" />
+            <circle r={R} fill={glow} mask="url(#llg-moon)" />
+            <g fill="#16130F" opacity="0.12" mask="url(#llg-moon)">
+              <circle cx="-6" cy="-7" r="4.5" />
+              <circle cx="7" cy="4" r="3.2" />
+              <circle cx="-2" cy="10" r="2.4" />
             </g>
-            <circle r={R} fill="none" stroke={ink} strokeWidth="1" opacity="0.35" />
           </g>
         )}
 
-        {/* Clouds. More of them, and lower, the worse it is. */}
+        {/* Clouds drift across whatever is up there. */}
         {clouded && (
-          <g fill={night ? '#2A241D' : '#E8E0D2'} stroke={ink} strokeWidth="1.1">
-            <g opacity={heavy ? 1 : 0.92}>
-              <ellipse cx="66" cy="34" rx="17" ry="9" />
-              <ellipse cx="80" cy="31" rx="12" ry="7.5" />
-              <ellipse cx="54" cy="37" rx="11" ry="6.5" />
+          <g fill={night ? '#242938' : '#FBF7F0'} opacity={night ? 0.92 : 0.82}>
+            <g>
+              <ellipse cx="118" cy="60" rx="34" ry="15" />
+              <ellipse cx="146" cy="54" rx="24" ry="12" />
+              <ellipse cx="96" cy="66" rx="20" ry="10" />
+              <animateTransform attributeName="transform" type="translate" values="0 0; 10 0; 0 0" dur="26s" repeatCount="indefinite" />
             </g>
             {heavy && (
-              <g opacity="0.95">
-                <ellipse cx="30" cy="40" rx="15" ry="8" />
-                <ellipse cx="44" cy="42" rx="10" ry="6" />
+              <g opacity="0.9">
+                <ellipse cx="58" cy="76" rx="28" ry="13" />
+                <ellipse cx="84" cy="80" rx="18" ry="9" />
+                <animateTransform attributeName="transform" type="translate" values="0 0; -12 0; 0 0" dur="34s" repeatCount="indefinite" />
               </g>
             )}
           </g>
         )}
 
-        {/* Rain, as hatching. It is a newspaper. */}
         {wet && (
-          <g stroke={night ? '#7FA8C9' : '#4A6E8A'} strokeWidth="1.3" strokeLinecap="round">
-            {[52, 60, 68, 76, 84, 92].map((x, i) => (
-              <line key={x} x1={x} y1="44" x2={x - 4} y2="56">
-                <animate attributeName="opacity" values="0;1;0" dur="1.1s" begin={`${i * 0.16}s`} repeatCount="indefinite" />
+          <g stroke={night ? '#8FB6D6' : '#4A6E8A'} strokeWidth="2" strokeLinecap="round" opacity="0.75">
+            {[92, 108, 124, 140, 156, 172].map((x, i) => (
+              <line key={x} x1={x} y1="80" x2={x - 7} y2="104">
+                <animate attributeName="opacity" values="0;0.9;0" dur="1.2s" begin={`${i * 0.17}s`} repeatCount="indefinite" />
               </line>
             ))}
           </g>
         )}
 
         {snowy && (
-          <g fill={night ? '#F4EFE6' : '#4A6E8A'}>
-            {[54, 64, 74, 84, 94].map((x, i) => (
-              <circle key={x} cx={x} cy="48" r="1.5">
-                <animate attributeName="cy" values="44;58" dur="2.6s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0;1;0" dur="2.6s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
+          <g fill={night ? '#F4EFE6' : '#7FA8C9'}>
+            {[96, 116, 136, 156, 176].map((x, i) => (
+              <circle key={x} cx={x} cy="84" r="2.4">
+                <animate attributeName="cy" values="78;108" dur="3s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0;1;0" dur="3s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
               </circle>
             ))}
           </g>
         )}
 
-        {/* A lightning bolt, because a storm should look like one. */}
         {condition === 'storm' && (
-          <path d="M70 42 L64 54 L69 54 L65 64 L76 50 L70 50 L74 42 Z" fill="#E8A33D" stroke={ink} strokeWidth="0.8">
-            <animate attributeName="opacity" values="0;0;1;0;0" dur="3.4s" repeatCount="indefinite" />
+          <path d="M132 74 L122 96 L131 96 L124 116 L146 88 L135 88 L142 74 Z" fill="#E8A33D">
+            <animate attributeName="opacity" values="0;0;1;0.3;1;0;0" dur="4.2s" repeatCount="indefinite" />
           </path>
         )}
-
-        {/* The Hill Country, in silhouette. Grounds the whole thing in a place. */}
-        <path
-          d="M0 70 L0 60 Q14 52 26 58 Q36 62 46 55 Q58 47 70 56 Q82 64 94 57 Q106 51 120 59 L120 70 Z"
-          fill={hills}
-        />
       </svg>
+    </div>
+  );
+}
 
-      <figcaption
-        className="px-3 py-2 border-t-2 border-ink flex items-baseline justify-between gap-2"
-        style={{ backgroundColor: night ? '#0F0D0A' : '#EDE6DA' }}
-      >
-        <span className="font-stamp uppercase tracking-[0.1em] text-xs" style={{ color: night ? '#F4EFE6' : '#16130F' }}>
-          {night ? sky.moonName : sky.description || 'Leander'}
-        </span>
-        <span className="font-display font-black text-lg leading-none" style={{ color: accent }}>
-          {sky.tempF != null ? `${sky.tempF}°` : sky.localTime}
-        </span>
-      </figcaption>
-    </figure>
+/** The words. Separate from the drawing, so a screen reader gets them once and cleanly. */
+export function SkyCaption({ sky }: { sky: Sky }) {
+  const night = sky.part === 'night';
+  const label = night ? sky.moonName : sky.description || 'Leander';
+  const golden = sky.part === 'dawn' || sky.part === 'dusk';
+
+  return (
+    <p className="font-stamp uppercase tracking-[0.14em] text-xs text-ink-soft/80">
+      {golden && <span className="text-chile">{sky.part === 'dawn' ? 'Sunrise' : 'Sunset'} · </span>}
+      <span className={night ? 'text-ink' : ''}>{label}</span>
+      {sky.tempF != null && (
+        <>
+          {' · '}
+          <span className="text-chile font-display font-black text-sm">{sky.tempF}°</span>
+        </>
+      )}
+      {' · '}
+      {sky.localTime} in Leander
+    </p>
   );
 }

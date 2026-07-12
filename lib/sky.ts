@@ -10,8 +10,12 @@ export const TZ = 'America/Chicago';
 
 export type Condition = 'clear' | 'partly' | 'cloudy' | 'fog' | 'rain' | 'storm' | 'snow';
 
+/** Night, the two golden hours either side of it, and plain daylight. Drives the colour of the wash. */
+export type DayPart = 'night' | 'dawn' | 'day' | 'dusk';
+
 export type Sky = {
   isDay: boolean;
+  part: DayPart;
   tempF: number | null;
   condition: Condition;
   description: string;
@@ -84,7 +88,8 @@ export async function getSky(): Promise<Sky> {
   try {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LNG}` +
-      `&current=temperature_2m,weather_code,is_day&temperature_unit=fahrenheit&timezone=${encodeURIComponent(TZ)}`;
+      `&current=temperature_2m,weather_code,is_day&daily=sunrise,sunset&forecast_days=1` +
+      `&temperature_unit=fahrenheit&timezone=${encodeURIComponent(TZ)}`;
     const res = await fetch(url, { next: { revalidate: 600 } });
     if (!res.ok) throw new Error(String(res.status));
     const j = await res.json();
@@ -92,8 +97,22 @@ export async function getSky(): Promise<Sky> {
     if (!cur) throw new Error('no current');
 
     const { condition, description } = readCode(Number(cur.weather_code));
+
+    // Golden hour, properly: within an hour of the real sunrise or sunset for THIS date, not a guess
+    // from the clock. It is the difference between the corner glowing amber at the right moment and
+    // glowing amber because somebody hardcoded 6pm.
+    const isDay = cur.is_day === 1;
+    let part: DayPart = isDay ? 'day' : 'night';
+    const sunrise = j?.daily?.sunrise?.[0] ? new Date(j.daily.sunrise[0]).getTime() : null;
+    const sunset = j?.daily?.sunset?.[0] ? new Date(j.daily.sunset[0]).getTime() : null;
+    const t = now.getTime();
+    const HOUR = 3_600_000;
+    if (sunrise && Math.abs(t - sunrise) < HOUR) part = 'dawn';
+    else if (sunset && Math.abs(t - sunset) < HOUR) part = 'dusk';
+
     return {
-      isDay: cur.is_day === 1,
+      isDay,
+      part,
       tempF: typeof cur.temperature_2m === 'number' ? Math.round(cur.temperature_2m) : null,
       condition,
       description,
@@ -108,6 +127,7 @@ export async function getSky(): Promise<Sky> {
     // about the weather rather than inventing it.
     return {
       isDay: fallbackDay,
+      part: fallbackDay ? 'day' : 'night',
       tempF: null,
       condition: 'clear',
       description: '',

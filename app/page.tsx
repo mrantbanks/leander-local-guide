@@ -5,7 +5,7 @@ import FreshInk from '@/components/FreshInk';
 import FeedMe from '@/components/FeedMe';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
-import SkyOverLeander from '@/components/SkyOverLeander';
+import SkyOverLeander, { SkyCaption } from '@/components/SkyOverLeander';
 import { getSky } from '@/lib/sky';
 
 export const dynamic = 'force-dynamic';
@@ -57,25 +57,27 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Masthead */}
-      <header className="border-b-2 border-ink">
-        <div className="max-w-6xl mx-auto px-5 pt-9 pb-5 flex flex-col-reverse sm:flex-row sm:items-start sm:justify-between gap-6">
-          <div className="min-w-0">
-            <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">
-              Leander, Texas · Local-First · No Nonsense
-            </p>
-            <h1 className="font-display font-black text-ink leading-[0.9] tracking-[-0.03em]" style={{ fontSize: 'clamp(2.75rem, 8vw, 7rem)' }}>
-              The Leander
-              <br />
-              Local Guide
-            </h1>
-            <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
-              {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back) · Eat where Leander actually eats
-            </p>
-          </div>
+      {/* Masthead. The sky is not a widget sitting on it, it IS the top right corner of it: a wash of
+          whatever the weather is actually doing over Leander, with the sun or moon floating in it and
+          the headline reading straight through. */}
+      <header className="relative border-b-2 border-ink overflow-hidden">
+        <SkyOverLeander sky={sky} />
 
-          {/* The sky over Leander, right now. Real weather, and the moon at its real phase. */}
-          <SkyOverLeander sky={sky} />
+        <div className="relative max-w-6xl mx-auto px-5 pt-9 pb-5">
+          <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">
+            Leander, Texas · Local-First · No Nonsense
+          </p>
+          <h1 className="font-display font-black text-ink leading-[0.9] tracking-[-0.03em]" style={{ fontSize: 'clamp(2.75rem, 8vw, 7rem)' }}>
+            The Leander
+            <br />
+            Local Guide
+          </h1>
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <p className="font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
+              {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back)
+            </p>
+            <SkyCaption sky={sky} />
+          </div>
         </div>
       </header>
 
