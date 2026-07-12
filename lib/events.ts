@@ -1,16 +1,9 @@
 import { pool } from './db';
 
-export const EVENT_LABELS: Record<string, string> = {
-  trivia: 'Trivia', karaoke: 'Karaoke', live_music: 'Live Music', bingo: 'Bingo',
-  game_night: 'Game Night', comedy: 'Comedy', open_mic: 'Open Mic', book_club: 'Book Club',
-  watch_party: 'Watch Party', run_club: 'Run Club', kids_eat_free: 'Kids Eat Free',
-  brunch: 'Brunch', market: 'Market', tasting: 'Tasting', other: 'Event',
-};
-export const EVENT_EMOJI: Record<string, string> = {
-  trivia: '🧠', karaoke: '🎤', live_music: '🎸', bingo: '🎱', game_night: '🎲', comedy: '🎙️',
-  open_mic: '🎶', book_club: '📚', watch_party: '🏈', run_club: '🏃', kids_eat_free: '🧒',
-  brunch: '🥂', market: '🛍️', tasting: '🍷', other: '📅',
-};
+// The vocabulary lives in lib/eventLabels.ts so the client-side composer can import it without
+// dragging the Postgres pool into the browser bundle. Re-exported here so existing callers still work.
+export { EVENT_LABELS, EVENT_EMOJI, EVENT_TYPES } from './eventLabels';
+import { EVENT_LABELS, EVENT_EMOJI } from './eventLabels';
 
 const DOW_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; // index by ISO-1
 const ORD = ['', '1st', '2nd', '3rd', '4th'];
@@ -120,7 +113,18 @@ function eventDates(r: EventRow): { startDate: string; endDate: string } | null 
   return { startDate, endDate };
 }
 
-const LIVE = `e.status = 'approved' and (e.expires_at is null or e.expires_at > now())`;
+// Brunch is not an event, it is a restaurant being open on a Sunday. It was the single biggest
+// "event type" on the board (9 of 26 rows) and it made the whole board look like filler. Filtered
+// here as well as removed from the vocabulary, because the scraper writes straight to this table and
+// would happily reintroduce it.
+//
+// ends_on / starts_on were never checked, so a recurring event with an end date would have run for
+// ever. That matters a lot more now that owners can set one.
+const LIVE = `e.status = 'approved'
+  and e.event_type <> 'brunch'
+  and (e.expires_at is null or e.expires_at > now())
+  and (e.starts_on is null or e.starts_on <= current_date)
+  and (e.ends_on   is null or e.ends_on   >= current_date)`;
 
 export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
   const { rows } = await pool.query(
@@ -156,6 +160,10 @@ export async function getWhatsOn(): Promise<WhatsOnDay[]> {
     `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id where ${LIVE} and coalesce(r.attributes->>'chainStatus','') <> 'chain'`
   );
   const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  // Chicago wall-clock, HH:MM. Anything TODAY that has already started is over, and listing an 11am
+  // sitting under "Tonight" at 8pm makes the whole board look stale and unmaintained.
+  // nextOccurrence() already did this for the spot pages; the town-wide board never did.
+  const nowHM = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
   const base = new Date(todayStr + 'T12:00:00Z');
   const days: WhatsOnDay[] = [];
   for (let i = 0; i < 7; i++) {
@@ -171,6 +179,8 @@ export async function getWhatsOn(): Promise<WhatsOnDay[]> {
       else if (r.freq === 'weekly') hit = (r.days_of_week || []).includes(isoDow);
       else if (r.freq === 'monthly_dow') hit = (r.days_of_week || []).includes(isoDow) && (r.week_of_month === wom || (r.week_of_month === -1 && isLast));
       if (!hit) continue;
+      // Today only: drop anything whose start time has already gone by.
+      if (i === 0 && r.start_time && String(r.start_time).slice(0, 5) < nowHM) continue;
       const f = freshness(r);
       items.push({
         id: r.id, type: r.event_type, label: EVENT_LABELS[r.event_type] || 'Event', emoji: EVENT_EMOJI[r.event_type] || '📅',

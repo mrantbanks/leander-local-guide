@@ -4,7 +4,7 @@ import { getSpot } from '@/lib/spots';
 import MenuViewer from '@/components/MenuViewer';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
-import { menuSnippet } from '@/lib/seo';
+import { menuSnippet, facilitiesLd } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // The menu page: every dish and price as crawlable text + Menu structured data.
@@ -68,6 +68,8 @@ export default async function MenuPage({ params }: { params: Promise<{ slug: str
     telephone: spot.phone || undefined,
     image: spot.menus[0] ? [`${SITE}${spot.menus[0].url}`] : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
+    // Hours, reservations, dogs, patio. Same facts, same markup, on both pages.
+    ...facilitiesLd(spot),
     // `menu` (a plain URL) is the ONLY menu property Google actually documents, on LocalBusiness:
     // "for food establishments, the fully-qualified URL of the menu". The rich hasMenu tree below
     // is valid schema.org and good for AI answer engines, but Google Search has no menu rich

@@ -14,7 +14,7 @@ import TipContribute from '@/components/TipContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
-import { snippetFor, faqLd, readerRatingLd } from '@/lib/seo';
+import { snippetFor, faqLd, readerRatingLd, facilitiesLd } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -86,6 +86,10 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
     menu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : (spot.menuUrl || undefined),
     hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
     address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
+    // Hours, reservations, dogs, patio, and the rest. We render all of this on the page and none of
+    // it was reaching the markup. openingHoursSpecification in particular is a documented property
+    // that Google actually reads for local results.
+    ...facilitiesLd(spot),
     // Reader-submitted ratings only, and only once three exist. See the note above ratingLd.
     ...ratingLd,
   };
@@ -173,9 +177,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
             )}
           </div>
           {spot.summary && <p className="mt-4 font-ui text-ink-soft max-w-2xl italic">{spot.summary}</p>}
-          {(spot.badges.length > 0 || spot.amenities.length > 0) && (
+          {(spot.badges.length > 0 || spot.meals.length > 0 || spot.amenities.length > 0) && (
             <div className="mt-4 flex flex-wrap gap-2">
-              {[...new Set([...spot.badges, ...spot.amenities])].map((b) => <Tag key={b} label={b} />)}
+              {[...new Set([...spot.badges, ...spot.meals, ...spot.amenities])].map((b) => <Tag key={b} label={b} />)}
             </div>
           )}
           <div className="mt-5 pt-4 border-t border-rule">

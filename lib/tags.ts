@@ -26,8 +26,6 @@ export const AMENITY_TAGS: [string, string][] = [
   // Was 'Veg' in the badge list and 'Veg Options' in the amenity list: two strings for one thing, so
   // both rendered side by side on the page. One name now.
   ['servesVegetarianFood', 'Veg Options'],
-  ['servesBreakfast', 'Breakfast'],
-  ['servesBrunch', 'Brunch'],
   ['servesBeer', 'Beer'],
   ['servesWine', 'Wine'],
   ['servesCocktails', 'Cocktails'],
@@ -37,6 +35,18 @@ export const AMENITY_TAGS: [string, string][] = [
   ['reservable', 'Reservations'],
   ['liveMusic', 'Live Music'],
   ['goodForWatchingSports', 'Sports'],
+];
+
+/**
+ * When they serve. Google gives us all four and we were only ever reading two of them, both filed
+ * under "amenities" as if breakfast were a patio. 95 spots serve lunch and nothing on the site could
+ * tell you which.
+ */
+export const MEAL_TAGS: [string, string][] = [
+  ['servesBreakfast', 'Breakfast'],
+  ['servesBrunch', 'Brunch'],
+  ['servesLunch', 'Lunch'],
+  ['servesDinner', 'Dinner'],
 ];
 
 export const CHAIN_STATUS: { value: string; label: string; help: string }[] = [

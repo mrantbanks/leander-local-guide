@@ -1,132 +1,115 @@
 import Link from 'next/link';
-import { auth, signIn } from '@/auth';
-import { getSpot, isVerifiedOwner } from '@/lib/spots';
-import { getOwnerContent } from '@/lib/owner';
-import { getOwnerSpecials, scheduleLabel } from '@/lib/specials';
-import { removeSpecialAction } from '@/app/actions';
-import OwnerEditor from '@/components/OwnerEditor';
-import LocalsOnlyStudio from '@/components/LocalsOnlyStudio';
-import StampItButton from '@/components/StampItButton';
-import Help from '@/components/Help';
+import { notFound } from 'next/navigation';
+import { getSpotAny } from '@/lib/spots';
+import { ownerGate } from '@/lib/owner';
+import { getOwnerSpecials } from '@/lib/specials';
+import { getEventsForSpot } from '@/lib/events';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Owner desk', robots: { index: false } };
 
-export default async function OwnerDash({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ welcome?: string }> }) {
+// The overview answers one question: is this working, and what should I do next. Nothing else.
+export default async function OwnerOverview({
+  params, searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ welcome?: string }>;
+}) {
   const { slug } = await params;
   const sp = await searchParams;
-  const session = await auth();
-  const email = session?.user?.email;
+  if (!(await ownerGate(slug))) notFound();
 
-  if (!email) {
-    return (
-      <main className="min-h-[70vh] flex items-center justify-center px-5">
-        <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/owner/${slug}` }); }} className="text-center">
-          <h1 className="font-display font-black text-2xl text-ink mb-3">Sign in to manage your listing</h1>
-          <button className="font-stamp uppercase tracking-[0.1em] text-sm bg-ink text-paper px-6 py-3 rounded-sm">Sign in with Google</button>
-        </form>
-      </main>
-    );
-  }
-  if (!(await isVerifiedOwner(slug, email))) {
-    return (
-      <main className="min-h-[70vh] flex items-center justify-center px-5 text-center">
-        <div>
-          <h1 className="font-display font-black text-2xl text-ink">This isn&apos;t your listing yet.</h1>
-          <p className="font-ui text-sm text-ink-soft mt-2">Signed in as {email}. If you own this spot, claim it with the code on your printed sheet at <Link href="/claim" className="text-chile underline">/claim</Link>.</p>
-        </div>
-      </main>
-    );
-  }
+  const spot = await getSpotAny(slug);
+  if (!spot) notFound();
+  const [perks, events] = await Promise.all([getOwnerSpecials(slug), getEventsForSpot(slug)]);
 
-  const spot = await getSpot(slug);
-  if (!spot) return <main className="p-10 text-center font-ui">Listing not found.</main>;
-  const { ownerContent, googleWeek } = await getOwnerContent(slug);
-  const specials = await getOwnerSpecials(slug);
-
-  const stats = [
-    { n: spot.wantToGo, label: 'want to try you', lead: true },
-    { n: spot.worthIt, label: 'say you&apos;re worth it' },
-    { n: spot.beenHere, label: 'have been here' },
-  ];
   const anyStats = spot.wantToGo + spot.worthIt + spot.beenHere > 0;
 
-  return (
-    <main className="max-w-2xl mx-auto px-5 py-6 pb-24">
-      {/* header */}
-      <div className="flex items-baseline justify-between border-b-2 border-ink pb-3 mb-5">
-        <div>
-          <p className="font-stamp uppercase tracking-[0.18em] text-chile text-sm">Owner desk</p>
-          <h1 className="font-display font-black text-2xl text-ink leading-tight">{spot.name}</h1>
-        </div>
-        <Link href={`/r/${slug}`} target="_blank" className="font-stamp uppercase tracking-[0.08em] text-xs text-chile hover:text-oxblood shrink-0">View live page →</Link>
-      </div>
+  // The honest to-do list. Each row is a thing they can actually go and do, and the ones already done
+  // are ticked rather than hidden, so the desk feels like progress and not a nag.
+  const todo = [
+    { done: !!spot.hoursToday, label: 'Check your hours are right', href: `/owner/${slug}/details` },
+    { done: !!spot.menuUrl, label: 'Add your menu link', href: `/owner/${slug}/details` },
+    { done: !!spot.ownerBlurb, label: 'Say something in your own words', href: `/owner/${slug}/details` },
+    { done: events.length > 0, label: "Put your trivia night on What's On", href: `/owner/${slug}/events` },
+    { done: perks.length > 0, label: 'Offer a perk on the Local Passport', href: `/owner/${slug}/passport` },
+  ];
+  const left = todo.filter((t) => !t.done).length;
 
+  return (
+    <div>
       {sp.welcome && (
         <div className="border-2 border-dashed border-oxblood bg-paper-raised p-4 mb-5 -rotate-1">
           <p className="font-stamp uppercase tracking-[0.12em] text-chile text-xs">Claimed ✓</p>
           <p className="font-hand text-2xl text-ink mt-0.5">Welcome in. This is your place now.</p>
-          <p className="font-ui text-sm text-ink-soft mt-1">Do one thing below, see it go live. Fix your hours, add a note, drop your menu link. Takes a minute.</p>
+          <p className="font-ui text-sm text-ink-soft mt-1">Do one thing on the list below and watch it go live on your page.</p>
         </div>
       )}
 
-      {/* stats — positive only, never "skip it" */}
+      <h1 className="font-display font-black text-2xl text-ink mb-1">How you are doing</h1>
+      <p className="font-ui text-sm text-ink-soft mb-6">
+        Everything here is counted on the guide only. Most of your customers will find you elsewhere, and that is normal.
+        This is the part we can actually prove.
+      </p>
+
       {anyStats ? (
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          {stats.map((s, i) => (
+        <div className="grid grid-cols-3 gap-2 mb-8">
+          {[
+            { n: spot.wantToGo, label: 'want to try you', lead: true },
+            { n: spot.worthIt, label: "say you're worth it" },
+            { n: spot.beenHere, label: 'have been here' },
+          ].map((s, i) => (
             <div key={i} className={`border rounded-sm p-3 text-center ${s.lead ? 'border-chile bg-paper-raised' : 'border-rule'}`}>
               <div className="font-display font-black text-3xl text-ink">{s.n}</div>
-              <div className="font-ui text-sm text-ink-soft leading-tight mt-0.5" dangerouslySetInnerHTML={{ __html: s.label }} />
+              <div className="font-ui text-sm text-ink-soft leading-tight mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="font-ui text-sm text-ink-soft mb-6 bg-paper-raised border border-rule rounded-sm p-3">Once locals start tapping on your page, your numbers show up here. Add a special or a note to get the ball rolling.</p>
+        <p className="font-ui text-sm text-ink-soft mb-8 bg-paper-raised border border-rule rounded-sm p-3">
+          Nobody has tapped anything on your page yet. Numbers show up here as locals start weighing in.
+        </p>
       )}
 
-      {/* the editable card stack */}
-      <OwnerEditor
-        slug={slug}
-        googleWeek={googleWeek}
-        initial={{
-          phone: spot.phone || '', website: spot.website || '', menuUrl: spot.menuUrl || '', orderUrl: spot.orderUrl || '',
-          happyHour: spot.happyHour || '', blurb: spot.ownerBlurb || '', hours: ownerContent.hours || null,
-        }}
-      />
-
-      {/* The Local Passport — owner-posted perks */}
-      <section className="mt-8 border-t-2 border-ink pt-5">
-        <div className="flex items-center gap-2 mb-1">
-          <img src="/locals-only.webp" alt="" width={28} height={28} className="w-7 h-7" />
-          <h2 className="font-stamp uppercase tracking-[0.14em] text-ink text-base">Local Passport</h2>
-          <Help text="A standing perk you offer to people who found you through the guide. It shows on your page under the Local Passport, and diners pull up a printable stamp to show at the counter. Honor system — you decide what to give." example="Free churro with any plate. Or $2 tacos on Tuesdays." />
-        </div>
-        <p className="font-ui text-sm text-ink-soft mb-4">Add a perk to the Passport — your call what it is. Locals pull up a stamp to show you at the counter. Post as many as you like.</p>
-        <LocalsOnlyStudio slug={slug} restaurant={spot.name} category={spot.category} cuisines={spot.cuisines} />
-        {specials.length > 0 && (
-          <ul className="mt-5 space-y-2">
-            {specials.map((s) => (
-              <li key={s.id} className="bg-paper-raised border border-rule rounded-sm p-3 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="font-display font-bold text-ink truncate">{s.title}</p>
-                  <p className="font-stamp uppercase tracking-[0.06em] text-sm text-chile">{scheduleLabel(s)}</p>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  {/* Tap when a local actually shows you the stamp. That is the proof we sent them. */}
-                  <StampItButton specialId={s.id} />
-                  <Link href={`/ticket/${s.id}`} target="_blank" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile">Stamp →</Link>
-                  <form action={async () => { 'use server'; await removeSpecialAction(s.id); }}><button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood">End it</button></form>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* the trust line */}
-      <p className="font-ui text-xs text-ink-soft mt-8 border-t border-rule pt-4">
-        The review, the verdict, and the &ldquo;worth it&rdquo; tally are Anthony&apos;s and the public&apos;s — you can&apos;t edit those, and that&apos;s the point: your page stays credible.
+      {/* The to-do list. This is the real job of the overview. */}
+      <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-1">
+        {left === 0 ? 'Your page is in good shape' : `${left} thing${left === 1 ? '' : 's'} worth doing`}
+      </h2>
+      <p className="font-ui text-xs text-ink-soft mb-3">
+        The spots people tap most are the ones with real hours, a menu link, something on the board, and a perk.
       </p>
-    </main>
+      <ul className="border-t border-rule mb-8">
+        {todo.map((t) => (
+          <li key={t.label} className="border-b border-rule py-2.5 flex items-center gap-3">
+            <span className={`font-stamp text-sm shrink-0 ${t.done ? 'text-chile' : 'text-ink-soft/40'}`}>
+              {t.done ? '✓' : '□'}
+            </span>
+            {t.done ? (
+              <span className="font-ui text-sm text-ink-soft line-through">{t.label}</span>
+            ) : (
+              <Link href={t.href} className="font-ui text-sm text-ink hover:text-chile underline underline-offset-2">{t.label}</Link>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <div className="border-2 border-ink bg-paper-raised p-4">
+        <p className="font-stamp uppercase tracking-[0.1em] text-xs text-chile mb-1">What locals actually see</p>
+        <p className="font-ui text-sm text-ink-soft mb-3">
+          Your page is live right now. Everything you change here shows up on it within about a minute.
+        </p>
+        <Link
+          href={`/r/${slug}`}
+          target="_blank"
+          className="inline-block font-stamp uppercase tracking-[0.08em] text-xs bg-chile text-paper px-4 py-2 rounded-sm hover:bg-oxblood"
+        >
+          Open your live page →
+        </Link>
+      </div>
+
+      <p className="font-ui text-xs text-ink-soft mt-8 border-t border-rule pt-4">
+        The review, the verdict, and the &ldquo;worth it&rdquo; tally are Anthony&apos;s and the public&apos;s. You cannot edit those,
+        and that is the point: your page stays credible, so being on it means something.
+      </p>
+    </div>
   );
 }

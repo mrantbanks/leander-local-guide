@@ -73,12 +73,39 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
                   <span className="font-ui text-xs text-ink-soft/60">not yet</span>
                 )}
               </td>
-              <td className="text-right">
-                <form action={setHidden.bind(null, r.slug, !r.hidden)} className="inline">
-                  <button className={`font-stamp uppercase tracking-[0.08em] hover:opacity-70 ${r.hidden ? 'text-ink-soft' : 'text-oxblood'}`}>{r.hidden ? 'Show' : 'Hide'}</button>
+              {/* Hide removes a listing from the ENTIRE public site: the directory, the map, search,
+                  its own page, the boards. It sat one careless pixel from Edit, with no confirm.
+                  Ask first, and put some air between them. */}
+              <td className="text-right pr-6">
+                <form
+                  action={setHidden.bind(null, r.slug, !r.hidden)}
+                  className="inline"
+                  onSubmit={(e) => {
+                    if (r.hidden) return; // showing it again needs no ceremony
+                    if (!confirm(`Hide ${r.name}?\n\nIt disappears from the whole public site: the directory, the map, search, the boards, and its own page. Nothing is deleted, and you can show it again from here.`)) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  <button
+                    className={`font-stamp uppercase tracking-[0.08em] px-2 py-1 rounded-sm border transition-colors ${
+                      r.hidden
+                        ? 'text-ink-soft border-rule hover:border-ink hover:text-ink'
+                        : 'text-oxblood border-oxblood/40 hover:bg-oxblood hover:text-paper hover:border-oxblood'
+                    }`}
+                  >
+                    {r.hidden ? 'Show' : 'Hide'}
+                  </button>
                 </form>
               </td>
-              <td className="text-right"><Link href={`/admin/r/${r.slug}`} className="text-chile font-stamp uppercase tracking-[0.08em] hover:text-oxblood">Edit</Link></td>
+              <td className="text-right">
+                <Link
+                  href={`/admin/r/${r.slug}`}
+                  className="inline-block font-stamp uppercase tracking-[0.08em] px-2 py-1 rounded-sm border border-chile/40 text-chile hover:bg-chile hover:text-paper transition-colors"
+                >
+                  Edit
+                </Link>
+              </td>
             </tr>
           ))}
           {filtered.length === 0 ? (

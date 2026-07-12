@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getWhatsOn } from '@/lib/events';
 import SiteFooter from '@/components/SiteFooter';
+import EventCard from '@/components/EventCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,27 +50,15 @@ export default async function WhatsOnPage() {
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {d.items.map((it) => (
                     <li key={`${d.iso}-${it.id}`}>
-                      {/* The whole card is the link, so the hit area is the card and not four words
-                          of the venue name. */}
-                      <Link
-                        href={`/r/${it.slug}`}
-                        className="group flex gap-3 h-full border border-rule bg-paper-raised rounded-sm p-4 transition-colors hover:border-ink hover:bg-paper"
-                      >
-                        <span className="text-3xl leading-none shrink-0" aria-hidden="true">{it.emoji}</span>
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-baseline gap-x-2">
-                            <span className="font-stamp uppercase tracking-[0.08em] text-chile text-base">{it.time || 'Time TBA'}</span>
-                            <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft">{it.label}</span>
-                          </div>
-                          <p className="font-display font-bold text-ink text-xl leading-tight mt-1 transition-colors group-hover:text-oxblood">
-                            {it.title}
-                          </p>
-                          <p className="font-ui text-base text-ink-soft mt-0.5 truncate">{it.spot}</p>
-                          {!it.fresh && (
-                            <p className="font-stamp uppercase tracking-[0.06em] text-sm text-ink-soft/80 mt-1.5">⚠ Unconfirmed, call ahead</p>
-                          )}
-                        </div>
-                      </Link>
+                      <EventCard
+                        emoji={it.emoji}
+                        time={it.time}
+                        typeLabel={it.label}
+                        title={it.title}
+                        spot={it.spot}
+                        slug={it.slug}
+                        unconfirmed={!it.fresh}
+                      />
                     </li>
                   ))}
                 </ul>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Help from '@/components/Help';
-import { AMENITY_TAGS, EDITORIAL_BADGES, CHAIN_STATUS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, EDITORIAL_BADGES, CHAIN_STATUS } from '@/lib/tags';
 
 /**
  * Every tag that can appear on a spot page, in one grid, with the live ones lit up.
@@ -19,10 +19,12 @@ const on = 'bg-chile text-paper border-chile';
 const off = 'border-rule text-ink-soft hover:border-ink hover:text-ink';
 
 export default function TagPicker({
-  amenities, badges, chainStatus, computed,
+  amenities, meals, badges, chainStatus, computed,
 }: {
   /** attribute keys that are currently true */
   amenities: string[];
+  /** meal-time attribute keys that are currently true */
+  meals: string[];
   /** editorial.badges currently pinned */
   badges: string[];
   chainStatus: string;
@@ -30,6 +32,7 @@ export default function TagPicker({
   computed: { label: string; why: string }[];
 }) {
   const [amen, setAmen] = useState<string[]>(amenities);
+  const [meal, setMeal] = useState<string[]>(meals);
   const [pins, setPins] = useState<string[]>(badges);
   const [chain, setChain] = useState(chainStatus || 'unknown');
 
@@ -108,6 +111,25 @@ export default function TagPicker({
           ))}
         </div>
         <input type="hidden" name="badges" value={pins.join(',')} />
+      </div>
+
+      {/* When they serve. Drives the Breakfast / Lunch / Dinner / Brunch filter on the browse grid. */}
+      <div>
+        <p className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mb-1.5 flex items-center">
+          When they serve
+          <Help
+            text="Drives the Breakfast, Lunch, Dinner and Brunch filter on the home page, which is the first question most hungry people ask. Imported from Google, and Google gets it wrong constantly, especially for trucks and bakeries."
+            example="A donut shop that shuts at 1pm does not serve dinner, whatever Google says."
+          />
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {MEAL_TAGS.map(([key, label]) => (
+            <button key={key} type="button" onClick={() => toggle(meal, setMeal, key)} className={`${chip} ${meal.includes(key) ? on : off}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <input type="hidden" name="meals" value={meal.join(',')} />
       </div>
 
       {/* Amenities. Imported from Google, and Google is often wrong. */}

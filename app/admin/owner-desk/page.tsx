@@ -1,22 +1,28 @@
-import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 
 export const dynamic = 'force-dynamic';
 
+/** The hidden restaurant the demo desk runs on. Hidden = absent from every public surface. */
+export const DEMO_SLUG = 'demo-cielo-rojo';
+
+/**
+ * The owner-desk demo IS the owner desk.
+ *
+ * This used to iframe public/owner-desk-demo.html: 754 hand-maintained lines that promised 148/63/211
+ * lifetime tiles no real owner will see for a year, still said "Locals Only" months after the rebrand
+ * to The Local Passport, and misled a product memo into describing a blank text box that had not
+ * existed for weeks. A demo that drifts from the product is worse than no demo, because it is a demo
+ * of a product that does not exist.
+ *
+ * So it now redirects to the REAL /owner/<slug>, on a demo restaurant that is hidden from the whole
+ * public site. Admins can open any owner desk (lib/owner.ts canManage). Every change we ever ship to
+ * real owners shows up here the same day, automatically, because it is the same code.
+ *
+ * GUARDRAIL: never rebuild a separate fake of the owner desk. If you want to show it, show it.
+ */
 export default async function OwnerDeskDemoPage() {
   const session = await auth();
-  if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
-    return <main className="max-w-md mx-auto px-5 py-24 text-center"><p className="font-ui text-sm text-ink-soft">Admins only. <Link href="/admin" className="text-chile">Sign in</Link></p></main>;
-  }
-  return (
-    <main className="max-w-5xl mx-auto px-5 py-8">
-      <h1 className="font-display font-black text-3xl text-ink">Owner Desk</h1>
-      <p className="font-ui text-sm text-ink-soft mt-1 mb-5 max-w-2xl leading-relaxed">
-        A clickable walkthrough of what a verified owner sees after they claim a listing — sign-in, stats, the “From the owner” editor, hours, and Locals Only deals. It runs on dummy data (Cielo Rojo Taquería) and saves nothing. <a href="/owner-desk-demo.html" target="_blank" className="text-chile hover:text-oxblood">Open in a new tab →</a>
-      </p>
-      <div className="border-2 border-ink rounded-[2px] overflow-hidden bg-paper" style={{ height: 'calc(100vh - 220px)', minHeight: 560 }}>
-        <iframe title="Owner desk demo" src="/owner-desk-demo.html" className="w-full h-full" style={{ border: 0 }} />
-      </div>
-    </main>
-  );
+  if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) redirect('/admin');
+  redirect(`/owner/${DEMO_SLUG}`);
 }

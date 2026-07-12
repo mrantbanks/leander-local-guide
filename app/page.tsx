@@ -47,7 +47,7 @@ export default async function Home() {
     ratingGoogle: s.ratingGoogle, priceTier: s.priceTier, addressLine: s.addressLine,
     hoursToday: s.hoursToday, openNow: s.openNow, periods: s.periods, open24: s.open24, openLate: s.openLate,
     photo: s.photo, photoCredit: s.photoCredit,
-    verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities,
+    verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities, meals: s.meals,
     chainStatus: s.chainStatus, beenHere: s.beenHere, worthIt: s.worthIt, itsFine: s.itsFine,
     skipIt: s.skipIt, wantToGo: s.wantToGo, visited: s.visited, happyHour: s.happyHour, localPhotos: s.localPhotos, headerPhoto: s.headerPhoto,
     comingSoon: s.comingSoon,

@@ -225,6 +225,59 @@ export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { t
   return { title, description: clip(body, DESC_MAX) };
 }
 
+// Google's day numbering in the Places payload is 0 = Sunday. schema.org wants names.
+const SCHEMA_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const hhmm = (mins: number) => `${String(Math.floor((mins % 1440) / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
+
+/**
+ * The facts about the place, as structured data.
+ *
+ * We render hours, a phone number, a patio, dog-friendliness and whether they take reservations all
+ * over the page, and NONE of it reached the JSON-LD. openingHoursSpecification is a documented
+ * LocalBusiness property and one of the few Google actually reads for local results, and we were
+ * simply not emitting it.
+ *
+ * Everything here is a fact we can point at on the page. No invented properties: schema.org has no
+ * breakfast/lunch/dinner concept, so the meal-time tags stay on the page and out of the markup
+ * rather than being crowbarred into something that means something else.
+ */
+export function facilitiesLd(spot: Spot): object {
+  const out: Record<string, unknown> = {};
+
+  // Hours. spot.periods is [openAbs, closeAbs] in minutes from Sunday 00:00, and a close that wraps
+  // past the end of the week has had 10080 added to it, so mask it back before reading the day.
+  if (spot.open24) {
+    out.openingHoursSpecification = [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: SCHEMA_DAYS.map((d) => `https://schema.org/${d}`),
+      opens: '00:00',
+      closes: '23:59',
+    }];
+  } else if (spot.periods.length) {
+    out.openingHoursSpecification = spot.periods.map(([openAbs, closeAbs]) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: `https://schema.org/${SCHEMA_DAYS[Math.floor(openAbs / 1440) % 7]}`,
+      opens: hhmm(openAbs),
+      closes: hhmm(closeAbs % 10080),
+    }));
+  }
+
+  if (spot.amenities.includes('Reservations')) out.acceptsReservations = true;
+  if (spot.amenities.includes('Dog-Friendly')) out.petsAllowed = true;
+
+  // The rest of the amenities, as the schema.org type that exists for exactly this.
+  const feature = spot.amenities.filter((a) => a !== 'Dog-Friendly' && a !== 'Reservations');
+  if (feature.length) {
+    out.amenityFeature = feature.map((name) => ({
+      '@type': 'LocationFeatureSpecification',
+      name,
+      value: true,
+    }));
+  }
+
+  return out;
+}
+
 /** What getReviews() in lib/spots.ts returns. The ONLY thing allowed to become a star rating. */
 export type ReaderReviews = {
   avg: number | null;

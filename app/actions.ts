@@ -7,10 +7,12 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { isVerifiedOwner } from '@/lib/spots';
-import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
+import { consumeClaim, saveOwnerContent, canManage, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
-import { AMENITY_TAGS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS } from '@/lib/tags';
+import { validateEvent, type EventInput } from '@/lib/eventInput';
+import { EVENT_TYPES } from '@/lib/eventLabels';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -101,8 +103,10 @@ export async function updateReview(slug: string, fd: FormData) {
   // Google is regularly wrong about these (it will swear a taco trailer takes reservations), and
   // Anthony has stood in the room. His toggle wins.
   const lit = new Set(String(fd.get('amenities') || '').split(',').map((s) => s.trim()).filter(Boolean));
+  const litMeals = new Set(String(fd.get('meals') || '').split(',').map((s) => s.trim()).filter(Boolean));
   const amenities: Record<string, boolean> = {};
   for (const [key] of AMENITY_TAGS) amenities[key] = lit.has(key);
+  for (const [key] of MEAL_TAGS) amenities[key] = litMeals.has(key);
 
   const chainStatus = String(fd.get('chainStatus') || '').trim();
   const CHAIN_OK = ['local', 'regional', 'chain', 'unknown'];
@@ -296,6 +300,76 @@ export async function addEvent(slug: string, fd: FormData) {
   revalidateSpot(slug);
   revalidatePath('/whats-on');
 }
+/**
+ * The one insert for an event, whoever is adding it.
+ *
+ * Anthony adds these when he is standing in the room, and a verified owner adds their own, and the
+ * scraper guesses at them. The scraper's guesses land as `pending` and get verified; a human who is
+ * actually there is the authority on their own calendar, so theirs go straight up. `source` records
+ * which, so /whats-on can keep flagging the unverified scrapes and only those.
+ */
+async function insertEvent(placeId: string, e: EventInput, source: 'admin' | 'owner'): Promise<{ ok: boolean; error?: string }> {
+  const bad = validateEvent(e);
+  if (bad) return { ok: false, error: bad };
+
+  const title = clean(e.title)?.slice(0, 120);
+  if (!title) return { ok: false, error: 'Give it a name.' };
+  if (!EVENT_TYPES.includes(e.eventType)) return { ok: false, error: 'Unknown kind of event.' };
+
+  const days = (e.daysOfWeek || []).filter((n) => n >= 1 && n <= 7);
+  const recurring = e.freq !== 'once';
+
+  await pool.query(
+    `insert into events
+       (place_id, event_type, title, description, freq, days_of_week, week_of_month, event_date,
+        start_time, end_time, ends_on, source, status, verified, confidence, last_confirmed_at)
+     values ($1,$2,$3,$4,$5::event_freq,$6,$7,$8,$9,$10,$11,$12::event_source,'approved',true,100,now())`,
+    [
+      placeId, e.eventType, title, clean(e.description ?? null)?.slice(0, 500) ?? null,
+      e.freq,
+      recurring && days.length ? days : null,
+      e.freq === 'monthly_dow' ? e.weekOfMonth ?? null : null,
+      e.freq === 'once' ? e.eventDate ?? null : null,
+      e.startTime || null,
+      e.endTime || null,
+      recurring ? e.endsOn || null : null,
+      source,
+    ]
+  );
+  return { ok: true };
+}
+
+/** Admin: add an event to any spot. Anthony asks the owner while he is standing there. */
+export async function addEventAction(slug: string, input: EventInput): Promise<{ ok: boolean; error?: string }> {
+  if (!(await requireAdmin())) return { ok: false, error: 'Not authorized' };
+  const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
+  if (!rows[0]) return { ok: false, error: 'No such spot' };
+  const r = await insertEvent(rows[0].id, input, 'admin');
+  if (r.ok) { revalidateSpot(slug); revalidatePath('/whats-on'); }
+  return r;
+}
+
+/** Owner: add an event to their own spot. They know their own calendar better than any scraper. */
+export async function createOwnerEvent(slug: string, input: EventInput): Promise<{ ok: boolean; error?: string }> {
+  if (!(await canManage(slug))) return { ok: false, error: 'Not authorized' };
+  const { rows } = await pool.query('select id from restaurants where slug = $1', [slug]);
+  if (!rows[0]) return { ok: false, error: 'No such spot' };
+  const r = await insertEvent(rows[0].id, input, 'owner');
+  if (r.ok) { revalidateSpot(slug); revalidatePath('/whats-on'); }
+  return r;
+}
+
+/** Owner: take one of their own events down. Scoped to their spot, so they cannot touch anyone else's. */
+export async function removeOwnerEvent(slug: string, id: number): Promise<{ ok: boolean }> {
+  if (!(await canManage(slug))) return { ok: false };
+  const r = await pool.query(
+    `delete from events where id = $1 and place_id = (select id from restaurants where slug = $2)`,
+    [id, slug]
+  );
+  if (r.rowCount) { revalidateSpot(slug); revalidatePath('/whats-on'); }
+  return { ok: !!r.rowCount };
+}
+
 export async function deleteEvent(id: number, slug: string) {
   if (!(await requireAdmin())) return;
   await pool.query('delete from events where id = $1', [id]);
@@ -325,9 +399,8 @@ export async function claimRestaurant(tokenId: number): Promise<{ ok: boolean; s
 }
 
 export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise<{ ok: boolean; error?: string }> {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email || !(await isVerifiedOwner(slug, email))) return { ok: false, error: 'Not authorized' };
+  const email = await canManage(slug);
+  if (!email) return { ok: false, error: 'Not authorized' };
   // Only ever writes owner_content. Never touches editorial (Anthony's) or attributes (admin's).
   const safe: OwnerContent = {};
   for (const k of ['phone', 'website', 'menuUrl', 'orderUrl', 'happyHour', 'blurb'] as const) {
@@ -343,9 +416,8 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
 
 // The Local Passport — owner-created, honor-based perks.
 export async function createSpecialAction(slug: string, input: SpecialInput): Promise<{ ok: boolean; error?: string }> {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email || !(await isVerifiedOwner(slug, email))) return { ok: false, error: 'Not authorized' };
+  const email = await canManage(slug);
+  if (!email) return { ok: false, error: 'Not authorized' };
   const title = clean(input.title);
   if (!title) return { ok: false, error: 'Add the perk' };
   await createSpecial(slug, email, {
@@ -358,10 +430,8 @@ export async function createSpecialAction(slug: string, input: SpecialInput): Pr
 }
 
 export async function removeSpecialAction(id: number): Promise<{ ok: boolean }> {
-  const session = await auth();
-  const email = session?.user?.email;
   const slug = await specialOwnerSlug(id);
-  if (!email || !slug || !(await isVerifiedOwner(slug, email))) return { ok: false };
+  if (!slug || !(await canManage(slug))) return { ok: false };
   await removeSpecial(id);
   revalidateSpot(slug);
   return { ok: true };
@@ -431,10 +501,8 @@ export async function recordStampPull(specialId: number, source?: string): Promi
  * Internally 'redeem'; every user-facing surface says "stamp it" (brand ban list).
  */
 export async function recordStampRedeem(specialId: number): Promise<{ ok: boolean; total?: number }> {
-  const session = await auth();
-  const email = session?.user?.email;
   const slug = await specialOwnerSlug(specialId);
-  if (!email || !slug || !(await isVerifiedOwner(slug, email))) return { ok: false };
+  if (!slug || !(await canManage(slug))) return { ok: false };
   await pool.query(
     `insert into passport_stamp_events (place_id, special_id, event_type, redeemed_by, source)
      select place_id, id, 'redeem', 'owner', 'listing' from specials where id = $1 and status = 'active'`,

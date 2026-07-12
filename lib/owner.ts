@@ -114,3 +114,37 @@ export async function ownedPlaces(email: string): Promise<{ slug: string; name: 
      where lower(c.user_email)=lower($1) and c.status='verified' order by r.name`, [email]);
   return rows;
 }
+
+/**
+ * Guard for every page under /owner/[slug]. The layout already blocks rendering, but a layout is a
+ * wrapper and not a security boundary, and these pages fetch the owner's own data. Cheap to re-check.
+ */
+export async function ownerGate(slug: string): Promise<string | null> {
+  const { auth } = await import('@/auth');
+  const { isVerifiedOwner } = await import('@/lib/spots');
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) return null;
+  // Admins can open any owner desk. Anthony has to be able to see EXACTLY what an owner sees, both to
+  // help them over the phone and to demo the product without maintaining a separate fake of it.
+  if ((session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) return email;
+  if (!(await isVerifiedOwner(slug, email))) return null;
+  return email;
+}
+
+/**
+ * Can this signed-in user manage this listing? Verified owner, or an admin.
+ *
+ * The admin bypass is what lets /admin/owner-desk be the REAL owner desk for a demo restaurant
+ * rather than a hand-maintained fake of it, and it lets Anthony fix an owner's hours over the phone.
+ * Every owner-facing mutation goes through here, so the two can never disagree about who is allowed.
+ */
+export async function canManage(slug: string): Promise<string | null> {
+  const { auth } = await import('@/auth');
+  const { isVerifiedOwner } = await import('@/lib/spots');
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) return null;
+  if ((session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) return email;
+  return (await isVerifiedOwner(slug, email)) ? email : null;
+}

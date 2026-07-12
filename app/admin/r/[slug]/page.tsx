@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { pool } from '@/lib/db';
-import { updateReview, addEvent, deleteEvent } from '@/app/actions';
+import { updateReview, addEventAction, deleteEvent } from '@/app/actions';
 import { EVENT_LABELS } from '@/lib/events';
 import { HIDDEN_GEM } from '@/lib/spots';
 import { auth } from '@/auth';
@@ -9,7 +9,9 @@ import PhotoStudio from '@/components/PhotoStudio';
 import MenuStudio from '@/components/MenuStudio';
 import ReviewComposer from '@/components/ReviewComposer';
 import TagPicker from '@/components/TagPicker';
-import { AMENITY_TAGS, CATEGORIES, computedTags } from '@/lib/tags';
+import EventComposer from '@/components/EventComposer';
+import type { EventInput } from '@/lib/eventInput';
+import { AMENITY_TAGS, MEAL_TAGS, CATEGORIES, computedTags } from '@/lib/tags';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +39,10 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const ph = await pool.query('select id, filename, caption, is_menu, is_header from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
   const ev = await pool.query('select id, event_type, title, freq, days_of_week, start_time, status from events where place_id = (select id from restaurants where slug = $1) order by event_type', [slug]);
   const action = updateReview.bind(null, slug);
+  async function addForSpot(input: EventInput) {
+    'use server';
+    return addEventAction(slug, input);
+  }
   const field = 'w-full bg-paper-raised border border-rule px-3 py-2 font-ui text-ink rounded-[2px]';
   const label = 'block font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mb-1 mt-4';
 
@@ -105,6 +111,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <label className={label}>Tags on the page</label>
         <TagPicker
           amenities={AMENITY_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
+          meals={MEAL_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
           badges={Array.isArray(ed.badges) ? ed.badges : []}
           chainStatus={attr.chainStatus || 'unknown'}
           computed={computedTags({
@@ -164,23 +171,9 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
             ))}
           </ul>
         )}
-        <form action={addEvent.bind(null, slug)} className="space-y-2 bg-paper-raised border border-rule p-3">
-          <div className="flex flex-wrap gap-2">
-            <select name="event_type" className={`${field} !w-auto`}>{Object.entries(EVENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
-            <select name="freq" defaultValue="weekly" className={`${field} !w-auto`}>
-              <option value="weekly">Weekly</option><option value="monthly_dow">Monthly</option><option value="once">One-off</option>
-            </select>
-            <input name="start_time" type="time" className={`${field} !w-auto`} />
-          </div>
-          <div className="flex flex-wrap gap-3 font-ui text-xs text-ink">
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => (
-              <label key={d} className="flex items-center gap-1"><input type="checkbox" name="dow" value={i + 1} />{d}</label>
-            ))}
-          </div>
-          <input name="title" placeholder="Title (e.g. Geeks Who Drink Trivia)" className={field} />
-          <input name="description" placeholder="Description (optional)" className={field} />
-          <button className="font-stamp uppercase tracking-[0.1em] text-sm bg-ink text-paper px-4 py-2 hover:bg-chile transition-colors">Add event</button>
-        </form>
+        {/* Same composer the owner uses, so an event Anthony adds on a visit and one the owner adds
+            are the same record, made the same way, with the same live preview. */}
+        <EventComposer spotName={r.name as string} onCreate={addForSpot} />
       </section>
     </main>
   );

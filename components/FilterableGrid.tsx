@@ -14,7 +14,16 @@ const TOGGLES: { key: string; label: string; test: (s: CardSpot) => boolean }[] 
   { key: 'kid', label: 'Kid-Friendly', test: (s) => s.amenities.includes('Kid-Friendly') },
   { key: 'veg', label: 'Veg Options', test: (s) => s.amenities.includes('Veg Options') },
   { key: 'takeout', label: 'Takeout', test: (s) => s.amenities.includes('Takeout') },
-  { key: 'brunch', label: 'Brunch', test: (s) => s.amenities.includes('Brunch') },
+];
+
+// When they serve. Its own row, because "am I looking for breakfast" is the first question a hungry
+// person asks and it is not the same kind of question as "do they have a patio". The data was always
+// in Google's payload: 95 spots serve lunch and nothing on the site could tell you which.
+const MEALS: { key: string; label: string }[] = [
+  { key: 'Breakfast', label: 'Breakfast' },
+  { key: 'Brunch', label: 'Brunch' },
+  { key: 'Lunch', label: 'Lunch' },
+  { key: 'Dinner', label: 'Dinner' },
 ];
 
 const SORTS: Record<string, (a: CardSpot, b: CardSpot) => number> = {
@@ -26,6 +35,7 @@ const SORTS: Record<string, (a: CardSpot, b: CardSpot) => number> = {
 
 export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
   const [on, setOn] = useState<Set<string>>(new Set());
+  const [meals, setMeals] = useState<Set<string>>(new Set());
   const [cat, setCat] = useState('');
   const [cuisine, setCuisine] = useState('');
   const [price, setPrice] = useState(0);
@@ -37,21 +47,44 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
   const filtered = useMemo(() => {
     let r = spots.filter((s) =>
       [...on].every((k) => TOGGLES.find((t) => t.key === k)!.test(s)) &&
+      [...meals].every((m) => s.meals.includes(m)) &&
       (!cat || s.category === cat) &&
       (!cuisine || s.cuisines.includes(cuisine)) &&
       (!price || s.priceTier === price)
     );
     if (sort !== 'featured') r = [...r].sort(SORTS[sort]);
     return r;
-  }, [spots, on, cat, cuisine, price, sort]);
+  }, [spots, on, meals, cat, cuisine, price, sort]);
 
   const toggle = (k: string) => setOn((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; });
-  const clear = () => { setOn(new Set()); setCat(''); setCuisine(''); setPrice(0); setSort('featured'); };
-  const active = on.size > 0 || cat || cuisine || price || sort !== 'featured';
+  const toggleMeal = (k: string) => setMeals((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const clear = () => { setOn(new Set()); setMeals(new Set()); setCat(''); setCuisine(''); setPrice(0); setSort('featured'); };
+  const active = on.size > 0 || meals.size > 0 || cat || cuisine || price || sort !== 'featured';
   const sel = 'bg-paper-raised border border-rule px-2.5 py-1 font-ui text-sm text-ink rounded-[2px]';
 
   return (
     <div>
+      {/* When they serve. First, and visually distinct, because "I want breakfast" is the question
+          most people turn up with, and it is a different kind of question from "has a patio". */}
+      <div className="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-rule">
+        <span className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mr-1">Serving</span>
+        {MEALS.map((m) => {
+          const isOn = meals.has(m.key);
+          return (
+            <button
+              key={m.key}
+              onClick={() => toggleMeal(m.key)}
+              aria-pressed={isOn}
+              className={`font-stamp uppercase tracking-[0.07em] text-sm px-4 py-1.5 border-2 rounded-[2px] transition-colors ${
+                isOn ? 'bg-ink text-paper border-ink' : 'text-ink border-ink/30 hover:border-ink'
+              }`}
+            >
+              {m.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* toggles */}
       <div className="flex flex-wrap gap-2">
         {TOGGLES.map((t) => {
