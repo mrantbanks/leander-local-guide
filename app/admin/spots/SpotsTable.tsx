@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { setHidden } from '@/app/actions';
+import { setHidden, archiveSpot } from '@/app/actions';
 
 export type SpotRow = {
   slug: string;
@@ -48,7 +48,7 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
       <table className="w-full font-ui text-sm">
         <thead>
           <tr className="text-left border-b border-rule font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft">
-            <th className="py-2">Spot</th><th>Verdict</th><th>Visited</th><th></th><th></th>
+            <th className="py-2">Spot</th><th>Verdict</th><th>Visited</th><th></th><th></th><th></th>
           </tr>
         </thead>
         <tbody>
@@ -98,6 +98,23 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
                   </button>
                 </form>
               </td>
+              {/* Archive: closed for good, never really a restaurant, or a duplicate. Not a delete.
+                  Nothing is thrown away, and deleting is a separate, deliberate act from the archive. */}
+              <td className="text-right pr-6">
+                <form
+                  action={archiveSpot.bind(null, r.slug)}
+                  className="inline"
+                  onSubmit={(e) => {
+                    if (!confirm(`Archive ${r.name}?\n\nIt comes off the public site and out of this list, but nothing is thrown away: photos, reviews, tips and votes all stay. You can put it back any time, and you can delete it for good from the archive.`)) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  <button className="font-stamp uppercase tracking-[0.08em] px-2 py-1 rounded-sm border border-rule text-ink-soft hover:border-ink hover:text-ink transition-colors">
+                    Archive
+                  </button>
+                </form>
+              </td>
               <td className="text-right">
                 <Link
                   href={`/admin/r/${r.slug}`}
@@ -109,7 +126,7 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
             </tr>
           ))}
           {filtered.length === 0 ? (
-            <tr><td colSpan={5} className="py-6 font-hand text-xl text-oxblood">No spot matches &quot;{q}&quot;.</td></tr>
+            <tr><td colSpan={6} className="py-6 font-hand text-xl text-oxblood">No spot matches &quot;{q}&quot;.</td></tr>
           ) : null}
         </tbody>
       </table>

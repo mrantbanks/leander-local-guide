@@ -140,6 +140,87 @@ export async function setHidden(slug: string, hidden: boolean) {
   revalidatePath('/admin/spots');
 }
 
+/**
+ * Archive a spot. Not a delete: the row carries reader photos, tips, reviews and votes that we cannot
+ * get back, so archiving keeps every one of them. It also sets hidden, which is what actually takes it
+ * off the public site (every public query already filters `not hidden`).
+ *
+ * For a place that has closed for good, or was never really a restaurant, or is a duplicate.
+ */
+export async function archiveSpot(slug: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query(
+    'update restaurants set archived_at = now(), hidden = true, updated_at = now() where slug = $1',
+    [slug]
+  );
+  revalidateSpot(slug);
+  revalidatePath('/admin/spots');
+  revalidatePath('/admin/spots/archive');
+}
+
+/** Back to the working list. Stays hidden: putting it back on the site is a separate, deliberate click. */
+export async function restoreSpot(slug: string) {
+  if (!(await requireAdmin())) return;
+  await pool.query('update restaurants set archived_at = null, updated_at = now() where slug = $1', [slug]);
+  revalidateSpot(slug);
+  revalidatePath('/admin/spots');
+  revalidatePath('/admin/spots/archive');
+}
+
+/**
+ * Delete a spot and everything hanging off it, for ever. Only from the archive, and only after that
+ * screen has told you exactly what is about to go with it.
+ *
+ * Every foreign key to restaurants except events is NO ACTION, so a bare delete simply fails on the
+ * first child row. They go in dependency order, in ONE transaction, on ONE checked-out client: a
+ * half-deleted spot with orphaned photos is worse than either outcome. The uploaded image files go
+ * too, or we keep paying to store pictures of a restaurant nobody can reach.
+ */
+export async function deleteSpotForever(slug: string): Promise<{ ok: boolean; error?: string }> {
+  if (!(await requireAdmin())) return { ok: false, error: 'forbidden' };
+
+  const { rows } = await pool.query('select id, archived_at from restaurants where slug = $1', [slug]);
+  const spot = rows[0];
+  if (!spot) return { ok: false, error: 'No such spot' };
+  // The archive is the only door to this. You cannot delete something you have not deliberately taken
+  // out of circulation first.
+  if (!spot.archived_at) return { ok: false, error: 'Archive it first.' };
+
+  const files = await pool.query('select filename from photos where place_id = $1', [spot.id]);
+
+  const client = await pool.connect();
+  try {
+    await client.query('begin');
+    // passport_stamp_events first: it points at BOTH restaurants and specials.
+    await client.query('delete from passport_stamp_events where place_id = $1', [spot.id]);
+    await client.query('delete from specials           where place_id = $1', [spot.id]);
+    await client.query('delete from owner_responses    where place_id = $1', [spot.id]);
+    await client.query('delete from owner_claim_tokens where place_id = $1', [spot.id]);
+    await client.query('delete from claims             where place_id = $1', [spot.id]);
+    await client.query('delete from photos            where place_id = $1', [spot.id]);
+    await client.query('delete from place_signals     where place_id = $1', [spot.id]);
+    await client.query('delete from reviews           where place_id = $1', [spot.id]);
+    await client.query('delete from tips              where place_id = $1', [spot.id]);
+    await client.query('delete from feed_events       where place_id = $1', [spot.id]);
+    await client.query('delete from events            where place_id = $1', [spot.id]); // cascades anyway
+    await client.query('delete from restaurants       where id = $1', [spot.id]);
+    await client.query('commit');
+  } catch (e) {
+    await client.query('rollback');
+    return { ok: false, error: (e as Error).message };
+  } finally {
+    client.release();
+  }
+
+  // Only once the database says it is gone. Files are unrecoverable, and the row is not worth risking.
+  const { deleteUpload } = await import('@/lib/r2');
+  for (const f of files.rows) await deleteUpload(f.filename as string).catch(() => {});
+
+  revalidatePath('/admin/spots');
+  revalidatePath('/admin/spots/archive');
+  return { ok: true };
+}
+
 // Admin: delete an uploaded photo.
 export async function deletePhoto(id: number, slug: string) {
   const session = await auth();
