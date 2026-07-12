@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { BOARDS } from '@/lib/boards';
+import Icon from '@/components/Icon';
 import SiteFooter from '@/components/SiteFooter';
 
 export const metadata = {
@@ -32,7 +33,7 @@ export default function BestIndex() {
       <div className="max-w-4xl mx-auto px-5 py-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
         {BOARDS.map((b) => (
           <Link key={b.slug} href={`/best/${b.slug}`} className="group border border-rule bg-paper-raised p-4 hover:border-ink transition-colors">
-            <span className="text-2xl">{b.emoji}</span>
+            <Icon name={b.slug} fallback={b.emoji} className="w-7 h-7 text-ink group-hover:text-chile transition-colors" />
             <h2 className="font-display font-bold text-xl text-ink group-hover:text-oxblood transition-colors mt-1">{b.title}</h2>
             <p className="font-ui text-sm text-ink-soft">{b.blurb}</p>
           </Link>

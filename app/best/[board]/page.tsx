@@ -4,6 +4,7 @@ import { getAllSpots } from '@/lib/spots';
 import { getBoard, rankScore } from '@/lib/boards';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
+import Icon from '@/components/Icon';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -52,8 +53,9 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
         <div className="max-w-4xl mx-auto px-5 pt-8 pb-5">
           <Link href="/best" className="inline-flex items-center gap-1 font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft hover:text-chile transition-colors mb-4">← All rankings</Link>
           <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">Power Rankings · Leander, TX</p>
-          <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
-            {b.emoji} {b.title}
+          <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em] flex items-center gap-3" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
+            <Icon name={b.slug} fallback={b.emoji} className="w-[0.85em] h-[0.85em] shrink-0 text-chile" />
+            <span>{b.title}</span>
           </h1>
           <p className="mt-3 font-ui text-ink-soft max-w-xl">{b.blurb}</p>
           {answer && <p className="mt-2 font-ui text-sm text-ink max-w-2xl">{answer}</p>}
