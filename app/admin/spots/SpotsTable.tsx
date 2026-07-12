@@ -60,7 +60,19 @@ export default function SpotsTable({ rows }: { rows: SpotRow[] }) {
                 {r.hidden ? <span className="font-stamp uppercase tracking-[0.06em] text-sm bg-oxblood text-paper px-1 rounded-sm ml-2">Hidden</span> : null}
               </td>
               <td className="text-oxblood font-stamp uppercase tracking-[0.06em]">{r.verdict || 'none'}</td>
-              <td>{r.visited ? '✓' : ''}</td>
+              {/* A real stamp, not a tick. Only 4 of 197 spots have actually been visited, and that
+                  distinction is the spine of the whole guide: the verdict on every other spot is
+                  synthesised from what reviewers say. It should be unmissable in the one table where
+                  Anthony decides where to go next. */}
+              <td className="whitespace-nowrap">
+                {r.visited ? (
+                  <span className="inline-block font-stamp uppercase tracking-[0.06em] text-xs border-2 border-oxblood/70 text-oxblood rounded-[2px] px-2 py-0.5 leading-none -rotate-3">
+                    I&apos;ve been here
+                  </span>
+                ) : (
+                  <span className="font-ui text-xs text-ink-soft/60">not yet</span>
+                )}
+              </td>
               <td className="text-right">
                 <form action={setHidden.bind(null, r.slug, !r.hidden)} className="inline">
                   <button className={`font-stamp uppercase tracking-[0.08em] hover:opacity-70 ${r.hidden ? 'text-ink-soft' : 'text-oxblood'}`}>{r.hidden ? 'Show' : 'Hide'}</button>

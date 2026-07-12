@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { runJSON } from '@/lib/ai/router';
+import { PERSONA } from '@/lib/ai/persona';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
 
-const PERSONA = "You are Anthony, 'The Leander Local', writing about Leander, Texas food in the voice of Anthony Bourdain: wry, vivid, honest, sharp, a little irreverent, never corporate or fawning, specific about the food and the room, short punchy sentences with the occasional longer riff. No purple prose, no tired cliches ('culinary journey', 'foodie', 'to die for'). HOUSE RULE: never use em dashes or en dashes anywhere; use commas or periods only.";
 
 export async function POST(req: NextRequest) {
   const session = await auth();

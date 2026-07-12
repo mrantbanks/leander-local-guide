@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { revalidateSpot } from '@/lib/revalidate';
+import { autoCaption } from '@/lib/ai/caption';
 import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { putUpload, deleteUpload } from '@/lib/r2';
@@ -43,11 +44,16 @@ export async function POST(req: NextRequest) {
       if (!file.type.startsWith('image/') || file.size > 15 * 1024 * 1024) continue;
       const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
       const fn = `${randomUUID()}.${ext}`;
-      await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
+      const buf = Buffer.from(await file.arrayBuffer());
+      await putUpload(fn, buf, file.type);
       const ins = await pool.query(
         "insert into photos (place_id, filename, source, status, uploaded_by, rights_ack, rights_ack_at) values ($1,$2,'editorial','approved',$3,true,now()) returning id",
         [placeId, fn, email]);
       saved.push({ id: ins.rows[0].id, filename: fn, url: uploadUrl(fn) });
+      // Caption it in Anthony's voice. Fire and forget: a caption is worth a few seconds of a
+      // model's time, not a few seconds of the uploader's. It lands a moment later and busts the
+      // spot's cache itself.
+      void autoCaption(ins.rows[0].id as number, placeId, buf, file.type);
     }
   } catch (e) {
     return NextResponse.json({ error: `Storage error: ${(e as Error).name} — ${(e as Error).message}`, saved }, { status: 500 });

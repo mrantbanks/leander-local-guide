@@ -3,10 +3,13 @@ import { notFound, redirect } from 'next/navigation';
 import { pool } from '@/lib/db';
 import { updateReview, addEvent, deleteEvent } from '@/app/actions';
 import { EVENT_LABELS } from '@/lib/events';
+import { HIDDEN_GEM } from '@/lib/spots';
 import { auth } from '@/auth';
 import PhotoStudio from '@/components/PhotoStudio';
 import MenuStudio from '@/components/MenuStudio';
 import ReviewComposer from '@/components/ReviewComposer';
+import TagPicker from '@/components/TagPicker';
+import { AMENITY_TAGS, CATEGORIES, computedTags } from '@/lib/tags';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +19,16 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const session = await auth();
   if (!(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin) redirect('/admin');
   const { slug } = await params;
-  const { rows } = await pool.query("select slug, name, editorial, happy_hour, attributes, owner_content, hidden, menu, photos->0->>'name' google_photo from restaurants where slug = $1", [slug]);
+  // primary_category was missing from this list, and it silently corrupted data on every save:
+  // r.primary_category came back undefined, so <select defaultValue={undefined}> fell through to its
+  // first <option> ("Restaurant"), and updateReview then wrote that back. Editing ANYTHING on a food
+  // truck, cafe or bakery quietly turned it into a Restaurant.
+  const { rows } = await pool.query(
+    `select slug, name, primary_category, editorial, happy_hour, attributes, ratings, owner_content, hidden, menu,
+            photos->0->>'name' google_photo, ${HIDDEN_GEM}
+       from restaurants where slug = $1`,
+    [slug]
+  );
   const r = rows[0];
   if (!r) notFound();
   const ed = r.editorial || {};
@@ -52,7 +64,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
 
         <label className={label}>Category (venue type — drives the Food Truck filter, map pin, icons &amp; boards)</label>
         <select name="category" defaultValue={r.primary_category} className={field}>
-          {[...new Set([r.primary_category, 'Restaurant', 'Food Truck', 'Cafe', 'Bakery', 'Bar', 'Brewery', 'Dessert', 'Coffee Shop', 'Tea House', 'Ice Cream Shop', 'Donut Shop'])].filter(Boolean).map((c) => <option key={c} value={c}>{c}</option>)}
+          {[...new Set([r.primary_category as string, ...CATEGORIES])].filter(Boolean).map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
         <p className="font-ui text-xs text-ink-soft mt-1">Set this to <strong>Food Truck</strong> to tag a trailer/stand. The spot keeps its cuisine; it just shows under the Food Truck filter and the 🚚 boards.</p>
 
@@ -90,8 +102,19 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <input name="orderUrl" defaultValue={attr.orderUrl || ''} className={field} placeholder="https://..." />
         {oc.orderUrl ? <p className="font-ui text-xs text-ink-soft mt-1">Owner&apos;s link shows on the site: <span className="break-all">{oc.orderUrl}</span>. Yours is the fallback if they clear theirs.</p> : null}
 
-        <label className={label}>Pinned badges (comma-separated, e.g. Hidden Gem, Local Favorite)</label>
-        <input name="badges" defaultValue={(ed.badges || []).join(', ')} className={field} />
+        <label className={label}>Tags on the page</label>
+        <TagPicker
+          amenities={AMENITY_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
+          badges={Array.isArray(ed.badges) ? ed.badges : []}
+          chainStatus={attr.chainStatus || 'unknown'}
+          computed={computedTags({
+            isHiddenGem: !!r.is_hidden_gem,
+            chainStatus: attr.chainStatus,
+            ratingGoogle: r.ratings?.google?.rating ?? null,
+            ratingCount: r.ratings?.google?.count ?? null,
+            comingSoon: ed.openingStatus === 'coming_soon',
+          })}
+        />
         <p className="font-ui text-xs text-ink-soft mt-1">Hidden Gem / Local Favorite are auto-applied to top-rated local spots; use this to pin them manually.</p>
 
         <label className={label}>Opening status (Coming Soon = visible with a COMING SOON stamp + badge; also feeds the &quot;New in Leander&quot; wire)</label>

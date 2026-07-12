@@ -10,6 +10,7 @@ import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
+import { AMENITY_TAGS } from '@/lib/tags';
 
 const COUNTER: Record<string, string> = {
   worth_it: 'worth_it_ct', its_fine: 'its_fine_ct', skip_it: 'skip_it_ct',
@@ -92,11 +93,34 @@ export async function updateReview(slug: string, fd: FormData) {
   const orderUrl = norm(fd.get('orderUrl'));
   const hidden = fd.get('hidden') === 'on';
   const category = String(fd.get('category') || '').trim(); // venue type, e.g. Food Truck
+
+  // The tags a diner sees. TagPicker sends the amenity KEYS that are lit, so we write the whole set
+  // explicitly: every amenity Google gave us is set true or false, not merged. Merging would mean a
+  // toggle could turn a tag ON but never OFF, which is exactly the bug you get from `||` on jsonb.
+  //
+  // Google is regularly wrong about these (it will swear a taco trailer takes reservations), and
+  // Anthony has stood in the room. His toggle wins.
+  const lit = new Set(String(fd.get('amenities') || '').split(',').map((s) => s.trim()).filter(Boolean));
+  const amenities: Record<string, boolean> = {};
+  for (const [key] of AMENITY_TAGS) amenities[key] = lit.has(key);
+
+  const chainStatus = String(fd.get('chainStatus') || '').trim();
+  const CHAIN_OK = ['local', 'regional', 'chain', 'unknown'];
+
   await pool.query(
     `update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3,
-       attributes = coalesce(attributes,'{}'::jsonb) || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text),
-       hidden = $6, primary_category = coalesce(nullif($7,''), primary_category), updated_at = now() where slug = $1`,
-    [slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden, category]
+       attributes = coalesce(attributes,'{}'::jsonb)
+                    || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text)
+                    || $8::jsonb
+                    || case when $9::text = '' then '{}'::jsonb
+                            else jsonb_build_object('chainStatus', $9::text) end,
+       hidden = $6, primary_category = coalesce(nullif($7,''), primary_category), updated_at = now()
+     where slug = $1`,
+    [
+      slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden, category,
+      JSON.stringify(amenities),
+      CHAIN_OK.includes(chainStatus) ? chainStatus : '',
+    ]
   );
   revalidateSpot(slug);
   revalidatePath('/admin'); revalidatePath('/admin/spots');

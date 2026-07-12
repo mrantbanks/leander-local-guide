@@ -2,6 +2,7 @@ import { cache } from 'react';
 import { pool } from './db';
 import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
+import { AMENITY_TAGS } from '@/lib/tags';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -140,9 +141,9 @@ function mapRow(r: any): Spot {
   if (a.chainStatus === 'chain') badges.push('Chain');
   else if (a.chainStatus === 'regional') badges.push('Texas Chain');
   else if (a.chainStatus === 'local') badges.push('Local');
-  if (a.outdoorSeating) badges.push('Patio');
-  if (a.allowsDogs) badges.push('Dog-Friendly');
-  if (a.servesVegetarianFood) badges.push('Veg');
+  // Patio / Dog-Friendly / Veg used to be repeated here AND in the amenity list below. The exact
+  // duplicates were swallowed by the Set at the render site, but 'Veg' and 'Veg Options' are two
+  // different strings for one thing, so BOTH rendered on the page. The amenity loop covers all three.
   // Lead badges: heuristic Hidden Gem / Local Favorite (same signal as the Hidden Gems page),
   // plus any editorial.badges the admin has hand-pinned. These render first on cards.
   const lead: string[] = [];
@@ -153,15 +154,10 @@ function mapRow(r: any): Spot {
   if (r.is_hidden_gem) lead.push('Hidden Gem');
   else if (a.chainStatus === 'local' && gr >= 4.6 && gc > 150) lead.push('Local Favorite');
   if (Array.isArray(ed.badges)) for (const b of ed.badges) if (!lead.includes(b)) lead.push(b);
+  // The vocabulary lives in lib/tags.ts, so the chips Anthony toggles in the admin are provably the
+  // chips a diner sees here. It used to be a private array in this function that nothing else knew about.
   const amenities: string[] = [];
-  const amen: [string, string][] = [
-    ['outdoorSeating', 'Patio'], ['allowsDogs', 'Dog-Friendly'], ['goodForChildren', 'Kid-Friendly'],
-    ['goodForGroups', 'Good for Groups'], ['servesVegetarianFood', 'Veg Options'], ['servesBreakfast', 'Breakfast'],
-    ['servesBrunch', 'Brunch'], ['servesBeer', 'Beer'], ['servesWine', 'Wine'], ['servesCocktails', 'Cocktails'],
-    ['takeout', 'Takeout'], ['delivery', 'Delivery'], ['dineIn', 'Dine-In'], ['reservable', 'Reservations'],
-    ['liveMusic', 'Live Music'], ['goodForWatchingSports', 'Sports'],
-  ];
-  for (const [k, label] of amen) if (a[k]) amenities.push(label);
+  for (const [k, label] of AMENITY_TAGS) if (a[k]) amenities.push(label);
   const hrs = parseHours(hoursSrc);
   const photosAll = (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename, url: uploadUrl(p.filename), caption: clean(p.caption), isMenu: !!p.is_menu, isHeader: !!p.is_header }));
   const headerPhoto = photosAll.find((p: { isMenu: boolean; isHeader: boolean }) => p.isHeader && !p.isMenu) || null;
@@ -202,7 +198,7 @@ const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',f
 // Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
 const GEM_WHERE = `not hidden and attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
 const GEM_ORDER = `order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last`;
-const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)) as is_hidden_gem`;
+export const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)) as is_hidden_gem`;
 
 export async function getAllSpots(): Promise<Spot[]> {
   const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where not hidden ${ORDER}`);

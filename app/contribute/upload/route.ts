@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { pool } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { putUpload } from '@/lib/r2';
+import { autoCaption } from '@/lib/ai/caption';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,11 +32,15 @@ export async function POST(req: NextRequest) {
     if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) continue;
     const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
     const fn = `${randomUUID()}.${ext}`;
-    await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
-    await pool.query(
-      "insert into photos (place_id, filename, source, status, uploaded_by, rights_ack, rights_ack_at) values ($1,$2,'user','pending',$3,true,now())",
+    const buf = Buffer.from(await file.arrayBuffer());
+    await putUpload(fn, buf, file.type);
+    const ins = await pool.query(
+      "insert into photos (place_id, filename, source, status, uploaded_by, rights_ack, rights_ack_at) values ($1,$2,'user','pending',$3,true,now()) returning id",
       [placeId, fn, email]
     );
+    // Reader photos get captioned too, even though they wait in the moderation queue: a captioned
+    // photo is quicker to judge, and the caption is the guide's own words either way.
+    void autoCaption(ins.rows[0].id as number, placeId, buf, file.type);
     saved++;
   }
   return NextResponse.json({ saved });
