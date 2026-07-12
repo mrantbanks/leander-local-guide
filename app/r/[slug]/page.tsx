@@ -132,7 +132,13 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <p className="font-stamp uppercase tracking-[0.18em] text-chile text-sm mb-2">
-                {[spot.category, spot.chainStatus === 'chain' ? 'Chain' : spot.chainStatus === 'regional' ? 'Texas Chain' : 'Local', ...spot.cuisines.slice(0, 2)].join(' · ')}
+                {/* 'unknown' used to fall through to "Local" here, so an unclassified spot was
+                    being called locally owned on its own page. Say nothing rather than guess. */}
+                {[spot.category,
+                  spot.chainStatus === 'chain' ? 'Chain'
+                    : spot.chainStatus === 'regional' ? 'Texas Chain'
+                      : spot.chainStatus === 'local' ? 'Local Owned' : null,
+                  ...spot.cuisines.slice(0, 2)].filter(Boolean).join(' · ')}
               </p>
               <h1 className="font-display font-black text-ink leading-[0.92] tracking-[-0.02em]" style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}>
                 {spot.name}

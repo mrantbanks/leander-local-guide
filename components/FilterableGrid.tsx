@@ -8,7 +8,7 @@ const TOGGLES: { key: string; label: string; test: (s: CardSpot) => boolean }[] 
   { key: 'open', label: 'Open Now', test: (s) => s.openNow === true },
   { key: 'hh', label: 'Happy Hour', test: (s) => !!s.happyHour },
   { key: 'truck', label: 'Food Truck', test: (s) => s.category === 'Food Truck' },
-  { key: 'local', label: 'Local Only', test: (s) => s.chainStatus === 'local' },
+  { key: 'local', label: 'Local Owned', test: (s) => s.chainStatus === 'local' },
   { key: 'patio', label: 'Patio', test: (s) => s.amenities.includes('Patio') },
   { key: 'dog', label: 'Dog-Friendly', test: (s) => s.amenities.includes('Dog-Friendly') },
   { key: 'kid', label: 'Kid-Friendly', test: (s) => s.amenities.includes('Kid-Friendly') },

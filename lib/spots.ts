@@ -140,7 +140,7 @@ function mapRow(r: any): Spot {
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
   if (a.chainStatus === 'chain') badges.push('Chain');
   else if (a.chainStatus === 'regional') badges.push('Texas Chain');
-  else if (a.chainStatus === 'local') badges.push('Local');
+  else if (a.chainStatus === 'local') badges.push('Local Owned');
   // Patio / Dog-Friendly / Veg used to be repeated here AND in the amenity list below. The exact
   // duplicates were swallowed by the Set at the render site, but 'Veg' and 'Veg Options' are two
   // different strings for one thing, so BOTH rendered on the page. The amenity loop covers all three.

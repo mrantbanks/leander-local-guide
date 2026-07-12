@@ -10,7 +10,7 @@ const categoryIcons: Record<string, string> = {
 };
 
 // Committee priority order; max 3 editorial badges per card so the zine look stays clean.
-const BADGE_RANK = ['Coming Soon', "Anthony's Pick", 'Hidden Gem', 'Local Favorite', 'New', 'Food Truck', 'Local', 'Patio', 'Dog-Friendly', 'Veg', 'Happy Hour'];
+const BADGE_RANK = ['Coming Soon', "Anthony's Pick", 'Hidden Gem', 'Local Favorite', 'New', 'Food Truck', 'Local Owned', 'Patio', 'Dog-Friendly', 'Veg Options', 'Happy Hour'];
 
 export default function SpotCard({ spot, priority = false }: { spot: CardSpot; priority?: boolean }) {
   const icon = categoryIcons[spot.category] ?? '📍';

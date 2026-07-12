@@ -40,7 +40,7 @@ export const AMENITY_TAGS: [string, string][] = [
 ];
 
 export const CHAIN_STATUS: { value: string; label: string; help: string }[] = [
-  { value: 'local', label: 'Local', help: 'Independent. Not a chain. This is the guide\'s whole point.' },
+  { value: 'local', label: 'Local Owned', help: 'Independent, owned by someone who lives here. Not a chain. This is the guide\'s whole point.' },
   { value: 'regional', label: 'Texas Chain', help: 'A Texas chain, e.g. Whataburger. Sorted below local spots.' },
   { value: 'chain', label: 'Chain', help: 'A national chain. Sorted last, everywhere.' },
   { value: 'unknown', label: 'Unknown', help: 'Not classified yet. Renders no ownership tag at all.' },
@@ -77,7 +77,7 @@ export function computedTags(spot: {
   if (spot.isHiddenGem) {
     out.push({ label: 'Hidden Gem', why: 'One of the top 8 local spots rated 4.5+ with under 150 reviews. Recomputed automatically.' });
   } else if (spot.chainStatus === 'local' && (spot.ratingGoogle ?? 0) >= 4.6 && (spot.ratingCount ?? 0) > 150) {
-    out.push({ label: 'Local Favorite', why: 'Local, rated 4.6+, and more than 150 reviews. A Local Favorite is always also Local: that is why you see both.' });
+    out.push({ label: 'Local Favorite', why: 'Local Owned, rated 4.6+, and more than 150 reviews. Local Owned is about who owns it; Local Favorite is about whether the town loves it. A Local Favorite is always also Local Owned, which is why you see both.' });
   }
   return out;
 }
