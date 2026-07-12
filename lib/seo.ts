@@ -265,8 +265,14 @@ export function facilitiesLd(spot: Spot): object {
   if (spot.amenities.includes('Reservations')) out.acceptsReservations = true;
   if (spot.amenities.includes('Dog-Friendly')) out.petsAllowed = true;
 
-  // The rest of the amenities, as the schema.org type that exists for exactly this.
-  const feature = spot.amenities.filter((a) => a !== 'Dog-Friendly' && a !== 'Reservations');
+  // The rest of the amenities, plus the practical facts (parking, step-free access, restrooms, how
+  // you pay), as the schema.org type that exists for exactly this. Accessibility in particular is
+  // something a person may genuinely need to know before they get in the car, and it belongs in the
+  // machine-readable version of the page as much as the human one.
+  const feature = [
+    ...spot.amenities.filter((a) => a !== 'Dog-Friendly' && a !== 'Reservations'),
+    ...spot.facilities.flatMap((f) => f.labels),
+  ];
   if (feature.length) {
     out.amenityFeature = feature.map((name) => ({
       '@type': 'LocationFeatureSpecification',
@@ -274,6 +280,10 @@ export function facilitiesLd(spot: Spot): object {
       value: true,
     }));
   }
+
+  // paymentAccepted is a documented LocalBusiness property.
+  const pay = spot.facilities.find((f) => f.group === 'Paying');
+  if (pay?.labels.length) out.paymentAccepted = pay.labels.join(', ');
 
   return out;
 }

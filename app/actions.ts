@@ -10,7 +10,7 @@ import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, canManage, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
-import { AMENITY_TAGS, MEAL_TAGS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_TAGS } from '@/lib/tags';
 import { validateEvent, type EventInput } from '@/lib/eventInput';
 import { EVENT_TYPES } from '@/lib/eventLabels';
 
@@ -107,6 +107,8 @@ export async function updateReview(slug: string, fd: FormData) {
   const amenities: Record<string, boolean> = {};
   for (const [key] of AMENITY_TAGS) amenities[key] = lit.has(key);
   for (const [key] of MEAL_TAGS) amenities[key] = litMeals.has(key);
+  const litFac = new Set(String(fd.get('facilities') || '').split(',').map((s) => s.trim()).filter(Boolean));
+  for (const [key] of FACILITY_TAGS) amenities[key] = litFac.has(key);
 
   const chainStatus = String(fd.get('chainStatus') || '').trim();
   const CHAIN_OK = ['local', 'regional', 'chain', 'unknown'];

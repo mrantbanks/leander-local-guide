@@ -37,6 +37,10 @@ const DETAIL_FIELDS = [
   'id', 'displayName', 'primaryTypeDisplayName', 'nationalPhoneNumber', 'priceLevel',
   'rating', 'userRatingCount', 'googleMapsUri', 'businessStatus', 'regularOpeningHours',
   'photos', 'reviews', 'takeout', 'delivery', 'dineIn', 'editorialSummary',
+  // The practical stuff a person actually needs before they get in the car, and which we simply
+  // never asked Google for: can I park, is there a loo, can I get a wheelchair through the door,
+  // do they take a card. All four have been available on Place Details the whole time.
+  'parkingOptions', 'restroom', 'accessibilityOptions', 'paymentOptions',
 ].join(',');
 
 async function placeDetails(id) {

@@ -435,6 +435,21 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               {spot.website && <div><dt className="text-ink-soft">Website</dt><dd className="truncate"><a href={spot.website} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">{spot.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a></dd></div>}
               {spot.menuUrl && <div><dt className="text-ink-soft">Menu</dt><dd><a href={spot.menuUrl} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">View menu</a></dd></div>}
               {spot.orderUrl && <div><dt className="text-ink-soft">Order</dt><dd><a href={spot.orderUrl} target="_blank" rel="noopener noreferrer" className="text-chile underline underline-offset-2">Order online</a></dd></div>}
+
+              {/* Can I park, is there a loo, can I get a wheelchair through the door, can I pay with a
+                  card. Google has had all of this the whole time and our field mask never asked for it. */}
+              {spot.facilities.map((f) => (
+                <div key={f.group}>
+                  <dt className="text-ink-soft mb-1">{f.group}</dt>
+                  <dd className="flex flex-wrap gap-1.5">
+                    {f.labels.map((l) => (
+                      <span key={l} className="font-stamp uppercase tracking-[0.06em] text-xs border border-rule text-ink px-2 py-0.5 rounded-sm">
+                        {l}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              ))}
             </dl>
           </div>
 

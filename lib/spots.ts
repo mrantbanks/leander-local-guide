@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { pool } from './db';
 import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
-import { AMENITY_TAGS, MEAL_TAGS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS } from '@/lib/tags';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -40,6 +40,7 @@ export type Spot = {
   badges: string[];
   amenities: string[];
   meals: string[]; // Breakfast / Brunch / Lunch / Dinner
+  facilities: { group: string; labels: string[] }[]; // parking, access, restroom, payment
   summary: string | null;
   priceTier: number | null;
   photo: string | null;
@@ -162,6 +163,9 @@ function mapRow(r: any): Spot {
   for (const [k, label] of AMENITY_TAGS) if (a[k]) amenities.push(label);
   const meals: string[] = [];
   for (const [k, label] of MEAL_TAGS) if (a[k]) meals.push(label);
+  const facilities = FACILITY_GROUPS
+    .map((g) => ({ group: g.group, labels: g.tags.filter(([k]) => a[k]).map(([, l]) => l) }))
+    .filter((g) => g.labels.length > 0);
   const hrs = parseHours(hoursSrc);
   const photosAll = (r.local_photos || []).map((p: any) => ({ id: p.id, filename: p.filename, url: uploadUrl(p.filename), caption: clean(p.caption), isMenu: !!p.is_menu, isHeader: !!p.is_header }));
   const headerPhoto = photosAll.find((p: { isMenu: boolean; isHeader: boolean }) => p.isHeader && !p.isMenu) || null;
@@ -176,7 +180,7 @@ function mapRow(r: any): Spot {
     mapsUrl: r.google_maps_url || null, menuUrl: oc.menuUrl || a.menuUrl || null, orderUrl: oc.orderUrl || a.orderUrl || null,
     website: oc.website || a.website || null, phone: oc.phone || a.phone || null,
     chainStatus: a.chainStatus || 'unknown', chainTier: a.chainTier || null,
-    badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, meals, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
+    badges: [...lead, ...badges.filter((b) => !lead.includes(b))], amenities, meals, facilities, summary: clean(a.editorialSummary), priceTier: r.price_tier ?? null,
     photo: r.photos?.[0]?.name || null, photoCredit: r.photos?.[0]?.attribution?.[0] || null,
     localPhotos: photosAll.filter((p: { isMenu: boolean }) => !p.isMenu),
     menus: photosAll.filter((p: { isMenu: boolean }) => p.isMenu),

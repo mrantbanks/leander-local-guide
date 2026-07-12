@@ -11,7 +11,7 @@ import ReviewComposer from '@/components/ReviewComposer';
 import TagPicker from '@/components/TagPicker';
 import EventComposer from '@/components/EventComposer';
 import type { EventInput } from '@/lib/eventInput';
-import { AMENITY_TAGS, MEAL_TAGS, CATEGORIES, computedTags } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_TAGS, CATEGORIES, computedTags } from '@/lib/tags';
 
 export const dynamic = 'force-dynamic';
 
@@ -112,6 +112,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <TagPicker
           amenities={AMENITY_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
           meals={MEAL_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
+          facilities={FACILITY_TAGS.map(([k]) => k).filter((k) => !!attr[k])}
           badges={Array.isArray(ed.badges) ? ed.badges : []}
           chainStatus={attr.chainStatus || 'unknown'}
           computed={computedTags({

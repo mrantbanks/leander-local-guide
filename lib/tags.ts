@@ -26,6 +26,8 @@ export const AMENITY_TAGS: [string, string][] = [
   // Was 'Veg' in the badge list and 'Veg Options' in the amenity list: two strings for one thing, so
   // both rendered side by side on the page. One name now.
   ['servesVegetarianFood', 'Veg Options'],
+  ['servesDessert', 'Dessert'],
+  ['servesCoffee', 'Coffee'],
   ['servesBeer', 'Beer'],
   ['servesWine', 'Wine'],
   ['servesCocktails', 'Cocktails'],
@@ -48,6 +50,42 @@ export const MEAL_TAGS: [string, string][] = [
   ['servesLunch', 'Lunch'],
   ['servesDinner', 'Dinner'],
 ];
+
+/**
+ * The practical facts: can I park, is there a loo, can I get a wheelchair through the door, can I
+ * pay with a card. Google has had all of this the whole time and our Place Details field mask simply
+ * never asked for it, so 197 restaurants were missing it. One backfill later, 198 spots have it.
+ *
+ * Grouped, because "Free lot" and "Step-free entry" are different KINDS of fact and a diner scanning
+ * for one should not have to read the other.
+ */
+export const FACILITY_GROUPS: { group: string; tags: [string, string][] }[] = [
+  { group: 'Parking', tags: [
+    ['freeParkingLot', 'Free lot'],
+    ['freeStreetParking', 'Street parking'],
+    ['freeGarageParking', 'Free garage'],
+    ['paidParkingLot', 'Paid lot'],
+    ['paidStreetParking', 'Paid street'],
+    ['valetParking', 'Valet'],
+  ]},
+  { group: 'Getting in', tags: [
+    ['wheelchairAccessibleEntrance', 'Step-free entry'],
+    ['wheelchairAccessibleRestroom', 'Accessible restroom'],
+    ['wheelchairAccessibleParking', 'Accessible parking'],
+    ['wheelchairAccessibleSeating', 'Accessible seating'],
+  ]},
+  { group: 'Facilities', tags: [
+    ['restroom', 'Restroom'],
+  ]},
+  { group: 'Paying', tags: [
+    ['acceptsCreditCards', 'Cards'],
+    ['acceptsDebitCards', 'Debit'],
+    ['acceptsNfc', 'Tap to pay'],
+    ['acceptsCashOnly', 'Cash only'],
+  ]},
+];
+
+export const FACILITY_TAGS: [string, string][] = FACILITY_GROUPS.flatMap((g) => g.tags);
 
 export const CHAIN_STATUS: { value: string; label: string; help: string }[] = [
   { value: 'local', label: 'Local Owned', help: 'Independent, owned by someone who lives here. Not a chain. This is the guide\'s whole point.' },

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Help from '@/components/Help';
-import { AMENITY_TAGS, MEAL_TAGS, EDITORIAL_BADGES, CHAIN_STATUS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS, FACILITY_TAGS, EDITORIAL_BADGES, CHAIN_STATUS } from '@/lib/tags';
 
 /**
  * Every tag that can appear on a spot page, in one grid, with the live ones lit up.
@@ -19,12 +19,14 @@ const on = 'bg-chile text-paper border-chile';
 const off = 'border-rule text-ink-soft hover:border-ink hover:text-ink';
 
 export default function TagPicker({
-  amenities, meals, badges, chainStatus, computed,
+  amenities, meals, facilities, badges, chainStatus, computed,
 }: {
   /** attribute keys that are currently true */
   amenities: string[];
   /** meal-time attribute keys that are currently true */
   meals: string[];
+  /** parking / access / restroom / payment keys that are currently true */
+  facilities: string[];
   /** editorial.badges currently pinned */
   badges: string[];
   chainStatus: string;
@@ -33,6 +35,7 @@ export default function TagPicker({
 }) {
   const [amen, setAmen] = useState<string[]>(amenities);
   const [meal, setMeal] = useState<string[]>(meals);
+  const [fac, setFac] = useState<string[]>(facilities);
   const [pins, setPins] = useState<string[]>(badges);
   const [chain, setChain] = useState(chainStatus || 'unknown');
 
@@ -130,6 +133,32 @@ export default function TagPicker({
           ))}
         </div>
         <input type="hidden" name="meals" value={meal.join(',')} />
+      </div>
+
+      {/* The practical facts. Straight from Google, and a local who actually parked there knows better. */}
+      <div>
+        <p className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mb-1.5 flex items-center">
+          Parking, access, paying
+          <Help
+            text="Can I park, is there a loo, can I get a wheelchair through the door, can I pay with a card. Google had all of this the whole time and we never asked for it. It is now on every spot, and you can correct any of it."
+            example="Google says free lot. It is free, and it is full by 7pm on a Friday. That is a tip, not a tag."
+          />
+        </p>
+        <div className="space-y-2">
+          {FACILITY_GROUPS.map((g) => (
+            <div key={g.group}>
+              <p className="font-ui text-xs text-ink-soft/70 mb-1">{g.group}</p>
+              <div className="flex flex-wrap gap-2">
+                {g.tags.map(([key, label]) => (
+                  <button key={key} type="button" onClick={() => toggle(fac, setFac, key)} className={`${chip} ${fac.includes(key) ? on : off}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <input type="hidden" name="facilities" value={fac.join(',')} />
       </div>
 
       {/* Amenities. Imported from Google, and Google is often wrong. */}
