@@ -57,7 +57,11 @@ export default function SkyOverLeander({ sky }: { sky: Sky }) {
   const glow = night ? '#E8E0D2' : '#E8A33D';
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div
+      role="img"
+      aria-label={`The sky over Leander right now: ${night ? sky.moonName : sky.description || 'clear'}${sky.tempF != null ? `, ${sky.tempF} degrees` : ''}`}
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
       {/* The wash. It IS the sky: no border, no card, just weather coming into the corner. */}
       <div className="absolute inset-0" style={{ background: washFor(sky) }} />
 
@@ -166,27 +170,5 @@ export default function SkyOverLeander({ sky }: { sky: Sky }) {
         )}
       </svg>
     </div>
-  );
-}
-
-/** The words. Separate from the drawing, so a screen reader gets them once and cleanly. */
-export function SkyCaption({ sky }: { sky: Sky }) {
-  const night = sky.part === 'night';
-  const label = night ? sky.moonName : sky.description || 'Leander';
-  const golden = sky.part === 'dawn' || sky.part === 'dusk';
-
-  return (
-    <p className="font-stamp uppercase tracking-[0.14em] text-xs text-ink-soft/80">
-      {golden && <span className="text-chile">{sky.part === 'dawn' ? 'Sunrise' : 'Sunset'} · </span>}
-      <span className={night ? 'text-ink' : ''}>{label}</span>
-      {sky.tempF != null && (
-        <>
-          {' · '}
-          <span className="text-chile font-display font-black text-sm">{sky.tempF}°</span>
-        </>
-      )}
-      {' · '}
-      {sky.localTime} in Leander
-    </p>
   );
 }

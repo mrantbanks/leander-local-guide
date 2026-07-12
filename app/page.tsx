@@ -5,7 +5,7 @@ import FreshInk from '@/components/FreshInk';
 import FeedMe from '@/components/FeedMe';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
-import SkyOverLeander, { SkyCaption } from '@/components/SkyOverLeander';
+import SkyOverLeander from '@/components/SkyOverLeander';
 import { getSky } from '@/lib/sky';
 
 export const dynamic = 'force-dynamic';
@@ -72,12 +72,9 @@ export default async function Home() {
             <br />
             Local Guide
           </h1>
-          <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <p className="font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
-              {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back)
-            </p>
-            <SkyCaption sky={sky} />
-          </div>
+          <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
+            {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back) · Eat where Leander actually eats
+          </p>
         </div>
       </header>
 
