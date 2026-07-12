@@ -26,7 +26,7 @@ function fc(pins: MapPin[]): GeoJSON.FeatureCollection {
     features: pins.map((p) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0, periods: JSON.stringify(p.periods), open24: p.open24 ? 1 : 0, happy: p.happyHourText || '', hours: JSON.stringify(p.hoursText || []) },
+      properties: { slug: p.slug, name: p.name, cat: p.cat, lat: p.lat, lng: p.lng, gem: p.hiddenGem ? 1 : 0, price: p.priceTier || 0, blurb: p.hook || '', visited: p.visited ? 1 : 0, periods: JSON.stringify(p.periods), open24: p.open24 ? 1 : 0, happy: p.happyHourText || '', ev: p.eventText || '', hours: JSON.stringify(p.hoursText || []) },
     })),
   };
 }
@@ -41,15 +41,16 @@ function todayHours(hoursText: string[]): string {
 
 // Context-aware detail lines: surface happy-hour details when that's what they filtered,
 // and always show today's hours (so "open late" actually shows the hours).
-function detailHtml(hoursText: string[], happyText: string, emphasis?: 'happy' | 'hours' | null): string {
+function detailHtml(hoursText: string[], happyText: string, eventText: string, emphasis?: 'happy' | 'event' | 'hours' | null): string {
   const parts: string[] = [];
   if (emphasis === 'happy' && happyText) parts.push(`<div class="llg-pop-happy">🍺 Happy Hour · ${esc(happyText)}</div>`);
+  if (emphasis === 'event' && eventText) parts.push(`<div class="llg-pop-happy">🎤 ${esc(eventText)}</div>`);
   const th = todayHours(hoursText);
   if (th) parts.push(`<div class="llg-pop-hours">Today · ${esc(th)}</div>`);
   return parts.join('');
 }
 
-export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins: MapPin[]; userLoc: { lat: number; lng: number } | null; openSlug?: string | null; emphasis?: 'happy' | 'hours' | null }) {
+export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins: MapPin[]; userLoc: { lat: number; lng: number } | null; openSlug?: string | null; emphasis?: 'happy' | 'event' | 'hours' | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const userMarker = useRef<maplibregl.Marker | null>(null);
@@ -140,7 +141,7 @@ export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins
   return <div ref={ref} className="w-full h-full" />;
 }
 
-function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: { lat: number; lng: number } | null, emphasis?: 'happy' | 'hours' | null) {
+function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: { lat: number; lng: number } | null, emphasis?: 'happy' | 'event' | 'hours' | null) {
   const p = f.properties as Record<string, string | number>;
   const lat = Number(p.lat), lng = Number(p.lng);
   const apple = isApple();
@@ -155,7 +156,7 @@ function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: 
     <a class="llg-pop-name" href="/r/${esc(String(p.slug))}">${esc(String(p.name))}</a>
     <div class="llg-pop-status">${pillHtml(periods, Number(p.open24) === 1)}</div>
     <div class="llg-pop-meta">${meta}</div>
-    ${detailHtml(hoursText, String(p.happy || ''), emphasis)}
+    ${detailHtml(hoursText, String(p.happy || ''), String(p.ev || ''), emphasis)}
     ${p.blurb ? `<p class="llg-pop-blurb">${esc(String(p.blurb))}</p>` : ''}
     <div class="llg-pop-btns">
       <a class="llg-pop-view" href="/r/${esc(String(p.slug))}">View</a>
@@ -165,14 +166,14 @@ function openPopup(m: maplibregl.Map, f: maplibregl.MapGeoJSONFeature, userLoc: 
     .setLngLat([lng, lat]).setHTML(html).addTo(m);
 }
 
-function flyToSlug(m: maplibregl.Map, pins: MapPin[], slug: string, emphasis?: 'happy' | 'hours' | null) {
+function flyToSlug(m: maplibregl.Map, pins: MapPin[], slug: string, emphasis?: 'happy' | 'event' | 'hours' | null) {
   const p = pins.find((x) => x.slug === slug);
   if (!p) return;
   m.flyTo({ center: [p.lng, p.lat], zoom: 15 });
   const html = `<div class="llg-pop"><a class="llg-pop-name" href="/r/${p.slug}">${esc(p.name)}</a>
     <div class="llg-pop-status">${pillHtml(p.periods, p.open24)}</div>
     <div class="llg-pop-meta">${esc(p.cat)}</div>
-    ${detailHtml(p.hoursText || [], p.happyHourText || '', emphasis)}
+    ${detailHtml(p.hoursText || [], p.happyHourText || '', p.eventText || '', emphasis)}
     <div class="llg-pop-btns"><a class="llg-pop-view" href="/r/${p.slug}">View</a>
     <a class="llg-pop-dir" href="${directionsUrl(p, isApple())}" target="_blank" rel="noopener">Directions</a></div></div>`;
   new maplibregl.Popup({ offset: 14, maxWidth: '260px', className: 'llg-popup' }).setLngLat([p.lng, p.lat]).setHTML(html).addTo(m);

@@ -229,6 +229,11 @@ export type MapPin = {
   rating: number | null; hook: string | null; visited: boolean;
   periods: number[][]; open24: boolean; hoursText: string[];
   patio: boolean; dog: boolean; veg: boolean;
+  // Added for the map filters. All of it was already in the database and none of it was reaching the map.
+  hasEvent: boolean; eventText: string | null;   // something on the What's On board
+  meals: string[];                               // Breakfast / Brunch / Lunch / Dinner
+  ownership: string | null;                      // local | texas | chain
+  stepFree: boolean; freeParking: boolean; takeout: boolean;
 };
 
 // Google hours -> compact [openAbs, closeAbs] minute-of-week pairs (closeAbs wraps
@@ -252,11 +257,23 @@ function parseHours(h: { periods?: { open?: { day: number; hour?: number; minute
 // Lean per-pin payload for the map. ~177 rows, all with coords.
 export async function getMapPins(): Promise<MapPin[]> {
   const { rows } = await pool.query(
-    `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
-       happy_hour, hours, attributes,
-       ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
-       editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited
-     from restaurants where lat is not null and lng is not null and not hidden`
+    `select r.slug, r.name, r.lat, r.lng, r.primary_category cat, coalesce(r.cuisines,'{}') cuisines,
+       r.happy_hour, r.hours, r.attributes,
+       ${HIDDEN_GEM}, r.price_tier, (r.ratings#>>'{google,rating}')::float rating,
+       r.editorial->>'hook' hook, coalesce((r.editorial->>'visited')::bool,false) visited,
+       -- Anything live on the What's On board. Same LIVE rules as lib/events.ts: approved, not
+       -- brunch (that is a service, not an event), and inside its run dates.
+       (select count(*) from events e
+         where e.place_id = r.id and e.status = 'approved' and e.event_type <> 'brunch'
+           and (e.expires_at is null or e.expires_at > now())
+           and (e.starts_on is null or e.starts_on <= current_date)
+           and (e.ends_on   is null or e.ends_on   >= current_date))::int as event_count,
+       (select e.title from events e
+         where e.place_id = r.id and e.status = 'approved' and e.event_type <> 'brunch'
+           and (e.expires_at is null or e.expires_at > now())
+           and (e.ends_on is null or e.ends_on >= current_date)
+         order by e.created_at limit 1) as event_title
+     from restaurants r where r.lat is not null and r.lng is not null and not r.hidden`
   );
   return rows.map((r) => {
     const h = parseHours(r.hours);
@@ -269,6 +286,13 @@ export async function getMapPins(): Promise<MapPin[]> {
       hook: clean(r.hook), visited: !!r.visited,
       periods: h.periods, open24: h.open24, hoursText: h.text,
       patio: !!a.outdoorSeating, dog: !!a.allowsDogs, veg: !!a.servesVegetarianFood,
+      hasEvent: (r.event_count ?? 0) > 0,
+      eventText: clean(r.event_title),
+      meals: MEAL_TAGS.filter(([k]) => a[k]).map(([, label]) => label),
+      ownership: ownershipOf(a.chainStatus, a.chainTier),
+      stepFree: !!a.wheelchairAccessibleEntrance,
+      freeParking: !!(a.freeParkingLot || a.freeStreetParking || a.freeGarageParking),
+      takeout: !!a.takeout,
     };
   });
 }

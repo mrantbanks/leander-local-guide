@@ -12,17 +12,31 @@ const LeanderMap = dynamic(() => import('./LeanderMap'), {
 });
 
 type Tog = { key: string; label: string; test: (p: MapPin, now: number) => boolean };
+// The four questions people actually arrive at a food map with: is it open, is there a deal on, is
+// something happening tonight, and where are the good ones.
 const QUICK: Tog[] = [
   { key: 'openNow', label: 'Open Now', test: (p, now) => isOpenNow(evalHours(p.periods, p.open24, now).state) },
-  { key: 'openLate', label: 'Open Late', test: (p) => p.openLate },
   { key: 'happy', label: 'Happy Hour', test: (p) => p.happyHour },
+  { key: 'event', label: "What's On", test: (p) => p.hasEvent },
   { key: 'gem', label: 'Hidden Gems', test: (p) => p.hiddenGem },
 ];
+
+// Everything below was already in the database and none of it reached the map. Step-free entry in
+// particular: a person deciding whether they can get through the door should be able to filter for
+// it rather than ring round.
 const MORE: Tog[] = [
+  { key: 'local', label: 'Local Owned', test: (p) => p.ownership === 'local' },
+  { key: 'breakfast', label: 'Breakfast', test: (p) => p.meals.includes('Breakfast') },
+  { key: 'lunch', label: 'Lunch', test: (p) => p.meals.includes('Lunch') },
+  { key: 'dinner', label: 'Dinner', test: (p) => p.meals.includes('Dinner') },
+  { key: 'openLate', label: 'Open Late', test: (p) => p.openLate },
   { key: 'visited', label: "Anthony's Been", test: (p) => p.visited },
+  { key: 'truck', label: 'Food Trucks', test: (p) => p.cat === 'Food Truck' },
   { key: 'patio', label: 'Patio', test: (p) => p.patio },
   { key: 'dog', label: 'Dog-Friendly', test: (p) => p.dog },
-  { key: 'truck', label: 'Food Trucks', test: (p) => p.cat === 'Food Truck' },
+  { key: 'takeout', label: 'Takeout', test: (p) => p.takeout },
+  { key: 'stepFree', label: 'Step-Free Entry', test: (p) => p.stepFree },
+  { key: 'parking', label: 'Free Parking', test: (p) => p.freeParking },
   { key: 'rating45', label: '4.5★ +', test: (p) => (p.rating ?? 0) >= 4.5 },
 ];
 const ALL = [...QUICK, ...MORE];
@@ -58,8 +72,12 @@ export default function MapView({ pins, initialSpot }: { pins: MapPin[]; initial
   function togglePrice(n: number) { setPrice((s) => { const x = new Set(s); if (x.has(n)) x.delete(n); else x.add(n); return x; }); }
   function clearAll() { setActive(new Set()); setCuisine(''); setPrice(new Set()); }
   const moreCount = MORE.filter((t) => active.has(t.key)).length + (cuisine ? 1 : 0) + (price.size ? 1 : 0);
-  // surface the detail that matches the active filter inside each popup
-  const emphasis: 'happy' | 'hours' | null = active.has('happy') ? 'happy' : (active.has('openLate') || active.has('openNow')) ? 'hours' : null;
+  // surface the detail that matches the active filter inside each popup: filter by Happy Hour and the
+  // popup shows the times, filter by What's On and it shows what is on.
+  const emphasis: 'happy' | 'event' | 'hours' | null =
+    active.has('happy') ? 'happy'
+      : active.has('event') ? 'event'
+        : (active.has('openLate') || active.has('openNow')) ? 'hours' : null;
 
   function locate() {
     if (!navigator.geolocation) { setGeo('denied'); return; }
