@@ -3,24 +3,59 @@
 import { useMemo, useState } from 'react';
 import SpotCard from '@/components/SpotCard';
 import type { CardSpot } from '@/lib/spots';
-import { ownershipOf } from '@/lib/tags';
+import { ownershipOf, AMENITY_TAGS } from '@/lib/tags';
 
-const TOGGLES: { key: string; label: string; test: (s: CardSpot) => boolean }[] = [
+/**
+ * The filters are DERIVED from the tag vocabulary, not hand-listed.
+ *
+ * They used to be a hand-maintained array of ten, while the database held fourteen more amenities
+ * nobody could filter on: 97 spots serve dessert, 75 serve coffee, 180 have a step-free entrance,
+ * 168 have free parking, and not one of them was reachable. Someone searching the CATEGORY dropdown
+ * for "Coffee Shop" got Starbucks and nothing else, because Coffee Shop is a VENUE TYPE and exactly
+ * one spot is one, while 75 spots simply serve coffee.
+ *
+ * Deriving them from AMENITY_TAGS and FACILITY_GROUPS means adding a tag adds its filter, for ever.
+ * The lists cannot drift apart again, because there is only one list.
+ */
+type Tog = { key: string; label: string; test: (s: CardSpot) => boolean };
+
+// Not vocabulary: these are computed, so they have to be spelled out.
+const QUICK: Tog[] = [
   { key: 'open', label: 'Open Now', test: (s) => s.openNow === true },
   { key: 'hh', label: 'Happy Hour', test: (s) => !!s.happyHour },
-  { key: 'truck', label: 'Food Truck', test: (s) => s.category === 'Food Truck' },
   { key: 'local', label: 'Local Owned', test: (s) => ownershipOf(s.chainStatus, s.chainTier) === 'local' },
-  { key: 'texas', label: 'Texas Chain', test: (s) => ownershipOf(s.chainStatus, s.chainTier) === 'texas' },
-  { key: 'patio', label: 'Patio', test: (s) => s.amenities.includes('Patio') },
-  { key: 'dog', label: 'Dog-Friendly', test: (s) => s.amenities.includes('Dog-Friendly') },
-  { key: 'kid', label: 'Kid-Friendly', test: (s) => s.amenities.includes('Kid-Friendly') },
-  { key: 'veg', label: 'Veg Options', test: (s) => s.amenities.includes('Veg Options') },
-  { key: 'takeout', label: 'Takeout', test: (s) => s.amenities.includes('Takeout') },
+  { key: 'truck', label: 'Food Truck', test: (s) => s.category === 'Food Truck' },
 ];
 
+const amenityTog = (label: string): Tog => ({
+  key: `a:${label}`, label, test: (s) => s.amenities.includes(label),
+});
+const facilityTog = (label: string): Tog => ({
+  key: `f:${label}`, label, test: (s) => s.facilities.some((g) => g.labels.includes(label)),
+});
+
+const MORE: { group: string; tags: Tog[] }[] = [
+  { group: 'What they serve', tags: AMENITY_TAGS.map(([, label]) => label)
+      .filter((l) => ['Coffee', 'Dessert', 'Beer', 'Wine', 'Cocktails', 'Veg Options'].includes(l))
+      .map(amenityTog) },
+  { group: 'The room', tags: AMENITY_TAGS.map(([, label]) => label)
+      .filter((l) => ['Patio', 'Dog-Friendly', 'Kid-Friendly', 'Good for Groups', 'Live Music', 'Sports'].includes(l))
+      .map(amenityTog) },
+  { group: 'Getting fed', tags: AMENITY_TAGS.map(([, label]) => label)
+      .filter((l) => ['Takeout', 'Delivery', 'Dine-In', 'Reservations'].includes(l))
+      .map(amenityTog) },
+  // Nobody could filter for a step-free entrance before, and 180 spots have one.
+  { group: 'Parking and access', tags: ['Step-free entry', 'Accessible restroom', 'Free lot', 'Street parking', 'Restroom', 'Cards'].map(facilityTog) },
+  { group: 'Who owns it', tags: [
+    { key: 'texas', label: 'Texas Chain', test: (s: CardSpot) => ownershipOf(s.chainStatus, s.chainTier) === 'texas' },
+    { key: 'chain', label: 'National Chain', test: (s: CardSpot) => ownershipOf(s.chainStatus, s.chainTier) === 'chain' },
+  ]},
+];
+
+const ALL: Tog[] = [...QUICK, ...MORE.flatMap((g) => g.tags)];
+
 // When they serve. Its own row, because "am I looking for breakfast" is the first question a hungry
-// person asks and it is not the same kind of question as "do they have a patio". The data was always
-// in Google's payload: 95 spots serve lunch and nothing on the site could tell you which.
+// person asks and it is not the same kind of question as "do they have a patio".
 const MEALS: { key: string; label: string }[] = [
   { key: 'Breakfast', label: 'Breakfast' },
   { key: 'Brunch', label: 'Brunch' },
@@ -42,13 +77,14 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
   const [cuisine, setCuisine] = useState('');
   const [price, setPrice] = useState(0);
   const [sort, setSort] = useState('featured');
+  const [more, setMore] = useState(false);
 
   const categories = useMemo(() => [...new Set(spots.map((s) => s.category))].sort(), [spots]);
   const cuisines = useMemo(() => [...new Set(spots.flatMap((s) => s.cuisines))].sort(), [spots]);
 
   const filtered = useMemo(() => {
     let r = spots.filter((s) =>
-      [...on].every((k) => TOGGLES.find((t) => t.key === k)!.test(s)) &&
+      [...on].every((k) => ALL.find((t) => t.key === k)?.test(s) ?? true) &&
       [...meals].every((m) => s.meals.includes(m)) &&
       (!cat || s.category === cat) &&
       (!cuisine || s.cuisines.includes(cuisine)) &&
@@ -59,6 +95,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
   }, [spots, on, meals, cat, cuisine, price, sort]);
 
   const toggle = (k: string) => setOn((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const moreOn = MORE.flatMap((g) => g.tags).filter((t) => on.has(t.key)).length;
   const toggleMeal = (k: string) => setMeals((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; });
   const clear = () => { setOn(new Set()); setMeals(new Set()); setCat(''); setCuisine(''); setPrice(0); setSort('featured'); };
   const active = on.size > 0 || meals.size > 0 || cat || cuisine || price || sort !== 'featured';
@@ -87,9 +124,9 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
         })}
       </div>
 
-      {/* toggles */}
-      <div className="flex flex-wrap gap-2">
-        {TOGGLES.map((t) => {
+      {/* The four people actually arrive with. */}
+      <div className="flex flex-wrap items-center gap-2">
+        {QUICK.map((t) => {
           const isOn = on.has(t.key);
           return (
             <button
@@ -104,12 +141,49 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
             </button>
           );
         })}
+        <button
+          onClick={() => setMore((v) => !v)}
+          className={`font-stamp uppercase tracking-[0.07em] text-sm px-3 py-1.5 border-2 rounded-[2px] transition-colors ${
+            moreOn > 0 ? 'bg-ink text-paper border-ink' : 'text-ink border-rule hover:border-ink'
+          }`}
+        >
+          {more ? 'Fewer filters' : 'More filters'}{moreOn > 0 ? ` (${moreOn})` : ''}
+        </button>
       </div>
+
+      {/* Everything else. Derived from the tag vocabulary, so it can never drift out of date again:
+          97 spots serve dessert and 180 have a step-free entrance, and none of it was reachable. */}
+      {more && (
+        <div className="mt-3 border border-rule bg-paper-raised rounded-sm p-4 space-y-3">
+          {MORE.map((g) => (
+            <div key={g.group}>
+              <p className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mb-1.5">{g.group}</p>
+              <div className="flex flex-wrap gap-2">
+                {g.tags.map((t) => {
+                  const isOn = on.has(t.key);
+                  return (
+                    <button
+                      key={t.key}
+                      onClick={() => toggle(t.key)}
+                      aria-pressed={isOn}
+                      className={`font-stamp uppercase tracking-[0.06em] text-xs px-2.5 py-1.5 border rounded-sm transition-colors ${
+                        isOn ? 'bg-chile text-paper border-chile' : 'border-rule text-ink-soft hover:border-ink hover:text-ink'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* selects + sort */}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <select value={cat} onChange={(e) => setCat(e.target.value)} className={sel}>
-          <option value="">All categories</option>
+          <option value="">Any venue type</option>
           {categories.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
         <select value={cuisine} onChange={(e) => setCuisine(e.target.value)} className={sel}>

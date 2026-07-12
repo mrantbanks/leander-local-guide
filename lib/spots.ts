@@ -75,7 +75,7 @@ export type Spot = {
 export type CardSpot = Pick<Spot,
   'id' | 'slug' | 'name' | 'category' | 'cuisines' | 'ratingGoogle' | 'priceTier' | 'addressLine' |
   'hoursToday' | 'openNow' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
-  'meals' | 'chainStatus' | 'chainTier' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
+  'meals' | 'facilities' | 'chainStatus' | 'chainTier' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
 
 // HOUSE RULE: no em/en dashes anywhere on the site. Prose -> comma; ranges -> hyphen.
 // Preserves paragraph breaks (\n\n) and real hyphens (Chick-fil-A).
@@ -257,23 +257,25 @@ function parseHours(h: { periods?: { open?: { day: number; hour?: number; minute
 // Lean per-pin payload for the map. ~177 rows, all with coords.
 export async function getMapPins(): Promise<MapPin[]> {
   const { rows } = await pool.query(
-    `select r.slug, r.name, r.lat, r.lng, r.primary_category cat, coalesce(r.cuisines,'{}') cuisines,
-       r.happy_hour, r.hours, r.attributes,
-       ${HIDDEN_GEM}, r.price_tier, (r.ratings#>>'{google,rating}')::float rating,
-       r.editorial->>'hook' hook, coalesce((r.editorial->>'visited')::bool,false) visited,
+    // NOTE: no table alias. HIDDEN_GEM hardcodes `restaurants.slug`, so aliasing the table to `r`
+    // makes the whole query fail with "invalid reference to FROM-clause entry".
+    `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
+       happy_hour, hours, attributes,
+       ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
+       editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited,
        -- Anything live on the What's On board. Same LIVE rules as lib/events.ts: approved, not
        -- brunch (that is a service, not an event), and inside its run dates.
        (select count(*) from events e
-         where e.place_id = r.id and e.status = 'approved' and e.event_type <> 'brunch'
+         where e.place_id = restaurants.id and e.status = 'approved' and e.event_type <> 'brunch'
            and (e.expires_at is null or e.expires_at > now())
            and (e.starts_on is null or e.starts_on <= current_date)
            and (e.ends_on   is null or e.ends_on   >= current_date))::int as event_count,
        (select e.title from events e
-         where e.place_id = r.id and e.status = 'approved' and e.event_type <> 'brunch'
+         where e.place_id = restaurants.id and e.status = 'approved' and e.event_type <> 'brunch'
            and (e.expires_at is null or e.expires_at > now())
            and (e.ends_on is null or e.ends_on >= current_date)
          order by e.created_at limit 1) as event_title
-     from restaurants r where r.lat is not null and r.lng is not null and not r.hidden`
+     from restaurants where lat is not null and lng is not null and not hidden`
   );
   return rows.map((r) => {
     const h = parseHours(r.hours);

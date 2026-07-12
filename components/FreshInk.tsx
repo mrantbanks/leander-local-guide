@@ -8,30 +8,31 @@ const TAG: Record<InkItem['kind'], { label: string; cls: string }> = {
 };
 
 /**
- * The ticker under the masthead.
+ * The ticker under the masthead. One line, scrolls sideways, like a newspaper strap.
  *
- * It used to be one no-wrap row inside `overflow-x-auto`, so on a normal laptop the third item was
- * sliced clean through the middle at the container edge, with no scrollbar (no-scrollbar) and no
- * fade to say there was more. It did not read as "scroll me", it read as broken.
- *
- * Now: it WRAPS on anything tablet-sized and up, so an item is never cut. On a phone it still scrolls
- * sideways, which is the right gesture there, but with a fade on the right edge so a half-visible
- * item is obviously the start of more and not a rendering bug.
+ * The original cut its third item clean through the middle at the container edge, with no scrollbar
+ * (no-scrollbar) and no fade, so it did not read as "there is more, scroll", it read as broken. The
+ * fix is not to wrap it (that dumps the whole list into the masthead and kills the strap); it is to
+ * SAY that it scrolls. A fade on the right edge, and the scroll snaps so an item never parks
+ * half-visible once you have moved it.
  */
 export default function FreshInk({ items, dateline }: { items: InkItem[]; dateline: string }) {
   if (!items.length) return null;
 
   return (
     <section className="border-b border-rule bg-paper-raised">
-      <div className="max-w-6xl mx-auto px-5 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+      <div className="max-w-6xl mx-auto px-5 py-2.5 flex items-center gap-4">
         <span className="font-stamp uppercase tracking-[0.18em] text-chile text-sm whitespace-nowrap shrink-0">Fresh Ink</span>
         <span className="hidden sm:inline font-stamp uppercase tracking-[0.1em] text-sm text-ink-soft whitespace-nowrap shrink-0">{dateline}</span>
 
-        {/* The fade only exists while the strip can actually scroll, which is only on a phone. */}
         <div className="relative min-w-0 flex-1">
-          <div className="flex items-center gap-x-5 gap-y-1.5 overflow-x-auto no-scrollbar sm:overflow-visible sm:flex-wrap pr-8 sm:pr-0">
+          <div className="flex items-center gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-pl-1 pr-10">
             {items.map((it, i) => (
-              <Link key={it.slug + i} href={`/r/${it.slug}`} className="group flex items-center gap-2 whitespace-nowrap shrink-0 py-0.5">
+              <Link
+                key={it.slug + i}
+                href={`/r/${it.slug}`}
+                className="group flex items-center gap-2 whitespace-nowrap shrink-0 snap-start"
+              >
                 <span className={`font-stamp uppercase tracking-[0.06em] text-sm px-1.5 py-0.5 border rounded-[2px] -rotate-1 ${TAG[it.kind].cls}`}>
                   {TAG[it.kind].label}
                 </span>
@@ -40,10 +41,18 @@ export default function FreshInk({ items, dateline }: { items: InkItem[]; dateli
               </Link>
             ))}
           </div>
+
+          {/* The whole point: a half-visible item now obviously means "keep going", not "broken". */}
           <div
             aria-hidden="true"
-            className="sm:hidden pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-paper-raised to-transparent"
+            className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-paper-raised via-paper-raised/80 to-transparent"
           />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 font-stamp text-ink-soft text-sm"
+          >
+            →
+          </span>
         </div>
       </div>
     </section>
