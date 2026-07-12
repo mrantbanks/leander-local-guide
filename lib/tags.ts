@@ -87,11 +87,44 @@ export const FACILITY_GROUPS: { group: string; tags: [string, string][] }[] = [
 
 export const FACILITY_TAGS: [string, string][] = FACILITY_GROUPS.flatMap((g) => g.tags);
 
-export const CHAIN_STATUS: { value: string; label: string; help: string }[] = [
-  { value: 'local', label: 'Local Owned', help: 'Independent, owned by someone who lives here. Not a chain. This is the guide\'s whole point.' },
-  { value: 'regional', label: 'Texas Chain', help: 'A Texas chain, e.g. Whataburger. Sorted below local spots.' },
-  { value: 'chain', label: 'Chain', help: 'A national chain. Sorted last, everywhere.' },
-  { value: 'unknown', label: 'Unknown', help: 'Not classified yet. Renders no ownership tag at all.' },
+/**
+ * Who owns it, worked out from the TWO fields that actually hold the answer.
+ *
+ * THE BUG THIS FIXES: everything tested `chainStatus === 'regional'`, and chainStatus is only ever
+ * 'local' or 'chain'. The Texas/national distinction lives in a completely different field,
+ * chainTier. So "Texas chains" read 0 on the homepage, no spot ever got the Texas Chain badge, the
+ * browse filter never matched one, and the sort order treated Whataburger like a national chain.
+ * Twelve Texas chains, invisible.
+ *
+ * chainTier is also not tidy: it holds 'national', 'regional', 'regional-tx' and 'multi-location'
+ * from different import runs. Read all of them rather than pretending one vocabulary won.
+ */
+export type Ownership = 'local' | 'texas' | 'chain';
+
+export function ownershipOf(chainStatus?: string | null, chainTier?: string | null): Ownership | null {
+  const tier = (chainTier || '').toLowerCase();
+  if (tier === 'national') return 'chain';
+  if (tier === 'regional' || tier === 'regional-tx') return 'texas';
+  if (chainStatus === 'chain') return 'chain';
+  if (chainStatus === 'local') return 'local'; // includes local multi-location: Grand Donuts is still local
+  return null; // unknown: say nothing rather than guess
+}
+
+export const OWNERSHIP_LABEL: Record<Ownership, string> = {
+  local: 'Local Owned',
+  texas: 'Texas Chain',
+  chain: 'Chain',
+};
+
+/**
+ * The picker writes BOTH fields, because one of them alone cannot express the answer. Anything that
+ * only sets chainStatus is how "Texas Chain" became unreachable in the first place.
+ */
+export const CHAIN_STATUS: { value: Ownership | 'unknown'; label: string; help: string; status: string; tier: string | null }[] = [
+  { value: 'local', label: 'Local Owned', help: "Independent, owned by someone who lives here. A local place with a few branches (Grand Donuts) still counts.", status: 'local', tier: null },
+  { value: 'texas', label: 'Texas Chain', help: 'A Texas chain: Whataburger, Shipley, Golden Chick, Smokey Mo\'s. Sorted below local spots.', status: 'chain', tier: 'regional-tx' },
+  { value: 'chain', label: 'Chain', help: 'A national chain. Sorted last, everywhere.', status: 'chain', tier: 'national' },
+  { value: 'unknown', label: 'Unknown', help: 'Not classified. Renders no ownership tag at all.', status: 'unknown', tier: null },
 ];
 
 /** The venue types. "Food Truck" is the only one that also renders as a tag on the page. */

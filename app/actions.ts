@@ -10,7 +10,7 @@ import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, canManage, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
-import { AMENITY_TAGS, MEAL_TAGS, FACILITY_TAGS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_TAGS, CHAIN_STATUS, ownershipOf } from '@/lib/tags';
 import { validateEvent, type EventInput } from '@/lib/eventInput';
 import { EVENT_TYPES } from '@/lib/eventLabels';
 
@@ -110,8 +110,10 @@ export async function updateReview(slug: string, fd: FormData) {
   const litFac = new Set(String(fd.get('facilities') || '').split(',').map((s) => s.trim()).filter(Boolean));
   for (const [key] of FACILITY_TAGS) amenities[key] = litFac.has(key);
 
-  const chainStatus = String(fd.get('chainStatus') || '').trim();
-  const CHAIN_OK = ['local', 'regional', 'chain', 'unknown'];
+  // Ownership writes BOTH chainStatus and chainTier. Writing only chainStatus is what made "Texas
+  // Chain" unreachable for the entire life of the site.
+  const own = String(fd.get('ownership') || '').trim();
+  const OWN = CHAIN_STATUS.find((c) => c.value === own);
 
   await pool.query(
     `update restaurants set editorial = editorial || $2::jsonb, happy_hour = $3,
@@ -119,13 +121,14 @@ export async function updateReview(slug: string, fd: FormData) {
                     || jsonb_build_object('menuUrl', $4::text, 'orderUrl', $5::text)
                     || $8::jsonb
                     || case when $9::text = '' then '{}'::jsonb
-                            else jsonb_build_object('chainStatus', $9::text) end,
+                            else jsonb_build_object('chainStatus', $9::text, 'chainTier', $10::text) end,
        hidden = $6, primary_category = coalesce(nullif($7,''), primary_category), updated_at = now()
      where slug = $1`,
     [
       slug, JSON.stringify(ed), hh, menuUrl, orderUrl, hidden, category,
       JSON.stringify(amenities),
-      CHAIN_OK.includes(chainStatus) ? chainStatus : '',
+      OWN ? OWN.status : '',
+      OWN ? OWN.tier : null,
     ]
   );
   revalidateSpot(slug);

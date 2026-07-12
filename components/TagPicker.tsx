@@ -89,7 +89,9 @@ export default function TagPicker({
             </button>
           ))}
         </div>
-        <input type="hidden" name="chainStatus" value={chain} />
+        {/* Writes BOTH fields. Setting only chainStatus is exactly how Texas Chain became
+            unreachable: the tier is where the answer actually lives. */}
+        <input type="hidden" name="ownership" value={chain} />
       </div>
 
       {/* Editorial pins. These render FIRST on the page. */}

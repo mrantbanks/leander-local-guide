@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { pool } from './db';
 import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
-import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS } from '@/lib/tags';
+import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS, ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -75,7 +75,7 @@ export type Spot = {
 export type CardSpot = Pick<Spot,
   'id' | 'slug' | 'name' | 'category' | 'cuisines' | 'ratingGoogle' | 'priceTier' | 'addressLine' |
   'hoursToday' | 'openNow' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
-  'meals' | 'chainStatus' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
+  'meals' | 'chainStatus' | 'chainTier' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
 
 // HOUSE RULE: no em/en dashes anywhere on the site. Prose -> comma; ranges -> hyphen.
 // Preserves paragraph breaks (\n\n) and real hyphens (Chick-fil-A).
@@ -141,9 +141,10 @@ function mapRow(r: any): Spot {
   const todayIdx = (new Date().getDay() + 6) % 7;
   const badges: string[] = [];
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
-  if (a.chainStatus === 'chain') badges.push('Chain');
-  else if (a.chainStatus === 'regional') badges.push('Texas Chain');
-  else if (a.chainStatus === 'local') badges.push('Local Owned');
+  // ownershipOf reads chainStatus AND chainTier. Testing chainStatus alone for 'regional' never
+  // matched: chainStatus only ever holds 'local' or 'chain', so 12 Texas chains had no badge.
+  const own = ownershipOf(a.chainStatus, a.chainTier);
+  if (own) badges.push(OWNERSHIP_LABEL[own]);
   // Patio / Dog-Friendly / Veg used to be repeated here AND in the amenity list below. The exact
   // duplicates were swallowed by the Set at the render site, but 'Veg' and 'Veg Options' are two
   // different strings for one thing, so BOTH rendered on the page. The amenity loop covers all three.
@@ -202,7 +203,15 @@ function mapRow(r: any): Spot {
 }
 
 // Local first, then Texas/regional chains, then national chains (and unknowns) to the back.
-const ORDER = `order by (case attributes->>'chainStatus' when 'local' then 0 when 'regional' then 1 else 2 end), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
+// Local first, then Texas chains, then national to the back. Must read chainTier, exactly like
+// ownershipOf() does, or Whataburger sorts with McDonald's.
+const OWN_RANK = `case
+  when attributes->>'chainTier' in ('regional','regional-tx') then 1
+  when attributes->>'chainTier' = 'national' then 2
+  when attributes->>'chainStatus' = 'chain' then 2
+  when attributes->>'chainStatus' = 'local' then 0
+  else 3 end`;
+const ORDER = `order by (${OWN_RANK}), (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last, name`;
 const PHOTOS = `(select coalesce(json_agg(json_build_object('id',id,'filename',filename,'caption',caption,'is_menu',is_menu,'is_header',is_header) order by sort, created_at),'[]'::json) from photos where place_id = restaurants.id and status = 'approved') as local_photos`;
 // Hidden Gem is a CURATED top 8: highest-rated local spots with a small review count.
 const GEM_WHERE = `not hidden and attributes->>'chainStatus' = 'local' and (ratings#>>'{google,rating}')::float >= 4.5 and coalesce((ratings#>>'{google,count}')::int, 0) between 1 and 150`;
@@ -358,9 +367,9 @@ export async function getFreshInk(): Promise<InkItem[]> {
 export async function countSpots(): Promise<{ total: number; local: number; regional: number; chain: number }> {
   const { rows } = await pool.query(
     `select count(*)::int total,
-            count(*) filter (where attributes->>'chainStatus'='local')::int local,
-            count(*) filter (where attributes->>'chainStatus'='regional')::int regional,
-            count(*) filter (where attributes->>'chainStatus'='chain')::int chain
+            count(*) filter (where (${OWN_RANK}) = 0)::int local,
+            count(*) filter (where attributes->>'chainTier' in ('regional','regional-tx'))::int regional,
+            count(*) filter (where (${OWN_RANK}) = 2)::int chain
      from restaurants where not hidden`
   );
   return rows[0];

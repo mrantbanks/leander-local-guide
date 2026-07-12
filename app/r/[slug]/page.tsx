@@ -15,6 +15,7 @@ import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
 import { snippetFor, faqLd, readerRatingLd, facilitiesLd } from '@/lib/seo';
+import { ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -139,9 +140,9 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 {/* 'unknown' used to fall through to "Local" here, so an unclassified spot was
                     being called locally owned on its own page. Say nothing rather than guess. */}
                 {[spot.category,
-                  spot.chainStatus === 'chain' ? 'Chain'
-                    : spot.chainStatus === 'regional' ? 'Texas Chain'
-                      : spot.chainStatus === 'local' ? 'Local Owned' : null,
+                  ownershipOf(spot.chainStatus, spot.chainTier)
+                    ? OWNERSHIP_LABEL[ownershipOf(spot.chainStatus, spot.chainTier)!]
+                    : null,
                   ...spot.cuisines.slice(0, 2)].filter(Boolean).join(' · ')}
               </p>
               <div className="flex items-center gap-4">
