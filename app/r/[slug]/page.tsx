@@ -10,7 +10,6 @@ import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
 import SiteFooter from '@/components/SiteFooter';
 import PhotoContribute from '@/components/PhotoContribute';
-import TipContribute from '@/components/TipContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
@@ -350,17 +349,75 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               cta="Send me the good stuff" />
           </div>
 
-          {/* Locals say */}
+          {/* Locals weigh in.
+              This was TWO sections: "Locals say" with a post-a-tip box, and "Local reviews" with a
+              post-a-review box, stacked, asking the same person for the same thing in two different
+              forms. Two forms is two moments of goodwill and you only ever get one, which is part of
+              why there are four reviews on the whole site. One section, one flow. */}
           <div className="mt-8 border-t border-rule pt-6">
-            <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm mb-3">Locals say</h3>
-            {tips.length > 0 && (
-              <ul className="space-y-3 mb-5">
-                {tips.map((t, i) => (
-                  <li key={i} className="font-ui text-sm text-ink border-l-2 border-rule pl-3">{t.body}</li>
+            <div className="flex items-baseline justify-between mb-1">
+              <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm">Locals weigh in</h3>
+              {reviews.avg != null && (
+                <span className="font-ui text-sm text-ink">
+                  {reviews.avg}★ <span className="text-ink-soft text-xs">from locals ({reviews.count})</span>
+                </span>
+              )}
+            </div>
+            <p className="font-ui text-xs text-ink-soft mb-4">
+              Not Google&apos;s reviews. The people who actually live here.
+            </p>
+
+            {/* What the room is like. Only somebody who went can answer these, which is the whole
+                reason to ask them. Hidden until three people have, because "1 of 1 says it is quiet"
+                is worse than saying nothing. */}
+            {reviews.traits.length > 0 && (
+              <div className="border-l-2 border-chile pl-3 mb-5">
+                <p className="font-stamp uppercase tracking-[0.1em] text-xs text-chile mb-1.5">What the room is like</p>
+                <ul className="space-y-1">
+                  {reviews.traits.map((t) => (
+                    <li key={t.key} className="font-ui text-sm text-ink">
+                      <strong className="font-display font-bold">{t.n} of {t.of}</strong>{' '}
+                      <span className="text-ink-soft">say</span> {t.label.toLowerCase()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* The practical notes. These used to be "tips", in their own form, in their own section.
+                They ride with the review now, so they arrive attached to the visit they came from. */}
+            {(reviews.tips.length > 0 || tips.length > 0) && (
+              <div className="bg-paper-sunk border border-rule p-4 mb-5">
+                <p className="font-stamp uppercase tracking-[0.1em] text-xs text-oxblood mb-2">Worth knowing</p>
+                <ul className="space-y-1.5">
+                  {[...reviews.tips, ...tips.map((t) => t.body)].filter(Boolean).map((t, i) => (
+                    <li key={i} className="font-ui text-sm text-ink">{t}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {reviews.list.length > 0 && (
+              <ul className="space-y-4 mb-5">
+                {reviews.list.map((rv, i) => (
+                  <li key={i} className="border-l-2 border-rule pl-3">
+                    <span className="text-amber text-sm">
+                      {'★'.repeat(rv.stars)}<span className="text-rule">{'★'.repeat(5 - rv.stars)}</span>
+                    </span>
+                    {rv.body && <p className="font-ui text-sm text-ink mt-1">{rv.body}</p>}
+                    <p className="font-ui text-sm text-ink-soft mt-0.5">by {rv.who}</p>
+                  </li>
                 ))}
               </ul>
             )}
-            <TipContribute slug={slug} siteKey={siteKey} />
+
+            {reviews.list.length === 0 && reviews.traits.length === 0 && (
+              <p className="font-hand text-2xl text-oxblood mb-5">
+                Nobody local has weighed in yet. Be the first.
+              </p>
+            )}
+
+            <ReviewContribute slug={slug} siteKey={siteKey} />
           </div>
 
           {/* From the owner (clearly separate from Anthony's independent take above) */}
@@ -373,28 +430,6 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
               ))}
             </div>
           )}
-
-          {/* Local reviews */}
-          <div className="mt-8 border-t border-rule pt-6">
-            <div className="flex items-baseline justify-between mb-3">
-              <h3 className="font-stamp uppercase tracking-[0.15em] text-ink-soft text-sm">Local reviews</h3>
-              {reviews.avg != null && (
-                <span className="font-ui text-sm text-ink">{reviews.avg}★ <span className="text-ink-soft text-xs">from locals ({reviews.count})</span></span>
-              )}
-            </div>
-            {reviews.list.length > 0 && (
-              <ul className="space-y-4 mb-5">
-                {reviews.list.map((rv, i) => (
-                  <li key={i} className="border-l-2 border-rule pl-3">
-                    <span className="text-amber text-sm">{'★'.repeat(rv.stars)}<span className="text-rule">{'★'.repeat(5 - rv.stars)}</span></span>
-                    {rv.body && <p className="font-ui text-sm text-ink mt-1">{rv.body}</p>}
-                    <p className="font-ui text-sm text-ink-soft mt-0.5">by {rv.who}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <ReviewContribute slug={slug} siteKey={siteKey} />
-          </div>
 
           {/* Map */}
           <div className="mt-8 border-t border-rule pt-6">

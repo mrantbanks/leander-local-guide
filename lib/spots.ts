@@ -3,6 +3,7 @@ import { pool } from './db';
 import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
 import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS, ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
+import { tallyTraits, type TraitTally } from '@/lib/traits';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -324,15 +325,29 @@ export async function getTips(slug: string): Promise<{ body: string }[]> {
   return rows.map((r) => ({ body: clean(r.body) || r.body }));
 }
 
-export async function getReviews(slug: string): Promise<{ avg: number | null; count: number; list: { stars: number; body: string | null; who: string }[] }> {
+export type ReaderReview = { stars: number; body: string | null; who: string; tip: string | null; traits: string[] };
+
+export async function getReviews(slug: string): Promise<{
+  avg: number | null; count: number; list: ReaderReview[]; tips: string[]; traits: TraitTally[];
+}> {
   const { rows } = await pool.query(
-    `select rv.stars, rv.body, rv.user_email from reviews rv join restaurants r on r.id = rv.place_id
-     where r.slug = $1 and rv.status = 'approved' order by rv.created_at desc limit 40`, [slug]);
-  const list = rows.map((r) => ({ stars: r.stars as number, body: clean(r.body), who: (r.user_email || 'a local').split('@')[0] }));
+    `select rv.stars, rv.body, rv.user_email, rv.tip, coalesce(rv.traits,'{}') traits
+       from reviews rv join restaurants r on r.id = rv.place_id
+      where r.slug = $1 and rv.status = 'approved' order by rv.created_at desc limit 40`, [slug]);
+  const list: ReaderReview[] = rows.map((r) => ({
+    stars: r.stars as number,
+    body: clean(r.body),
+    who: (r.user_email || 'a local').split('@')[0],
+    tip: clean(r.tip),
+    traits: (r.traits || []) as string[],
+  }));
   const count = list.length;
   // suppress the headline average until there's enough signal (anti single-fake-star)
   const avg = count >= 3 ? Math.round((list.reduce((a, b) => a + b.stars, 0) / count) * 10) / 10 : null;
-  return { avg, count, list };
+  // The practical notes, which used to be their own "tips" table and their own form. Reviews carry
+  // them now, so they arrive attached to the visit they came from.
+  const tips = list.map((r) => r.tip).filter((t): t is string => !!t);
+  return { avg, count, list, tips, traits: tallyTraits(list) };
 }
 
 export async function getOwnerResponses(slug: string): Promise<{ body: string }[]> {
