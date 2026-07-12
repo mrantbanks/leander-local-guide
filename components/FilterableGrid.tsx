@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import SpotCard from '@/components/SpotCard';
 import type { CardSpot } from '@/lib/spots';
 import { ownershipOf, AMENITY_TAGS } from '@/lib/tags';
+import { evalHours, isOpenNow, centralNowAbs } from '@/lib/hours';
 
 /**
  * The filters are DERIVED from the tag vocabulary, not hand-listed.
@@ -17,11 +18,16 @@ import { ownershipOf, AMENITY_TAGS } from '@/lib/tags';
  * Deriving them from AMENITY_TAGS and FACILITY_GROUPS means adding a tag adds its filter, for ever.
  * The lists cannot drift apart again, because there is only one list.
  */
-type Tog = { key: string; label: string; test: (s: CardSpot) => boolean };
+type Tog = { key: string; label: string; test: (s: CardSpot, nowAbs: number) => boolean };
 
 // Not vocabulary: these are computed, so they have to be spelled out.
 const QUICK: Tog[] = [
-  { key: 'open', label: 'Open Now', test: (s) => s.openNow === true },
+  // Evaluated LIVE against Leander time on every tick, exactly like the map does it. It used to read
+  // a boolean the SERVER computed at render time, which meant the filter was only ever right for the
+  // instant the page was built: leave the tab open past closing and "Open Now" still showed you the
+  // places that had just shut. The card already ships `periods`, so the honest answer was always
+  // right there in the payload, unused.
+  { key: 'open', label: 'Open Now', test: (s, nowAbs) => isOpenNow(evalHours(s.periods, s.open24, nowAbs).state) },
   { key: 'hh', label: 'Happy Hour', test: (s) => !!s.happyHour },
   { key: 'local', label: 'Local Owned', test: (s) => ownershipOf(s.chainStatus, s.chainTier) === 'local' },
   { key: 'truck', label: 'Food Truck', test: (s) => s.category === 'Food Truck' },
@@ -79,12 +85,17 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
   const [sort, setSort] = useState('featured');
   const [more, setMore] = useState(false);
 
+  // The clock, in Leander, ticking. A tab left open past closing time must stop claiming a place is
+  // open. Same 60s tick the map uses.
+  const [nowAbs, setNowAbs] = useState(() => centralNowAbs());
+  useEffect(() => { const id = setInterval(() => setNowAbs(centralNowAbs()), 60000); return () => clearInterval(id); }, []);
+
   const categories = useMemo(() => [...new Set(spots.map((s) => s.category))].sort(), [spots]);
   const cuisines = useMemo(() => [...new Set(spots.flatMap((s) => s.cuisines))].sort(), [spots]);
 
   const filtered = useMemo(() => {
     let r = spots.filter((s) =>
-      [...on].every((k) => ALL.find((t) => t.key === k)?.test(s) ?? true) &&
+      [...on].every((k) => ALL.find((t) => t.key === k)?.test(s, nowAbs) ?? true) &&
       [...meals].every((m) => s.meals.includes(m)) &&
       (!cat || s.category === cat) &&
       (!cuisine || s.cuisines.includes(cuisine)) &&
@@ -92,7 +103,7 @@ export default function FilterableGrid({ spots }: { spots: CardSpot[] }) {
     );
     if (sort !== 'featured') r = [...r].sort(SORTS[sort]);
     return r;
-  }, [spots, on, meals, cat, cuisine, price, sort]);
+  }, [spots, on, meals, cat, cuisine, price, sort, nowAbs]);
 
   const toggle = (k: string) => setOn((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; });
   const moreOn = MORE.flatMap((g) => g.tags).filter((t) => on.has(t.key)).length;

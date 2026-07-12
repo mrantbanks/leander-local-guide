@@ -5,6 +5,8 @@ import { getEventsForSpot } from '@/lib/events';
 import { getActiveSpecials, scheduleLabel } from '@/lib/specials';
 import MenuViewer from '@/components/MenuViewer';
 import SpotPhotos from '@/components/SpotPhotos';
+import { leanderDayIdx } from '@/lib/hours';
+import OpenNowBadge from '@/components/OpenNowBadge';
 import VerdictStamp from '@/components/VerdictStamp';
 import Tag from '@/components/Tag';
 import SignalBar from '@/components/SignalBar';
@@ -53,7 +55,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const [tips, reviews, ownerResponses, events, specials] = await Promise.all([
     getTips(slug), getReviews(slug), getOwnerResponses(slug), getEventsForSpot(slug), getActiveSpecials(slug),
   ]);
-  const todayIdx = (new Date().getDay() + 6) % 7;
+  const todayIdx = leanderDayIdx(); // NOT getDay(): the server is UTC and rolls to tomorrow at 7pm Central
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${spot.name} ${spot.addressLine}`)}&output=embed`;
   const reviewParas = (spot.review || '').split(/\n\n+/).filter(Boolean);
@@ -160,8 +162,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                 </h1>
               </div>
               <div className="mt-3 flex items-center gap-3 flex-wrap font-ui text-sm text-ink-soft">
-                {!spot.comingSoon && spot.openNow === true && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink bg-amber px-2 py-0.5 rounded-sm">Open Now</span>}
-                {!spot.comingSoon && spot.openNow === false && <span className="font-stamp uppercase tracking-[0.08em] text-sm text-ink-soft border border-rule px-2 py-0.5 rounded-sm">Closed</span>}
+                {!spot.comingSoon && <OpenNowBadge periods={spot.periods} open24={spot.open24} />}
                 {spot.ratingGoogle && <span>Google: {spot.ratingGoogle}★ ({spot.ratingCount ?? 0})</span>}
                 {spot.priceTier ? <span>{'$'.repeat(spot.priceTier)}</span> : null}
               </div>

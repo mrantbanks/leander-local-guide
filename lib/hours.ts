@@ -8,6 +8,25 @@ const WEEK = 10080;
 export type HourState = 'open' | 'closing_soon' | 'closed' | 'open24' | 'unknown';
 export type HourStatus = { state: HourState; closeAbs?: number; nextOpenAbs?: number; minsToClose?: number };
 
+/**
+ * Which day is it IN LEANDER, Monday=0 (the order Google gives us weekdayDescriptions in).
+ *
+ * This exists because `new Date().getDay()` is a trap and we fell in it. Our servers run UTC, and
+ * after 7pm Central (6pm in winter) UTC has already rolled over to tomorrow. So for the five hours
+ * a night when people are actually deciding where to eat, every card on the site was printing
+ * TOMORROW'S hours as today's. Ked's showed "closes 11 PM" on a Saturday night when it was open
+ * till 1 AM, because the server had picked Sunday's row.
+ *
+ * It was invisible for months because SpotCard strips the day name off the front of the string
+ * before printing it. You cannot see that the wrong day is the wrong day.
+ *
+ * The site has ONE clock and it is in Texas. Use this, never getDay(). The lint rule will stop you.
+ */
+export function leanderDayIdx(now: Date = new Date()): number {
+  const wd = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short' }).format(now);
+  return ({ Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 } as Record<string, number>)[wd] ?? 0;
+}
+
 export function centralNowAbs(now: Date = new Date()): number {
   const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' });
   const p = Object.fromEntries(fmt.formatToParts(now).map((x) => [x.type, x.value])) as Record<string, string>;

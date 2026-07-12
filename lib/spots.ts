@@ -4,6 +4,7 @@ import { uploadUrl } from './uploads';
 import { ownerHoursToGoogle } from './owner';
 import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS, ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
 import { tallyTraits, type TraitTally } from '@/lib/traits';
+import { leanderDayIdx } from '@/lib/hours';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -27,7 +28,6 @@ export type Spot = {
   addressLine: string;
   hoursToday: string | null;
   weekHours: string[] | null;
-  openNow: boolean | null;
   periods: number[][];
   open24: boolean;
   openLate: boolean;
@@ -75,7 +75,7 @@ export type Spot = {
 // Lightweight shape for cards/grid (no heavy review prose) - keeps the client payload small.
 export type CardSpot = Pick<Spot,
   'id' | 'slug' | 'name' | 'category' | 'cuisines' | 'ratingGoogle' | 'priceTier' | 'addressLine' |
-  'hoursToday' | 'openNow' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
+  'hoursToday' | 'periods' | 'open24' | 'openLate' | 'photo' | 'photoCredit' | 'verdict' | 'hook' | 'badges' | 'amenities' |
   'meals' | 'facilities' | 'chainStatus' | 'chainTier' | 'beenHere' | 'worthIt' | 'itsFine' | 'skipIt' | 'wantToGo' | 'visited' | 'happyHour' | 'localPhotos' | 'headerPhoto' | 'comingSoon'>;
 
 // HOUSE RULE: no em/en dashes anywhere on the site. Prose -> comma; ranges -> hyphen.
@@ -104,34 +104,7 @@ function cleanHappyHour(s: string | null | undefined): string | null {
   return v.slice(0, 160) || null;
 }
 
-// Current time in Leander (Central) regardless of server TZ.
-function chicagoNow(): { day: number; mins: number } {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Chicago', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit',
-  }).formatToParts(new Date());
-  const get = (t: string) => parts.find((p) => p.type === t)?.value || '';
-  const days: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-  const day = days[get('weekday')] ?? 0;
-  const hour = parseInt(get('hour'), 10) % 24;
-  const mins = hour * 60 + parseInt(get('minute'), 10);
-  return { day, mins };
-}
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function isOpenNow(periods: any[] | undefined): boolean | null {
-  if (!periods || !periods.length) return null;
-  const { day, mins } = chicagoNow();
-  for (const p of periods) {
-    if (!p.open) continue;
-    const od = p.open.day, om = (p.open.hour || 0) * 60 + (p.open.minute || 0);
-    if (!p.close) { if (od === day) return true; continue; }
-    const cd = p.close.day, cm = (p.close.hour || 0) * 60 + (p.close.minute || 0);
-    if (od === cd) { if (day === od && mins >= om && mins < cm) return true; }
-    else { if (day === od && mins >= om) return true; if (day === cd && mins < cm) return true; }
-  }
-  return false;
-}
-
 function mapRow(r: any): Spot {
   const a = r.attributes || {};
   const oc = r.owner_content || {}; // owner-contributed (claimed) — overrides facts only, never editorial
@@ -139,7 +112,7 @@ function mapRow(r: any): Spot {
   const ed = r.editorial || {};
   const hoursSrc = (Array.isArray(oc.hours) && oc.hours.length === 7) ? ownerHoursToGoogle(oc.hours) : r.hours;
   const week: string[] | null = hoursSrc?.weekdayDescriptions || null;
-  const todayIdx = (new Date().getDay() + 6) % 7;
+  const todayIdx = leanderDayIdx(); // NOT getDay(): the server is UTC and rolls over at 7pm Central
   const badges: string[] = [];
   if (r.primary_category === 'Food Truck') badges.push('Food Truck');
   // ownershipOf reads chainStatus AND chainTier. Testing chainStatus alone for 'regional' never
@@ -177,7 +150,6 @@ function mapRow(r: any): Spot {
     addressLine: clean((r.address_formatted || '').replace(/,?\s*USA$/, '')) || '',
     hoursToday: week ? cleanRange(week[todayIdx]) : null,
     weekHours: week ? week.map((w) => cleanRange(w) as string) : null,
-    openNow: isOpenNow(hoursSrc?.periods),
     periods: hrs.periods, open24: hrs.open24, openLate: hrs.openLate,
     mapsUrl: r.google_maps_url || null, menuUrl: oc.menuUrl || a.menuUrl || null, orderUrl: oc.orderUrl || a.orderUrl || null,
     website: oc.website || a.website || null, phone: oc.phone || a.phone || null,

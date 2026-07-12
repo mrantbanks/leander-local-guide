@@ -47,7 +47,7 @@ export default async function Home() {
   const cards = spots.map((s) => ({
     id: s.id, slug: s.slug, name: s.name, category: s.category, cuisines: s.cuisines,
     ratingGoogle: s.ratingGoogle, priceTier: s.priceTier, addressLine: s.addressLine,
-    hoursToday: s.hoursToday, openNow: s.openNow, periods: s.periods, open24: s.open24, openLate: s.openLate,
+    hoursToday: s.hoursToday, periods: s.periods, open24: s.open24, openLate: s.openLate,
     photo: s.photo, photoCredit: s.photoCredit,
     verdict: s.verdict, hook: s.hook, badges: s.badges, amenities: s.amenities, meals: s.meals, facilities: s.facilities,
     chainStatus: s.chainStatus, chainTier: s.chainTier, beenHere: s.beenHere, worthIt: s.worthIt, itsFine: s.itsFine,

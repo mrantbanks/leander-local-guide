@@ -40,6 +40,22 @@ const HOUSE_RULES = {
         "date_trunc('week') is ISO-Monday in Postgres and will silently contradict a Sunday-start week. Use the rolling windows in lib/stats.ts (windowOf) instead.",
     },
   ],
+  // 4. The clock. The site describes ONE town, so it has ONE clock, and it is in Texas.
+  //    Our servers run UTC. `new Date().getDay()` on the server is therefore already TOMORROW from
+  //    7pm Central onward (6pm in winter), and in a client component it is the VISITOR'S timezone,
+  //    which for a Leander guide is nobody's business but Leander's. We shipped both bugs at once:
+  //    every card on the site printed tomorrow's opening hours for the five hours a night when
+  //    people are actually choosing where to eat, and it was invisible because SpotCard strips the
+  //    day name off the string before printing it. Use leanderDayIdx() / centralNowAbs() from
+  //    lib/hours.ts. Never getDay(), never getHours(), never getDate(), for anything time-of-day.
+  noLocalClock: [
+    {
+      selector:
+        "CallExpression[callee.property.name=/^(getDay|getHours|getMinutes|getDate)$/][callee.object.callee.name='Date']",
+      message:
+        "That is the SERVER's clock (UTC), or the VISITOR's. Neither is Leander's. Use leanderDayIdx() or centralNowAbs() from @/lib/hours, which always answer in America/Chicago.",
+    },
+  ],
   noHandWrittenRatings: [
     {
       selector: "Property[key.name='aggregateRating'], Property[key.value='aggregateRating']",
@@ -73,12 +89,13 @@ const eslintConfig = defineConfig([
         ...HOUSE_RULES.noAdHocSpotRevalidate,
         ...HOUSE_RULES.noHandWrittenRatings,
         ...HOUSE_RULES.noIsoWeek,
+        ...HOUSE_RULES.noLocalClock,
       ],
     },
   },
   {
     // The two files the rules exist to protect are, necessarily, the two that may break them.
-    files: ["lib/revalidate.ts", "lib/seo.ts"],
+    files: ["lib/revalidate.ts", "lib/seo.ts", "lib/hours.ts"],
     rules: { "no-restricted-syntax": "off" },
   },
 ]);
