@@ -5,6 +5,8 @@ import FreshInk from '@/components/FreshInk';
 import FeedMe from '@/components/FeedMe';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
+import SkyOverLeander from '@/components/SkyOverLeander';
+import { getSky } from '@/lib/sky';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +27,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const [spots, counts, ink] = await Promise.all([getAllSpots(), countSpots(), getFreshInk()]);
+  const [spots, counts, ink, sky] = await Promise.all([getAllSpots(), countSpots(), getFreshInk(), getSky()]);
   const dateline = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date());
   // Tonight's Pick rotates daily (America/Chicago): Penny Royal today, Mockingbird tomorrow,
   // then through the live Hidden Gems set. Anchored so 2026-07-10 = Penny Royal.
@@ -57,18 +59,23 @@ export default async function Home() {
     <main>
       {/* Masthead */}
       <header className="border-b-2 border-ink">
-        <div className="max-w-6xl mx-auto px-5 pt-9 pb-5">
-          <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">
-            Leander, Texas · Local-First · No Nonsense
-          </p>
-          <h1 className="font-display font-black text-ink leading-[0.9] tracking-[-0.03em]" style={{ fontSize: 'clamp(2.75rem, 8vw, 7rem)' }}>
-            The Leander
-            <br />
-            Local Guide
-          </h1>
-          <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
-            {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back) · Eat where Leander actually eats
-          </p>
+        <div className="max-w-6xl mx-auto px-5 pt-9 pb-5 flex flex-col-reverse sm:flex-row sm:items-start sm:justify-between gap-6">
+          <div className="min-w-0">
+            <p className="font-stamp uppercase tracking-[0.2em] text-chile text-sm mb-2">
+              Leander, Texas · Local-First · No Nonsense
+            </p>
+            <h1 className="font-display font-black text-ink leading-[0.9] tracking-[-0.03em]" style={{ fontSize: 'clamp(2.75rem, 8vw, 7rem)' }}>
+              The Leander
+              <br />
+              Local Guide
+            </h1>
+            <p className="mt-4 font-stamp uppercase tracking-[0.1em] text-ink-soft text-sm">
+              {counts.total} Spots · {counts.local} Local Owned · {counts.regional} Texas chains · {counts.chain} National (sorted to the back) · Eat where Leander actually eats
+            </p>
+          </div>
+
+          {/* The sky over Leander, right now. Real weather, and the moon at its real phase. */}
+          <SkyOverLeander sky={sky} />
         </div>
       </header>
 

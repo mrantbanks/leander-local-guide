@@ -74,3 +74,25 @@ body {
 .llg-here-ring { position: absolute; inset: 0; border-radius: 50%; background: rgba(37,99,235,.35); animation: llg-pulse 2s ease-out infinite; }
 @keyframes llg-pulse { 0% { transform: scale(.4); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .llg-here-ring { animation: none; } }
+
+/* Fresh Ink: the ticker actually moves.
+   The track holds the list twice, end to end, so sliding it left by exactly half its width lands the
+   second copy precisely where the first one started. That is what makes the loop seamless instead of
+   snapping. Hover pauses it, because you cannot click a moving target. */
+.llg-ticker-track {
+  animation: llg-ticker 40s linear infinite;
+  will-change: transform;
+}
+.llg-ticker:hover .llg-ticker-track,
+.llg-ticker:focus-within .llg-ticker-track {
+  animation-play-state: paused;
+}
+@keyframes llg-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+/* Anyone who has asked their machine for less motion gets a plain, scrollable strip. */
+@media (prefers-reduced-motion: reduce) {
+  .llg-ticker-track { animation: none; }
+  .llg-ticker { overflow-x: auto; }
+}
