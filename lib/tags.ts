@@ -77,13 +77,35 @@ export const FACILITY_GROUPS: { group: string; tags: [string, string][] }[] = [
   { group: 'Facilities', tags: [
     ['restroom', 'Restroom'],
   ]},
+  // How you actually pay. Google gives us four of these; scanToPay is ours.
+  //
+  // A QR code taped to the table is now how half of Leander settles up, and Google Places has no
+  // field for it and no plans to. That is exactly the kind of thing a local guide is FOR: it is
+  // true, it is useful, it changes whether you sit down, and nobody else is writing it down. It
+  // comes from owners, from Anthony, and from anyone who ate there, not from an API.
+  //
+  // 'Cash only' is the one that matters most and it is a WARNING, not a feature. Showing up at a
+  // taco truck with a card and no cash is a wasted trip, so it renders in oxblood, not as a
+  // neutral little chip like the rest.
   { group: 'Paying', tags: [
+    ['scanToPay', 'Scan to pay'],
     ['acceptsCreditCards', 'Cards'],
     ['acceptsDebitCards', 'Debit'],
     ['acceptsNfc', 'Tap to pay'],
     ['acceptsCashOnly', 'Cash only'],
   ]},
 ];
+
+/** Card brands. Google does not break credit cards down by brand, so these are owner-supplied. */
+export const CARD_BRANDS: [string, string][] = [
+  ['visa', 'Visa'],
+  ['mastercard', 'Mastercard'],
+  ['amex', 'American Express'],
+  ['discover', 'Discover'],
+];
+
+/** The chip that is a warning, not a feature. Turning up with a card and no cash is a wasted trip. */
+export const WARNING_FACILITIES = new Set(['Cash only']);
 
 export const FACILITY_TAGS: [string, string][] = FACILITY_GROUPS.flatMap((g) => g.tags);
 

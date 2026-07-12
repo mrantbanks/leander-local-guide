@@ -80,6 +80,14 @@ async function gemini(instruction) {
   }));
 
   // --- attributes (merge with existing) ---
+  //
+  // Google returns parkingOptions, accessibilityOptions, paymentOptions and restroom as NESTED
+  // objects, and for a long time we asked for all four in the field mask and then never read them:
+  // the payload arrived, this mapper ignored it, and the site showed nothing. The tag vocabulary in
+  // lib/tags.ts had a whole "Paying" group with Cards / Debit / Tap to pay / Cash only, and every
+  // one of them was empty on all 201 spots, because the pipe was built and never connected.
+  //
+  // Flatten them here, because lib/spots.ts reads facilities off FLAT keys in attributes.
   const attrs = {
     phone: p.nationalPhoneNumber || null,
     takeout: p.takeout ?? null,
@@ -87,6 +95,12 @@ async function gemini(instruction) {
     dineIn: p.dineIn ?? null,
     chainStatus: isChain ? 'chain' : 'local', // --chain for national brands
     businessStatus: p.businessStatus || null,
+    restroom: p.restroom ?? null,
+    ...p.parkingOptions,
+    ...p.accessibilityOptions,
+    ...p.paymentOptions,
+    // NB: scanToPay is deliberately NOT here. Google has no field for it and never will. It is
+    // first-party, set by owners and by us, and a Google refresh must never wipe it.
   };
 
   // --- editorial: ground Gemini in real Google review snippets ---

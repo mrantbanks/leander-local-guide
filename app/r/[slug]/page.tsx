@@ -16,7 +16,7 @@ import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
 import { snippetFor, faqLd, readerRatingLd, facilitiesLd } from '@/lib/seo';
-import { ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
+import { ownershipOf, OWNERSHIP_LABEL, WARNING_FACILITIES } from '@/lib/tags';
 import type { Metadata } from 'next';
 
 // ISR: render once, cache 60s, generate pages on demand. No per-user auth() in the render —
@@ -480,7 +480,18 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
                   <dt className="text-ink-soft mb-1">{f.group}</dt>
                   <dd className="flex flex-wrap gap-1.5">
                     {f.labels.map((l) => (
-                      <span key={l} className="font-stamp uppercase tracking-[0.06em] text-xs border border-rule text-ink px-2 py-0.5 rounded-sm">
+                      <span
+                        key={l}
+                        className={
+                          // "Cash only" is a WARNING, not a feature. Turning up at a taco truck with a
+                          // card and no cash is a wasted trip, and a neutral grey chip does not say so.
+                          // Google reports cash-only for exactly ZERO spots in Leander, so this only
+                          // ever comes from an owner or from us. Which is rather the point of a guide.
+                          WARNING_FACILITIES.has(l)
+                            ? 'font-stamp uppercase tracking-[0.06em] text-xs bg-oxblood text-paper px-2 py-0.5 rounded-sm'
+                            : 'font-stamp uppercase tracking-[0.06em] text-xs border border-rule text-ink px-2 py-0.5 rounded-sm'
+                        }
+                      >
                         {l}
                       </span>
                     ))}
