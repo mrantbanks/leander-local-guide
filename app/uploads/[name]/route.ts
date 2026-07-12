@@ -15,7 +15,11 @@ async function loadSharp(): Promise<any> {
 // Serve a locally-stored upload, optionally resized to ?w= via sharp (-> WebP). CF-cacheable.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
-  if (!/^[a-f0-9-]+\.(jpe?g|png|webp)$/i.test(name)) return new Response('bad request', { status: 400 });
+  // The optional `logo-` prefix is load-bearing. Owner logos are stored as `logo-<uuid>.png` so that
+  // saveOwnerLogo can tell a logo from any other file in the bucket and refuse to point a listing at
+  // someone else's photo. The old pattern was hex-only, so `l`, `o` and `g` failed it and EVERY logo
+  // 404'd at 400 before it ever reached the disk. Keep the prefix in both places or neither.
+  if (!/^(logo-)?[a-f0-9-]+\.(jpe?g|png|webp)$/i.test(name)) return new Response('bad request', { status: 400 });
   const w = parseInt(req.nextUrl.searchParams.get('w') || '0', 10);
   try {
     const buf = await readFile(path.join(UPLOAD_DIR, name));

@@ -25,12 +25,25 @@ function instructionFor(spot: { name: string; category: string; cuisines: string
 
   return (
     `${PERSONA}\n\n${ctx}\n\n` +
-    'Write ONE caption for this photo, to sit underneath it on the restaurant page. ' +
-    'Six to twelve words. Say what is actually IN the picture, concretely: the dish, the room, the ' +
-    'sign, the line out the door. Never invent a detail you cannot see. If it is a photograph of a ' +
-    'menu, say so plainly. If it is a plate of food, name the food. If you genuinely cannot tell what ' +
-    'it is, describe what you can see and nothing more. No hashtags, no emojis, no quotes, no final ' +
-    'period, no em dashes.\n\n' +
+    'Write ONE caption for this photo, to sit underneath it on the restaurant page. Six to twelve words.\n\n' +
+    'IT MUST BE TRUE. Say what is actually IN the picture: the dish, the room, the sign, the line out ' +
+    'the door. Never invent a detail you cannot see. If it is a photograph of a menu, say so plainly. ' +
+    'If it is a plate of food, name the food.\n\n' +
+    'IT MUST SOUND LIKE A PERSON. You are standing in front of this thing, telling a friend about it. ' +
+    'Have a point of view. A caption that could sit under any photo in the world is a failure.\n\n' +
+    'BANNED, these are stock-photo words and they kill it dead: showcasing, showing, featuring, various, ' +
+    'delicious, tasty, mouth-watering, an assortment of, a selection of, a variety of, and more, ' +
+    'perfectly, beautifully, nestled, boasting. Never begin with "A" or "An" followed by the noun ' +
+    '("A menu from...", "An assortment of..."). Do not simply name the thing and stop.\n\n' +
+    // Keep these examples STRUCTURAL, not phrasal. An earlier pair ended with "nobody is
+    // apologising" and the model dutifully stamped "no apologies" onto half the captions it wrote.
+    // Show it the shape of a caption with a point of view, never a phrase it can copy.
+    'Good: "The pretzel bites, and that aggressively yellow cheese dip"\n' +
+    'Good: "Chalkboard menu. Fish and chips sitting next to a gyro, and it works"\n' +
+    'Bad: "A menu from Obsidian Brewery, showing various pizza and other eats"\n' +
+    'Bad: "Delicious tacos showcasing fresh ingredients"\n\n' +
+    'Do not reuse the wording of the examples. They show the SHAPE, not the words.\n\n' +
+    'No hashtags, no emojis, no quotes, no final period, no em dashes.\n\n' +
     'Return ONLY minified JSON: {"caption":"<the caption>"}'
   );
 }
