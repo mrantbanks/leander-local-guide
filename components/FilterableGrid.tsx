@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import SpotCard from '@/components/SpotCard';
 import type { CardSpot } from '@/lib/spots';
-import { ownershipOf, AMENITY_TAGS } from '@/lib/tags';
+import { ownershipOf, AMENITY_TAGS, FACILITY_GROUPS } from '@/lib/tags';
 import { evalHours, isOpenNow, centralNowAbs } from '@/lib/hours';
 
 /**
@@ -51,7 +51,12 @@ const MORE: { group: string; tags: Tog[] }[] = [
       .filter((l) => ['Takeout', 'Delivery', 'Dine-In', 'Reservations'].includes(l))
       .map(amenityTog) },
   // Nobody could filter for a step-free entrance before, and 180 spots have one.
-  { group: 'Parking and access', tags: ['Step-free entry', 'Accessible restroom', 'Free lot', 'Street parking', 'Restroom', 'Cards'].map(facilityTog) },
+  { group: 'Parking and access', tags: ['Step-free entry', 'Accessible restroom', 'Free lot', 'Street parking', 'Restroom'].map(facilityTog) },
+  // Derived from the vocabulary, NOT hand-listed, so it cannot drift. The comment at the top of this
+  // file claimed the filters were already derived; the facility groups were in fact a hardcoded list
+  // of labels, and the proof is that adding "Scan to pay" to lib/tags.ts added an editor toggle, a
+  // display chip and structured data, and then quietly failed to add the one thing this file is for.
+  { group: 'Paying', tags: (FACILITY_GROUPS.find((g) => g.group === 'Paying')?.tags ?? []).map(([, label]) => facilityTog(label)) },
   { group: 'Who owns it', tags: [
     { key: 'texas', label: 'Texas Chain', test: (s: CardSpot) => ownershipOf(s.chainStatus, s.chainTier) === 'texas' },
     { key: 'chain', label: 'National Chain', test: (s: CardSpot) => ownershipOf(s.chainStatus, s.chainTier) === 'chain' },
