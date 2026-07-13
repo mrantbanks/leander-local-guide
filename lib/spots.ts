@@ -166,7 +166,7 @@ function mapRow(r: any): Spot {
     summaryNote: clean(ed.summaryNote), cantWait: clean(ed.cantWait),
     visited: !!ed.visited, visitedDate: ed.visitedDate || null,
     // Entered event > owner free-text > AI-scraped guess. One answer, best available.
-    happyHour: happyHourLabel(r.happy_hour_event) ?? cleanHappyHour(oc.happyHour || r.happy_hour),
+    happyHour: happyHourLabel(r.happy_hour_events) ?? cleanHappyHour(oc.happyHour || r.happy_hour),
     ownerBlurb: clean(oc.blurb),
     logo: oc.logo ? uploadUrl(oc.logo) : null,
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
@@ -203,12 +203,11 @@ export const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants wh
  *
  * So: entered event beats owner free-text beats scraped guess. See mapRow.
  */
-export const HH_EVENT = `(select to_jsonb(e) from events e
+export const HH_EVENT = `(select jsonb_agg(to_jsonb(e) order by e.start_time, e.created_at) from events e
    where e.place_id = restaurants.id and e.event_type = 'happy_hour' and e.status = 'approved'
      and (e.expires_at is null or e.expires_at > now())
      and (e.starts_on is null or e.starts_on <= current_date)
-     and (e.ends_on   is null or e.ends_on   >= current_date)
-   order by e.created_at limit 1) as happy_hour_event`;
+     and (e.ends_on   is null or e.ends_on   >= current_date)) as happy_hour_events`;
 
 export async function getAllSpots(): Promise<Spot[]> {
   const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM}, ${HH_EVENT} from restaurants where not hidden ${ORDER}`);
@@ -276,7 +275,7 @@ export async function getMapPins(): Promise<MapPin[]> {
     const h = parseHours(r.hours);
     const a = r.attributes || {};
     // Same precedence as the spot pages: an entered happy hour beats a scraped one.
-    const happyText = happyHourLabel(r.happy_hour_event) ?? cleanHappyHour(r.happy_hour);
+    const happyText = happyHourLabel(r.happy_hour_events) ?? cleanHappyHour(r.happy_hour);
     return {
       slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
       cat: r.cat, cuisines: r.cuisines || [], happyHour: !!happyText, happyHourText: happyText || null, openLate: h.openLate,

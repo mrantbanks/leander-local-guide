@@ -57,9 +57,8 @@ export type HappyHourish = {
   description?: string | null; title?: string | null;
 };
 
-/** "Mon-Fri 3-6pm · 30% off drinks and select appetizers" */
-export function happyHourLabel(e: HappyHourish | null | undefined): string | null {
-  if (!e) return null;
+/** One window: "Mon-Fri 3-6pm · 30% off drinks and select appetizers" */
+function oneWindow(e: HappyHourish): string | null {
   const days = daysLabel(e.days_of_week ?? e.daysOfWeek);
   const a = hhTime(e.start_time ?? e.startTime);
   const b = hhTime(e.end_time ?? e.endTime);
@@ -70,6 +69,35 @@ export function happyHourLabel(e: HappyHourish | null | undefined): string | nul
   return [when, what].filter(Boolean).join(' · ') || null;
 }
 
+/**
+ * ALL of a spot's happy hours, not the first one.
+ *
+ * This took `limit 1` for about a day, which meant a bar with a weekday happy hour AND a weekend one
+ * would have had the second silently dropped from its card, from the home filter and from the map
+ * popup, while still sitting there in the events list looking saved. Plenty of bars run two. A
+ * quietly discarded row is the worst kind of bug because everything keeps working.
+ *
+ * Windows are separated by a semicolon, so two of them stay legible on one card line:
+ *   "Mon-Fri 3-6pm · 30% off drinks; Sat-Sun 2-5pm · $2 pints"
+ */
+export function happyHourLabel(e: HappyHourish | HappyHourish[] | null | undefined): string | null {
+  const list = (Array.isArray(e) ? e : e ? [e] : []).filter(Boolean);
+  if (!list.length) return null;
+  const out = list.map(oneWindow).filter(Boolean).join('; ');
+  return out || null;
+}
+
 // 'brunch' is deliberately absent: it is a service, not an event. The enum value still exists in
 // Postgres (you cannot drop one cheaply) and lib/events.ts filters it out of every query.
 export const EVENT_TYPES = Object.keys(EVENT_LABELS);
+
+/**
+ * Happy hour is stored as an event and MANAGED as its own thing, so the two desks never mix them.
+ *
+ * A spot has many events and they churn: trivia this month, a watch party next. It has ONE standing
+ * happy hour, maybe two. "Add another" is the right verb for an event and the wrong one for a happy
+ * hour, where you almost always mean "change ours". Putting them in one list also buries the happy
+ * hour, which is the single thing most people are actually looking for.
+ */
+export const HAPPY_HOUR_TYPE = 'happy_hour';
+export const BOARD_EVENT_TYPES = EVENT_TYPES.filter((t) => t !== HAPPY_HOUR_TYPE);

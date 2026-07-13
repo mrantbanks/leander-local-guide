@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { pool } from '@/lib/db';
 import { updateReview, addEventAction, deleteEvent } from '@/app/actions';
 import { getEventsForSpotAdmin } from '@/lib/events';
+import { HAPPY_HOUR_TYPE, BOARD_EVENT_TYPES } from '@/lib/eventLabels';
 import { HIDDEN_GEM } from '@/lib/spots';
 import { auth } from '@/auth';
 import PhotoStudio from '@/components/PhotoStudio';
@@ -39,6 +40,8 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const ph = await pool.query('select id, filename, caption, is_menu, is_header from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
   // Everything on the record, live or not, formatted the same way the diner and the owner see it.
   const adminEvents = await getEventsForSpotAdmin(slug);
+  const happyHours = adminEvents.filter((e) => e.type === HAPPY_HOUR_TYPE);
+  const boardEvents = adminEvents.filter((e) => e.type !== HAPPY_HOUR_TYPE);
   const action = updateReview.bind(null, slug);
   async function addForSpot(input: EventInput) {
     'use server';
@@ -158,13 +161,38 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         <MenuStudio slug={slug} initial={(r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu : null} menuPhotoCount={ph.rows.filter((p) => p.is_menu).length} />
       </section>
 
+      {/* Happy hour first, and on its own. It is one standing thing, not one of many, and it is what
+          most people came to find out. Mixed into the events list it was neither. */}
+      <section className="mt-10 border-t border-rule pt-6">
+        <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">🍻 Happy Hour</h2>
+        {happyHours.length === 0 ? (
+          <p className="font-ui text-sm text-ink-soft mb-4">No happy hour on record. If they run one, put it here: it drives the Happy Hour filter on the home page and on the map.</p>
+        ) : (
+          <ul className="border-t border-rule mb-5">
+            {happyHours.map((e) => (
+              <li key={e.id} className="border-b border-rule py-3 flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-stamp uppercase tracking-[0.06em] text-sm text-chile">{e.when}</p>
+                  {e.description && <p className="font-ui text-sm text-ink mt-0.5">{e.description}</p>}
+                  {!e.live && <span className="font-stamp uppercase tracking-[0.06em] text-xs bg-oxblood text-paper px-1.5 py-0.5 rounded-sm">{e.status === 'approved' ? 'Not showing' : e.status}</span>}
+                </div>
+                <form action={deleteEvent.bind(null, e.id, slug)}>
+                  <button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood shrink-0">delete</button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        )}
+        <EventComposer spotName={r.name as string} onCreate={addForSpot} types={[HAPPY_HOUR_TYPE]} />
+      </section>
+
       <section className="mt-10 border-t border-rule pt-6">
         <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">Events</h2>
-        {adminEvents.length === 0 ? (
+        {boardEvents.length === 0 ? (
           <p className="font-ui text-sm text-ink-soft mb-4">Nothing on the board here yet.</p>
         ) : (
           <ul className="border-t border-rule mb-5">
-            {adminEvents.map((e) => (
+            {boardEvents.map((e) => (
               <li key={e.id} className="border-b border-rule py-3 flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-display font-bold text-ink">
@@ -187,7 +215,7 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
         )}
         {/* Same composer the owner uses, so an event Anthony adds on a visit and one the owner adds
             are the same record, made the same way, with the same live preview. */}
-        <EventComposer spotName={r.name as string} onCreate={addForSpot} />
+        <EventComposer spotName={r.name as string} onCreate={addForSpot} types={BOARD_EVENT_TYPES} />
       </section>
     </main>
   );

@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import EventCard from '@/components/EventCard';
 import Help from '@/components/Help';
-import { EVENT_LABELS, EVENT_EMOJI } from '@/lib/eventLabels';
+import { EVENT_LABELS, EVENT_EMOJI, EVENT_TYPES } from '@/lib/eventLabels';
 import {
   ISO_DAYS, FREQS, WEEKS_OF_MONTH, validateEvent, whenLabel, prettyTime,
   type EventInput, type EventFreq,
@@ -29,14 +29,24 @@ const EMPTY: EventInput = {
 };
 
 export default function EventComposer({
-  spotName, onCreate,
+  spotName, onCreate, types,
 }: {
   spotName: string;
   /** Server action. Returns an error string, or null on success. */
   onCreate: (input: EventInput) => Promise<{ ok: boolean; error?: string }>;
+  /**
+   * Which kinds this composer offers. Defaults to everything.
+   *
+   * Happy hour is stored as an event (it has days, a start and an end, so of course it is), but it
+   * is not MANAGED like one. A spot has many events and they churn; it has one standing happy hour,
+   * maybe two. So the desks give it its own panel and pass types={['happy_hour']} here, and the
+   * general Events panel passes everything else. One kind means no dropdown to pick from at all.
+   */
+  types?: string[];
 }) {
   const router = useRouter();
-  const [e, setE] = useState<EventInput>(EMPTY);
+  const kinds = types?.length ? types : EVENT_TYPES;
+  const [e, setE] = useState<EventInput>({ ...EMPTY, eventType: kinds[0] });
   const [err, setErr] = useState('');
   const [pending, start] = useTransition();
 
@@ -56,21 +66,23 @@ export default function EventComposer({
       if (bad) { setErr(bad); return; }
       const r = await onCreate(e);
       if (!r.ok) { setErr(r.error || 'Could not save that.'); return; }
-      setE(EMPTY);
+      setE({ ...EMPTY, eventType: kinds[0] });
       router.refresh();
     });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       <div className="space-y-3">
-        <div>
-          <label className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1 block">What kind of thing is it</label>
-          <select value={e.eventType} onChange={(x) => set('eventType', x.target.value)} className={field}>
-            {Object.entries(EVENT_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>{EVENT_EMOJI[k] || '📅'} {v}</option>
-            ))}
-          </select>
-        </div>
+        {kinds.length > 1 && (
+          <div>
+            <label className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1 block">What kind of thing is it</label>
+            <select value={e.eventType} onChange={(x) => set('eventType', x.target.value)} className={field}>
+              {kinds.map((k) => (
+                <option key={k} value={k}>{EVENT_EMOJI[k] || '📅'} {EVENT_LABELS[k] || k}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1 block">Call it something</label>
