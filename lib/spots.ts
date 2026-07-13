@@ -5,6 +5,7 @@ import { ownerHoursToGoogle } from './owner';
 import { AMENITY_TAGS, MEAL_TAGS, FACILITY_GROUPS, ownershipOf, OWNERSHIP_LABEL } from '@/lib/tags';
 import { tallyTraits, type TraitTally } from '@/lib/traits';
 import { leanderDayIdx } from '@/lib/hours';
+import { happyHourLabel } from '@/lib/eventLabels';
 
 // Extracted menu (transcribed from the photos marked 📋 Menu; editable in the admin).
 // Prices are strings straight off the printed menu ("14", "3/5/8" for S/M/L) so nothing gets invented.
@@ -164,7 +165,8 @@ function mapRow(r: any): Spot {
     whatToOrder: clean(ed.whatToOrder), gotcha: clean(ed.gotcha),
     summaryNote: clean(ed.summaryNote), cantWait: clean(ed.cantWait),
     visited: !!ed.visited, visitedDate: ed.visitedDate || null,
-    happyHour: cleanHappyHour(oc.happyHour || r.happy_hour),
+    // Entered event > owner free-text > AI-scraped guess. One answer, best available.
+    happyHour: happyHourLabel(r.happy_hour_event) ?? cleanHappyHour(oc.happyHour || r.happy_hour),
     ownerBlurb: clean(oc.blurb),
     logo: oc.logo ? uploadUrl(oc.logo) : null,
     worthIt: r.worth_it_ct || 0, itsFine: r.its_fine_ct || 0, skipIt: r.skip_it_ct || 0,
@@ -191,8 +193,25 @@ const GEM_WHERE = `not hidden and attributes->>'chainStatus' = 'local' and (rati
 const GEM_ORDER = `order by (ratings#>>'{google,rating}')::float desc nulls last, (ratings#>>'{google,count}')::int desc nulls last`;
 export const HIDDEN_GEM = `(restaurants.slug in (select slug from restaurants where ${GEM_WHERE} ${GEM_ORDER} limit 8)) as is_hidden_gem`;
 
+/**
+ * The happy hour someone actually TYPED, as opposed to the one an AI guessed off a website.
+ *
+ * There are two sources of happy-hour truth in this database and there must only ever be one answer.
+ * A structured happy_hour event has days, a start AND an end, and an offer, because a human sat down
+ * and entered it. `restaurants.happy_hour` is a free-text line scraped by a model, which is better
+ * than nothing for the spots nobody has visited yet, and worse than anything for the ones we have.
+ *
+ * So: entered event beats owner free-text beats scraped guess. See mapRow.
+ */
+export const HH_EVENT = `(select to_jsonb(e) from events e
+   where e.place_id = restaurants.id and e.event_type = 'happy_hour' and e.status = 'approved'
+     and (e.expires_at is null or e.expires_at > now())
+     and (e.starts_on is null or e.starts_on <= current_date)
+     and (e.ends_on   is null or e.ends_on   >= current_date)
+   order by e.created_at limit 1) as happy_hour_event`;
+
 export async function getAllSpots(): Promise<Spot[]> {
-  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where not hidden ${ORDER}`);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM}, ${HH_EVENT} from restaurants where not hidden ${ORDER}`);
   return rows.map(mapRow);
 }
 
@@ -234,17 +253,20 @@ export async function getMapPins(): Promise<MapPin[]> {
     // makes the whole query fail with "invalid reference to FROM-clause entry".
     `select slug, name, lat, lng, primary_category cat, coalesce(cuisines,'{}') cuisines,
        happy_hour, hours, attributes,
+       ${HH_EVENT},
        ${HIDDEN_GEM}, price_tier, (ratings#>>'{google,rating}')::float rating,
        editorial->>'hook' hook, coalesce((editorial->>'visited')::bool,false) visited,
        -- Anything live on the What's On board. Same LIVE rules as lib/events.ts: approved, not
        -- brunch (that is a service, not an event), and inside its run dates.
        (select count(*) from events e
-         where e.place_id = restaurants.id and e.status = 'approved' and e.event_type <> 'brunch'
+         where e.place_id = restaurants.id and e.status = 'approved'
+           and e.event_type not in ('brunch','happy_hour')
            and (e.expires_at is null or e.expires_at > now())
            and (e.starts_on is null or e.starts_on <= current_date)
            and (e.ends_on   is null or e.ends_on   >= current_date))::int as event_count,
        (select e.title from events e
-         where e.place_id = restaurants.id and e.status = 'approved' and e.event_type <> 'brunch'
+         where e.place_id = restaurants.id and e.status = 'approved'
+           and e.event_type not in ('brunch','happy_hour')
            and (e.expires_at is null or e.expires_at > now())
            and (e.ends_on is null or e.ends_on >= current_date)
          order by e.created_at limit 1) as event_title
@@ -253,7 +275,8 @@ export async function getMapPins(): Promise<MapPin[]> {
   return rows.map((r) => {
     const h = parseHours(r.hours);
     const a = r.attributes || {};
-    const happyText = cleanHappyHour(r.happy_hour);
+    // Same precedence as the spot pages: an entered happy hour beats a scraped one.
+    const happyText = happyHourLabel(r.happy_hour_event) ?? cleanHappyHour(r.happy_hour);
     return {
       slug: r.slug, name: clean(r.name) || r.name, lat: Number(r.lat), lng: Number(r.lng),
       cat: r.cat, cuisines: r.cuisines || [], happyHour: !!happyText, happyHourText: happyText || null, openLate: h.openLate,
@@ -272,7 +295,7 @@ export async function getMapPins(): Promise<MapPin[]> {
   });
 }
 export const getSpot = cache(async (slug: string): Promise<Spot | null> => {
-  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM} from restaurants where slug = $1 and not hidden`, [slug]);
+  const { rows } = await pool.query(`select *, ${PHOTOS}, ${HIDDEN_GEM}, ${HH_EVENT} from restaurants where slug = $1 and not hidden`, [slug]);
   return rows[0] ? mapRow(rows[0]) : null;
 });
 

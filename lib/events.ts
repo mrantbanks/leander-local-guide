@@ -148,6 +148,42 @@ export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
   });
 }
 
+/**
+ * Everything on the record for one spot, live or not, for the people who manage it.
+ *
+ * getEventsForSpot() applies LIVE, so it hides anything pending, expired or past its end date. That
+ * is right for a diner and wrong for an admin: the admin page was running its own raw SQL and
+ * printing "Trivia: Trivia (weekly 3 19:30)", which is a database row, not an event. If the one
+ * person who can fix a wrong event cannot read it, they cannot fix it.
+ *
+ * Same formatter as the owner desk and the public page, so all three describe an event identically.
+ * `live` says whether a diner can currently see it, which is the question an admin actually has.
+ */
+export async function getEventsForSpotAdmin(slug: string): Promise<(SpotEvent & { status: string; live: boolean; verified: boolean; source: string })[]> {
+  const { rows } = await pool.query(
+    `select e.*, (${LIVE.replace(/\be\./g, 'e.')}) as is_live
+       from events e join restaurants r on r.id = e.place_id
+      where r.slug = $1 order by e.event_type`, [slug]
+  );
+  return rows.map((r: EventRow & { status: string; is_live: boolean; verified: boolean; source: string }) => {
+    const f = freshness(r);
+    const d = eventDates(r);
+    return {
+      id: r.id, type: r.event_type, label: EVENT_LABELS[r.event_type] || 'Event', emoji: EVENT_EMOJI[r.event_type] || '📅',
+      title: clean(r.title) || r.title, description: clean(r.description), when: fmtWhen(r), url: r.url,
+      fresh: f.fresh, confirmedNote: f.note,
+      schedule: {
+        byDay: (r.days_of_week || []).map((n) => `https://schema.org/${DAY_URL[n - 1]}`),
+        startTime: r.start_time ? r.start_time.slice(0, 5) : null,
+        endTime: r.end_time ? r.end_time.slice(0, 5) : null,
+        freq: r.freq, date: r.event_date,
+      },
+      startDate: d?.startDate || null, endDate: d?.endDate || null,
+      status: r.status, live: !!r.is_live, verified: !!r.verified, source: r.source,
+    };
+  });
+}
+
 export type WhatsOnItem = { id: number; type: string; label: string; emoji: string; title: string; when: string; time: string | null; spot: string; slug: string; fresh: boolean };
 // `label` is Tonight / Tomorrow / the weekday. `date` is the short stamp (Jul 12). `full` spells the
 // whole thing out (Saturday, July 12) because the board reads like a printed listings page.

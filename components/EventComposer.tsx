@@ -137,7 +137,9 @@ export default function EventComposer({
             <input type="time" value={e.startTime || ''} onChange={(x) => set('startTime', x.target.value)} className={field} />
           </div>
           <div className="flex-1">
-            <label className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1 block">Ends (optional)</label>
+            <label className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1 block">
+              {e.eventType === 'happy_hour' ? 'Ends' : 'Ends (optional)'}
+            </label>
             <input type="time" value={e.endTime || ''} onChange={(x) => set('endTime', x.target.value)} className={field} />
           </div>
         </div>

@@ -45,6 +45,12 @@ export function validateEvent(e: EventInput): string | null {
   if (e.freq !== 'once' && !(e.daysOfWeek || []).length) return 'Pick at least one day of the week.';
   if (e.freq === 'monthly_dow' && !e.weekOfMonth) return 'Pick which week of the month.';
   if (e.startTime && e.endTime && e.endTime <= e.startTime) return 'It cannot finish before it starts.';
+  // For everything else the end time is a nicety. For a happy hour it IS the offer: "3 to 6" is a
+  // window you have to beat, and "happy hour from 3pm" tells a person nothing they can act on.
+  if (e.eventType === 'happy_hour') {
+    if (!e.startTime || !e.endTime) return 'A happy hour needs a start AND an end. When does it stop?';
+    if (!e.description?.trim()) return 'Say what the deal actually is. "Happy hour" on its own is not an offer.';
+  }
   return null;
 }
 

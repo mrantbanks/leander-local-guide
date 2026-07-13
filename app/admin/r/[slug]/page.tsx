@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { pool } from '@/lib/db';
 import { updateReview, addEventAction, deleteEvent } from '@/app/actions';
-import { EVENT_LABELS } from '@/lib/events';
+import { getEventsForSpotAdmin } from '@/lib/events';
 import { HIDDEN_GEM } from '@/lib/spots';
 import { auth } from '@/auth';
 import PhotoStudio from '@/components/PhotoStudio';
@@ -37,7 +37,8 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
   const attr = r.attributes || {};
   const oc = r.owner_content || {};
   const ph = await pool.query('select id, filename, caption, is_menu, is_header from photos where place_id = (select id from restaurants where slug = $1) order by sort, created_at', [slug]);
-  const ev = await pool.query('select id, event_type, title, freq, days_of_week, start_time, status from events where place_id = (select id from restaurants where slug = $1) order by event_type', [slug]);
+  // Everything on the record, live or not, formatted the same way the diner and the owner see it.
+  const adminEvents = await getEventsForSpotAdmin(slug);
   const action = updateReview.bind(null, slug);
   async function addForSpot(input: EventInput) {
     'use server';
@@ -159,15 +160,27 @@ export default async function AdminEdit({ params }: { params: Promise<{ slug: st
 
       <section className="mt-10 border-t border-rule pt-6">
         <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">Events</h2>
-        {ev.rows.length > 0 && (
-          <ul className="mb-4 space-y-1">
-            {ev.rows.map((e) => (
-              <li key={e.id} className="flex items-center justify-between font-ui text-sm border-b border-rule/50 py-1">
-                <span>{EVENT_LABELS[e.event_type] || e.event_type}: {e.title}{' '}
-                  <span className="text-ink-soft text-xs">({e.freq}{e.days_of_week ? ' ' + (e.days_of_week as number[]).join(',') : ''}{e.start_time ? ' ' + e.start_time.slice(0, 5) : ''})</span>
-                  {e.status !== 'approved' && <span className="text-oxblood text-xs"> · {e.status}</span>}
-                </span>
-                <form action={deleteEvent.bind(null, e.id as number, slug)}><button className="text-oxblood text-xs font-stamp uppercase tracking-[0.08em]">delete</button></form>
+        {adminEvents.length === 0 ? (
+          <p className="font-ui text-sm text-ink-soft mb-4">Nothing on the board here yet.</p>
+        ) : (
+          <ul className="border-t border-rule mb-5">
+            {adminEvents.map((e) => (
+              <li key={e.id} className="border-b border-rule py-3 flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-display font-bold text-ink">
+                    <span className="mr-1.5">{e.emoji}</span>{e.title}
+                    {!e.live && (
+                      <span className="ml-2 font-stamp uppercase tracking-[0.06em] text-xs bg-oxblood text-paper px-1.5 py-0.5 rounded-sm align-middle">
+                        {e.status === 'approved' ? 'Not showing' : e.status}
+                      </span>
+                    )}
+                  </p>
+                  <p className="font-stamp uppercase tracking-[0.06em] text-sm text-chile mt-0.5">{e.when}</p>
+                  {e.description && <p className="font-ui text-sm text-ink-soft mt-0.5">{e.description}</p>}
+                </div>
+                <form action={deleteEvent.bind(null, e.id, slug)}>
+                  <button className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-oxblood shrink-0">delete</button>
+                </form>
               </li>
             ))}
           </ul>
