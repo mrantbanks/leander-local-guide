@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getWhatsOn } from '@/lib/events';
+import { getWhatsOn, getPouringNow } from '@/lib/events';
 import SiteFooter from '@/components/SiteFooter';
 import EventCard from '@/components/EventCard';
 
@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function WhatsOnPage() {
-  const days = await getWhatsOn();
+  const [days, pouring] = await Promise.all([getWhatsOn(), getPouringNow()]);
   const total = days.reduce((n, d) => n + d.items.length, 0);
 
   return (
@@ -24,6 +24,29 @@ export default async function WhatsOnPage() {
           <p className="mt-3 font-ui text-ink-soft max-w-xl">Trivia, karaoke, live music, bingo and the rest. Tonight and the next seven days. Always call ahead to be sure, schedules change.</p>
         </div>
       </header>
+
+      {/* Happy hour is NOT in the listings below, and this band is why it does not need to be. A happy
+          hour is a service window, not a happening, and twenty spots running one Mon-Fri would be a
+          hundred rows a week against eight real events -- exactly what brunch did to this board. The
+          only genuinely time-sensitive thing about it is "who is pouring, and how long have I got",
+          so it gets answered here, once, and stays out of the way. Empty most of the day, which is
+          correct: at 10am nobody is pouring. */}
+      {pouring.length > 0 && (
+        <div className="border-b-2 border-ink bg-amber/25">
+          <div className="max-w-4xl mx-auto px-5 py-4">
+            <p className="font-stamp uppercase tracking-[0.14em] text-xs text-chile mb-2">🍻 Happy hour, right now</p>
+            <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+              {pouring.map((p) => (
+                <li key={p.slug} className="font-ui text-sm text-ink">
+                  <Link href={`/r/${p.slug}`} className="font-display font-bold hover:text-oxblood">{p.name}</Link>
+                  {p.endsAt && <span className="text-ink-soft"> until {p.endsAt}</span>}
+                  {p.deal && <span className="text-ink-soft"> · {p.deal}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {total === 0 ? (
         <div className="max-w-4xl mx-auto px-5 py-16 text-center">

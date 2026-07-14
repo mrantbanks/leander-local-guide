@@ -3,7 +3,7 @@ import { pool } from './db';
 // The vocabulary lives in lib/eventLabels.ts so the client-side composer can import it without
 // dragging the Postgres pool into the browser bundle. Re-exported here so existing callers still work.
 export { EVENT_LABELS, EVENT_EMOJI, EVENT_TYPES } from './eventLabels';
-import { EVENT_LABELS, EVENT_EMOJI } from './eventLabels';
+import { EVENT_LABELS, EVENT_EMOJI, happyHourLabel } from './eventLabels';
 
 const DOW_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; // index by ISO-1
 const ORD = ['', '1st', '2nd', '3rd', '4th'];
@@ -126,9 +126,22 @@ const LIVE = `e.status = 'approved'
   and (e.starts_on is null or e.starts_on <= current_date)
   and (e.ends_on   is null or e.ends_on   >= current_date)`;
 
+/**
+ * The EVENTS at a spot. Happy hour is not one of them, here or anywhere a diner looks.
+ *
+ * It is stored as an event row because that is genuinely its shape (days, a start, an end), but it
+ * is a SERVICE WINDOW, not a happening: you do not go TO a happy hour, you catch one. Every diner
+ * surface already states it in the place it belongs -- its own line on the spot page, its own filter
+ * on the home page and the map, its own band on the What's On board -- so letting it through here
+ * as well just told the same fact twice on the same page.
+ *
+ * Same call as brunch, which we removed for the same reason. The admin and owner desks use
+ * getEventsForSpotAdmin, which does show it, because someone has to be able to edit the thing.
+ */
 export async function getEventsForSpot(slug: string): Promise<SpotEvent[]> {
   const { rows } = await pool.query(
-    `select e.* from events e join restaurants r on r.id = e.place_id where r.slug = $1 and ${LIVE} order by e.event_type`, [slug]
+    `select e.* from events e join restaurants r on r.id = e.place_id
+      where r.slug = $1 and ${LIVE} and e.event_type <> 'happy_hour' order by e.event_type`, [slug]
   );
   return rows.map((r: EventRow) => {
     const f = freshness(r);
@@ -190,10 +203,58 @@ export type WhatsOnItem = { id: number; type: string; label: string; emoji: stri
 export type WhatsOnDay = { iso: string; date: string; full: string; label: string; items: WhatsOnItem[] };
 
 // Expand recurring + one-off events across the next 7 days (America/Chicago).
+export type PouringNow = { slug: string; name: string; when: string; deal: string | null; endsAt: string | null };
+
+/**
+ * Who is pouring RIGHT NOW. The one genuinely time-sensitive thing about a happy hour.
+ *
+ * This is the question the What's On board could not answer without being ruined by it: at 4pm on a
+ * Tuesday, where can I get a drink cheap, and how long have I got. So it gets a band of its own,
+ * above the listings and visually apart from them, rather than a hundred rows a week mixed in.
+ *
+ * "How long have I got" is the whole point, which is why the end time is mandatory on a happy hour.
+ */
+export async function getPouringNow(): Promise<PouringNow[]> {
+  const { rows } = await pool.query(
+    `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id
+      where ${LIVE} and e.event_type = 'happy_hour'`
+  );
+  // Leander's clock, never the server's. See lib/hours.ts.
+  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Chicago', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+  const parts = Object.fromEntries(fmt.formatToParts(new Date()).map((x) => [x.type, x.value]));
+  const isoDay = ({ Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 } as Record<string, number>)[parts.weekday] ?? 1;
+  const nowHM = `${parts.hour}:${parts.minute}`;
+
+  return rows
+    .filter((r: EventRow) => (r.days_of_week || []).includes(isoDay))
+    .filter((r: EventRow) => {
+      const a = (r.start_time || '').slice(0, 5);
+      const b = (r.end_time || '').slice(0, 5);
+      return a && b && nowHM >= a && nowHM < b;
+    })
+    .map((r: EventRow & { name: string; slug: string }) => ({
+      slug: r.slug,
+      name: clean(r.name) || r.name,
+      when: happyHourLabel(r) || '',
+      deal: clean(r.description),
+      endsAt: fmtTime(r.end_time),
+    }))
+    .sort((a: PouringNow, b: PouringNow) => a.name.localeCompare(b.name));
+}
+
 export async function getWhatsOn(): Promise<WhatsOnDay[]> {
   const { rows } = await pool.query(
     // What's On is a local-first board — national chains stay off it (their own page still shows their events).
-    `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id where ${LIVE} and coalesce(r.attributes->>'chainStatus','') <> 'chain'`
+    // Happy hour is excluded here for the same reason brunch is, and it took a while to see it: a
+    // happy hour is a SERVICE WINDOW, not a happening. You do not go TO one, you catch one while
+    // doing something else. Brunch was 9 of 26 rows and made the whole board look like filler; a
+    // town's worth of happy hours would be far worse, because each one recurs five days a week. With
+    // twenty spots on Mon-Fri that is a hundred listings a week against eight real events, and the
+    // board stops meaning "here is what is happening tonight" and starts meaning "here is a list of
+    // bars". It gets its own band above the listings instead (happyHourNow), plus the filters on the
+    // home page and the map, which is where "I want a drink" actually goes looking.
+    `select e.*, r.name, r.slug from events e join restaurants r on r.id = e.place_id
+      where ${LIVE} and e.event_type <> 'happy_hour' and coalesce(r.attributes->>'chainStatus','') <> 'chain'`
   );
   const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   // Chicago wall-clock, HH:MM. Anything TODAY that has already started is over, and listing an 11am

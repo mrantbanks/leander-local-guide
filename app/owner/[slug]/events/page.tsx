@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSpotAny } from '@/lib/spots';
 import { ownerGate } from '@/lib/owner';
-import { getEventsForSpot } from '@/lib/events';
+import { getEventsForSpotAdmin } from '@/lib/events';
 import { HAPPY_HOUR_TYPE, BOARD_EVENT_TYPES } from '@/lib/eventLabels';
 import { createOwnerEvent, removeOwnerEvent } from '@/app/actions';
 import EventComposer from '@/components/EventComposer';
@@ -17,7 +17,10 @@ export default async function OwnerEvents({ params }: { params: Promise<{ slug: 
 
   const spot = await getSpotAny(slug);
   if (!spot) notFound();
-  const all = await getEventsForSpot(slug);
+  // The MANAGER's view, not the diner's: getEventsForSpot now hides happy hour (it has its own
+  // line on the page, so an event card for it said the same thing twice), but the owner still has to
+  // be able to see and edit theirs.
+  const all = await getEventsForSpotAdmin(slug);
   const happyHours = all.filter((e) => e.type === HAPPY_HOUR_TYPE);
   const events = all.filter((e) => e.type !== HAPPY_HOUR_TYPE);
 
