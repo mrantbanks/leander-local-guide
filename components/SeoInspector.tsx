@@ -31,13 +31,13 @@ const LEVEL: Record<SnippetCheck['level'], { c: string; bg: string; label: strin
 };
 
 function Checks({ items }: { items: { level: SnippetCheck['level']; msg: string }[] }) {
-  if (!items.length) return <p className="font-ui text-xs text-ink-soft">No issues. This reads clean.</p>;
+  if (!items.length) return <p className="font-ui text-sm text-ink-soft">No issues. This reads clean.</p>;
   return (
     <ul className="space-y-1.5">
       {items.map((c, i) => (
         <li key={i} className="flex items-start gap-2">
-          <span className={`font-stamp uppercase tracking-[0.06em] text-[10px] px-1.5 py-0.5 rounded-[2px] shrink-0 ${LEVEL[c.level].bg} ${LEVEL[c.level].c}`}>{LEVEL[c.level].label}</span>
-          <span className="font-ui text-xs text-ink">{c.msg}</span>
+          <span className={`font-stamp uppercase tracking-[0.06em] text-xs px-1.5 py-0.5 rounded-[2px] shrink-0 ${LEVEL[c.level].bg} ${LEVEL[c.level].c}`}>{LEVEL[c.level].label}</span>
+          <span className="font-ui text-sm text-ink">{c.msg}</span>
         </li>
       ))}
     </ul>
@@ -47,7 +47,7 @@ function Checks({ items }: { items: { level: SnippetCheck['level']; msg: string 
 function Counter({ len, max }: { len: number; max: number }) {
   const soft = Math.round(max * 0.84);
   const state = len > max ? 'text-paper bg-oxblood' : len >= soft ? 'text-ink bg-amber' : 'text-ink-soft bg-paper-sunk';
-  return <span className={`font-stamp uppercase tracking-[0.06em] text-[10px] px-1.5 py-0.5 rounded-[2px] ${state}`}>{len} / {max}</span>;
+  return <span className={`font-stamp uppercase tracking-[0.06em] text-xs px-1.5 py-0.5 rounded-[2px] ${state}`}>{len} / {max}</span>;
 }
 
 function RichBadge({ r }: { r: RichResult }) {
@@ -59,10 +59,10 @@ function RichBadge({ r }: { r: RichResult }) {
   const label = { eligible: 'Eligible', 'not-eligible': 'Not eligible', info: 'Info' }[r.status];
   return (
     <div className="flex items-start gap-2 py-1.5 border-b border-rule last:border-0">
-      <span className={`font-stamp uppercase tracking-[0.06em] text-[10px] px-1.5 py-0.5 rounded-[2px] shrink-0 ${map[r.status]}`}>{label}</span>
+      <span className={`font-stamp uppercase tracking-[0.06em] text-xs px-1.5 py-0.5 rounded-[2px] shrink-0 ${map[r.status]}`}>{label}</span>
       <div>
         <p className="font-ui text-sm text-ink font-semibold leading-tight">{r.name}</p>
-        <p className="font-ui text-xs text-ink-soft">{r.reason}</p>
+        <p className="font-ui text-sm text-ink-soft">{r.reason}</p>
       </div>
     </div>
   );
@@ -75,16 +75,16 @@ function JsonBlock({ b }: { b: JsonLdBlock }) {
     <details className="border border-rule rounded-[2px] bg-paper">
       <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between gap-2 hover:bg-paper-raised">
         <span className="font-stamp uppercase tracking-[0.08em] text-xs text-chile">{b.label}</span>
-        <span className="font-ui text-[10px] text-ink-soft">tap to expand</span>
+        <span className="font-ui text-sm text-ink-soft">tap to expand</span>
       </summary>
       <div className="px-3 pb-3">
-        <p className="font-ui text-xs text-ink-soft mb-2 border-l-2 border-chile pl-2">{b.plain}</p>
+        <p className="font-ui text-sm text-ink-soft mb-2 border-l-2 border-chile pl-2">{b.plain}</p>
         <div className="relative">
           <button
             onClick={() => { navigator.clipboard.writeText(pretty); setCopied(true); setTimeout(() => setCopied(false), 1200); }}
-            className="absolute top-1 right-1 font-stamp uppercase tracking-[0.06em] text-[10px] bg-ink text-paper px-2 py-0.5 rounded-[2px] hover:bg-chile"
+            className="absolute top-1 right-1 font-stamp uppercase tracking-[0.06em] text-xs bg-ink text-paper px-2 py-0.5 rounded-[2px] hover:bg-chile"
           >{copied ? 'Copied' : 'Copy'}</button>
-          <pre className="overflow-x-auto text-[11px] leading-[1.5] bg-paper-sunk border border-rule rounded-[2px] p-2 text-ink"><code>{pretty}</code></pre>
+          <pre className="overflow-x-auto text-[13px] leading-[1.65] bg-paper-sunk border border-rule rounded-[2px] p-3 text-ink"><code>{pretty}</code></pre>
         </div>
       </div>
     </details>
@@ -94,7 +94,7 @@ function JsonBlock({ b }: { b: JsonLdBlock }) {
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-3 py-1.5 border-b border-rule last:border-0">
-      <dt className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft sm:w-32 shrink-0">{label}</dt>
+      <dt className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft sm:w-32 shrink-0">{label}</dt>
       <dd className="font-ui text-sm text-ink break-words min-w-0">{children}</dd>
     </div>
   );
@@ -154,30 +154,30 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
           <span className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft">{kind === 'title' ? 'Title' : 'Meta description'}</span>
           <div className="flex items-center gap-2">
             <Counter len={live.length} max={max} />
-            {kind === 'title' && titlePx != null && <span className="font-ui text-[10px] text-ink-soft">~{titlePx}px</span>}
-            <span className={`font-stamp uppercase tracking-[0.06em] text-[10px] px-1.5 py-0.5 rounded-[2px] ${st.on ? 'bg-chile text-paper' : 'bg-paper-sunk text-ink-soft'}`}>{st.on ? 'Override' : 'Auto'}</span>
+            {kind === 'title' && titlePx != null && <span className="font-ui text-sm text-ink-soft">~{titlePx}px</span>}
+            <span className={`font-stamp uppercase tracking-[0.06em] text-xs px-1.5 py-0.5 rounded-[2px] ${st.on ? 'bg-chile text-paper' : 'bg-paper-sunk text-ink-soft'}`}>{st.on ? 'Override' : 'Auto'}</span>
           </div>
         </div>
         {kind === 'title' ? (
           <input
             value={live} disabled={!st.on}
             onChange={(e) => setField(fk, { value: e.target.value })}
-            className={`w-full border border-rule px-3 py-2 font-ui text-sm text-ink rounded-[2px] ${st.on ? 'bg-paper' : 'bg-paper-sunk text-ink-soft'}`}
+            className={`w-full border border-rule px-3 py-2.5 font-ui text-base text-ink rounded-[2px] ${st.on ? 'bg-paper' : 'bg-paper-sunk text-ink-soft'}`}
           />
         ) : (
           <textarea
             value={live} disabled={!st.on} rows={3}
             onChange={(e) => setField(fk, { value: e.target.value })}
-            className={`w-full border border-rule px-3 py-2 font-ui text-sm text-ink rounded-[2px] resize-y ${st.on ? 'bg-paper' : 'bg-paper-sunk text-ink-soft'}`}
+            className={`w-full border border-rule px-3 py-2.5 font-ui text-base text-ink rounded-[2px] resize-y ${st.on ? 'bg-paper' : 'bg-paper-sunk text-ink-soft'}`}
           />
         )}
         <div className="mt-1 flex items-center gap-3">
           {!st.on ? (
-            <button onClick={() => setField(fk, { on: true })} className="font-stamp uppercase tracking-[0.06em] text-[11px] text-chile hover:text-oxblood">Override this</button>
+            <button onClick={() => setField(fk, { on: true })} className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">Override this</button>
           ) : (
-            <button onClick={() => setField(fk, { on: false, value: st.auto })} className="font-stamp uppercase tracking-[0.06em] text-[11px] text-ink-soft hover:text-chile">Reset to auto</button>
+            <button onClick={() => setField(fk, { on: false, value: st.auto })} className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft hover:text-chile">Reset to auto</button>
           )}
-          {st.on && st.value !== st.auto && <span className="font-ui text-[11px] text-ink-soft truncate">auto: {st.auto}</span>}
+          {st.on && st.value !== st.auto && <span className="font-ui text-sm text-ink-soft truncate">auto: {st.auto}</span>}
         </div>
       </div>
     );
@@ -195,7 +195,7 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
           <a href={active.url} target="_blank" rel="noreferrer" className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft hover:text-chile">Open live ↗</a>
         </div>
       </div>
-      <p className="font-ui text-sm text-ink-soft mb-4">Exactly what Google sees for each of this spot&apos;s pages, built from the same code the page ships. Edit the search title and description; everything else is read from the live markup.</p>
+      <p className="font-ui text-base text-ink-soft mb-4 max-w-2xl leading-relaxed">Exactly what Google sees for each of this spot&apos;s pages, built from the same code the page ships. Edit the search title and description; everything else is read from the live markup.</p>
 
       {hidden && <div className="mb-4 border-l-4 border-oxblood bg-paper-sunk px-3 py-2 font-ui text-sm text-ink">This spot is hidden. Its public pages return 404, so Google will not index them right now.</div>}
 
@@ -218,7 +218,7 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
           <div className="flex rounded-[2px] overflow-hidden border border-rule">
             {(['desktop', 'mobile'] as const).map((d) => (
               <button key={d} onClick={() => setDevice(d)}
-                className={`font-stamp uppercase tracking-[0.06em] text-[11px] px-3 py-1 ${device === d ? 'bg-ink text-paper' : 'bg-paper text-ink-soft hover:text-ink'}`}>{d}</button>
+                className={`font-stamp uppercase tracking-[0.06em] text-xs px-3 py-1 ${device === d ? 'bg-ink text-paper' : 'bg-paper text-ink-soft hover:text-ink'}`}>{d}</button>
             ))}
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
             rating={active.rating.eligible && active.rating.value != null ? { value: active.rating.value, count: active.rating.count } : null}
           />
         </div>
-        <p className="font-ui text-xs text-ink-soft mt-2">
+        <p className="font-ui text-sm text-ink-soft mt-2">
           Google rewrites the description for most searches, and sometimes the title too, so treat this as the best case. {active.rating.eligible ? '' : 'No stars show until three locals review this spot, which is the normal state for most pages.'}
         </p>
       </section>
@@ -245,7 +245,7 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
           {editor(descField(active.key), 'description')}
         </div>
         <div className="mt-4 pt-3 border-t border-rule">
-          <h3 className="font-stamp uppercase tracking-[0.1em] text-[11px] text-ink-soft mb-2">Snippet checks</h3>
+          <h3 className="font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft mb-2">Snippet checks</h3>
           <Checks items={liveChecks} />
         </div>
         <div className="mt-4 flex items-center gap-3">
@@ -287,8 +287,8 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
           <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-chile">Structured data (JSON-LD)</h2>
           <div className="flex items-center gap-3">
-            <a href={rrt} target="_blank" rel="noreferrer" className="font-stamp uppercase tracking-[0.06em] text-[11px] text-chile hover:text-oxblood">Rich Results Test ↗</a>
-            <a href={smv} target="_blank" rel="noreferrer" className="font-stamp uppercase tracking-[0.06em] text-[11px] text-chile hover:text-oxblood">Schema Validator ↗</a>
+            <a href={rrt} target="_blank" rel="noreferrer" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">Rich Results Test ↗</a>
+            <a href={smv} target="_blank" rel="noreferrer" className="font-stamp uppercase tracking-[0.06em] text-xs text-chile hover:text-oxblood">Schema Validator ↗</a>
           </div>
         </div>
         <div className="space-y-2">
@@ -304,8 +304,8 @@ export default function SeoInspector({ slug, name, hidden, pages }: { slug: stri
             <Checks items={active.page} />
             {active.duplicates.length > 0 && (
               <div className="pt-2 border-t border-rule">
-                <p className="font-stamp uppercase tracking-[0.08em] text-[11px] text-ink-soft mb-1">Same {active.duplicates[0].field} as</p>
-                <ul className="font-ui text-xs text-ink space-y-0.5">
+                <p className="font-stamp uppercase tracking-[0.08em] text-xs text-ink-soft mb-1">Same {active.duplicates[0].field} as</p>
+                <ul className="font-ui text-sm text-ink space-y-0.5">
                   {active.duplicates.map((d, i) => (
                     <li key={i}><a href={`/admin/seo/r/${d.slug}`} className="text-chile underline underline-offset-2">{d.name}</a> <span className="text-ink-soft">({d.page} · {d.field})</span></li>
                   ))}
