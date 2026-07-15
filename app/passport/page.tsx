@@ -6,10 +6,10 @@ import Subscribe from '@/components/Subscribe';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'The Local Passport — every Leander food perk in one place',
+  title: 'The Local Passport: every Leander food perk in one place',
   description: 'The Local Passport: standing perks straight from Leander owners to people who found them through the guide. Pull the stamp, show it at the counter, eat like you live here.',
   alternates: { canonical: '/passport' },
-  openGraph: { title: 'The Local Passport · Leander, TX', description: 'A passport to all the good stuff — every local perk in Leander, in one place.', url: 'https://leanderlocalguide.com/passport', type: 'website' },
+  openGraph: { title: 'The Local Passport · Leander, TX', description: 'A passport to all the good stuff, every local perk in Leander, in one place.', url: 'https://leanderlocalguide.com/passport', type: 'website' },
 };
 
 export default async function PassportRoundup() {

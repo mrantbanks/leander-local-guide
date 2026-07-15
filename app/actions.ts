@@ -266,6 +266,30 @@ export async function deleteMenu(slug: string) {
   revalidateSpot(slug);
 }
 
+// Admin SEO desk (/admin/seo): per-page search-snippet overrides. Each field is the FULL current
+// value from the editor, or empty to clear the override and fall back to the auto-generated snippet
+// (lib/seo.ts). Stored under editorial.seo*; a JSON null means "no override" (clean() reads it back
+// as null, and snippetTitle/snippetDescription fall through). Dashes are scrubbed here too, so an
+// override can never smuggle an em dash past the house rule.
+export async function saveSeoOverrides(
+  slug: string,
+  fields: { seoTitle?: string; seoDescription?: string; seoTitleMenu?: string; seoDescriptionMenu?: string }
+): Promise<{ ok: boolean; error?: string }> {
+  if (!(await requireAdmin())) return { ok: false, error: 'forbidden' };
+  const patch = {
+    seoTitle: clean(fields.seoTitle ?? null),
+    seoDescription: clean(fields.seoDescription ?? null),
+    seoTitleMenu: clean(fields.seoTitleMenu ?? null),
+    seoDescriptionMenu: clean(fields.seoDescriptionMenu ?? null),
+  };
+  await pool.query(
+    `update restaurants set editorial = coalesce(editorial,'{}'::jsonb) || $2::jsonb, updated_at = now() where slug = $1`,
+    [slug, JSON.stringify(patch)]
+  );
+  revalidateSpot(slug);
+  return { ok: true };
+}
+
 // Mark/unmark a photo as a menu (shown in its own zoomable Menu section, kept out of the food gallery).
 export async function setPhotoMenu(id: number, slug: string, isMenu: boolean) {
   if (!(await requireAdmin())) return;

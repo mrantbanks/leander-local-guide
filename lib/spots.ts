@@ -71,6 +71,12 @@ export type Spot = {
   menuData: MenuData | null;
   comingSoon: boolean;
   openingNote: string | null;
+  // Optional per-page search-snippet overrides, set from the admin SEO desk (/admin/seo). Null =
+  // fall back to the auto-generated snippet from lib/seo.ts. Stored dash-scrubbed in editorial.
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoTitleMenu: string | null;
+  seoDescriptionMenu: string | null;
 };
 
 // Lightweight shape for cards/grid (no heavy review prose) - keeps the client payload small.
@@ -174,6 +180,8 @@ function mapRow(r: any): Spot {
     menuData: (r.menu && Array.isArray(r.menu.sections) && r.menu.sections.length) ? r.menu as MenuData : null,
     comingSoon,
     openingNote: clean(ed.openingNote),
+    seoTitle: clean(ed.seoTitle), seoDescription: clean(ed.seoDescription),
+    seoTitleMenu: clean(ed.seoTitleMenu), seoDescriptionMenu: clean(ed.seoDescriptionMenu),
   };
 }
 

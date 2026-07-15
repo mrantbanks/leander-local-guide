@@ -8,14 +8,18 @@ import type { Spot } from '@/lib/spots';
 // Nothing here writes to the DB. `hook` is the on-site card teaser and stays untouched;
 // the snippet is COMPOSED from verdict + whatToOrder + gotcha at render time.
 
-const BRAND = 'Leander Local Guide';
+// One brand name, everywhere. This is the exact name Google appends from our Organization schema
+// (app/layout.tsx #org) and the name our social cards use, so the <title> must spell it the same
+// way. It used to read "Leander Local Guide" here while every other surface said "The Leander
+// Local Guide", so a title that kept its brand suffix disagreed with the site name beside it.
+const BRAND = 'The Leander Local Guide';
 const TRUST = 'No sponsors, no pay-to-play.';
-const TITLE_MAX = 62; // ~what Google renders before truncating
-const DESC_MAX = 160;
+export const TITLE_MAX = 62; // ~what Google renders before truncating
+export const DESC_MAX = 160;
 
 // House rule: no em/en dashes anywhere (lib/spots.ts clean() strips them on read, app/actions.ts
 // on write). Our own literals must obey it too, and Google's editorialSummary can smuggle one in.
-const noDash = (s: string) => s.replace(/[ \t]*[—–][ \t]*/g, ', ').replace(/[—–]/g, '-');
+export const noDash = (s: string) => s.replace(/[ \t]*[—–][ \t]*/g, ', ').replace(/[—–]/g, '-');
 
 // Verdict -> the label in the <title>.
 // SKIP IT is deliberately absent. The page still stamps SKIP IT loud and unmissable; the search
@@ -141,6 +145,9 @@ export function titleVerdict(spot: Spot): string | null {
  * the verdict when we run out of room; Google appends the site name from Organization schema.
  */
 export function snippetTitle(spot: Spot): string {
+  // An admin can override the computed title from the SEO desk (/admin/seo). The override is stored
+  // dash-scrubbed in editorial.seoTitle and read back through clean(), so the house rule still holds.
+  if (spot.seoTitle) return spot.seoTitle;
   const v = titleVerdict(spot);
   const tail = v ? `, ${v}` : '';
   const long = noDash(spot.name);
@@ -161,6 +168,7 @@ export function snippetTitle(spot: Spot): string {
  * Specificity is the whole pitch: "the paneer burger and fried rice" beats "great Indian food".
  */
 export function snippetDescription(spot: Spot): string {
+  if (spot.seoDescription) return spot.seoDescription; // admin override, see snippetTitle
   const name = noDash(spot.name);
   const v = (spot.verdict || '').toUpperCase();
   const skip = v === 'SKIP IT';
@@ -201,6 +209,44 @@ export function snippetFor(spot: Spot): { title: string; description: string } {
   return { title: snippetTitle(spot), description: snippetDescription(spot) };
 }
 
+// ---------------------------------------------------------------------------
+// Snippet quality checks. Pure and dependency-free on purpose: this file only
+// imports a type, so both the server SEO desk (lib/seo-inspect.ts) AND the live
+// editor client component (components/SeoInspector.tsx) import this to lint the
+// same way, and the editor's warnings update as you type.
+// ---------------------------------------------------------------------------
+export type SnippetCheck = { level: 'error' | 'warn' | 'info'; field: 'title' | 'description'; msg: string };
+
+const capsRun = (s: string) => /[A-Z]{3,}\s+[A-Z]{3,}/.test(s);
+const endsDangling = (s: string) => {
+  const last = s.trim().replace(/[.,;:!?]+$/, '').split(/\s+/).pop() || '';
+  return DANGLING.has(last.toLowerCase().replace(/[^a-z']/g, ''));
+};
+
+export function snippetChecks(title: string, description: string): SnippetCheck[] {
+  const out: SnippetCheck[] = [];
+  const dash = /[—–]/;
+  if (dash.test(title)) out.push({ level: 'error', field: 'title', msg: 'Contains an em/en dash. House rule: no dashes anywhere on the site.' });
+  if (!title.trim()) {
+    out.push({ level: 'error', field: 'title', msg: 'Title is empty.' });
+  } else {
+    if (title.length > TITLE_MAX) out.push({ level: 'warn', field: 'title', msg: `${title.length} characters. Google renders about ${TITLE_MAX} before it truncates the title.` });
+    if (title.length < 15) out.push({ level: 'warn', field: 'title', msg: `Only ${title.length} characters. A thin title is easy for Google to overwrite.` });
+    if (capsRun(title)) out.push({ level: 'warn', field: 'title', msg: 'Two or more ALL-CAPS words in a row read as shouting and invite a rewrite.' });
+    if (endsDangling(title)) out.push({ level: 'warn', field: 'title', msg: 'Ends on a connecting word, so it reads as cut off.' });
+  }
+  if (dash.test(description)) out.push({ level: 'error', field: 'description', msg: 'Contains an em/en dash. House rule: no dashes anywhere on the site.' });
+  if (!description.trim()) {
+    out.push({ level: 'info', field: 'description', msg: 'No description. Google will write its own from the page text.' });
+  } else {
+    if (description.length > DESC_MAX) out.push({ level: 'warn', field: 'description', msg: `${description.length} characters. Google shows roughly ${DESC_MAX} before it truncates the snippet.` });
+    else if (description.length < 70) out.push({ level: 'info', field: 'description', msg: `Only ${description.length} characters. Short descriptions get rewritten by Google more often.` });
+    if (capsRun(description)) out.push({ level: 'warn', field: 'description', msg: 'Two or more ALL-CAPS words in a row read as shouting.' });
+    if (endsDangling(description)) out.push({ level: 'warn', field: 'description', msg: 'Ends on a connecting word, so it reads as cut off.' });
+  }
+  return out;
+}
+
 /**
  * The menu page. "[restaurant] menu" is a big slice of our impressions. We will never beat the
  * restaurant's own menu on the head term, but a chunk of those searchers are really asking
@@ -209,7 +255,7 @@ export function snippetFor(spot: Spot): { title: string; description: string } {
 export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { title: string; description: string } {
   const name = noDash(spot.name);
   const short = shortName(name);
-  const title = fit([
+  const title = spot.seoTitleMenu || fit([
     `${name} Menu with Prices | ${BRAND}`,
     `${name} Menu with Prices, Leander TX`,
     `${name} Menu with Prices`,
@@ -222,7 +268,7 @@ export function menuSnippet(spot: Spot, dishes: number, sections: string[]): { t
   const body = order
     ? `${head} What to order: ${order}`
     : `${head} Photographed in person in Leander, TX${sections.length ? `, across ${noDash(sections.slice(0, 3).join(', '))}` : ''}.`;
-  return { title, description: clip(body, DESC_MAX) };
+  return { title, description: spot.seoDescriptionMenu || clip(body, DESC_MAX) };
 }
 
 // Google's day numbering in the Places payload is 0 = Sunday. schema.org wants names.
@@ -381,5 +427,167 @@ export function faqLd(spot: Spot, url: string): object | null {
       name: q,
       acceptedAnswer: { '@type': 'Answer', text: a },
     })),
+  };
+}
+
+// ============================================================================
+// Structured-data builders (JSON-LD) and social-card copy.
+//
+// SINGLE SOURCE OF TRUTH. The public pages (app/r/[slug]/page.tsx and
+// app/r/[slug]/menu/page.tsx) AND the admin SEO desk (lib/seo-inspect.ts) all
+// call these. That is deliberate: the whole promise of the SEO desk is "this is
+// exactly what Google sees", which is only true if the preview is built from the
+// same code the page ships. Change the markup here, once, and both move together.
+// ============================================================================
+
+export const SITE_URL = 'https://leanderlocalguide.com';
+
+/** The PostalAddress node, parsed from the one address string we store. */
+function addrOf(spot: Spot): object {
+  const parts = spot.addressLine.split(',').map((s) => s.trim());
+  const zip = (spot.addressLine.match(/TX (\d{5})/) || [])[1];
+  return { '@type': 'PostalAddress', streetAddress: parts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' };
+}
+
+/** The absolute hero image (og:image and Restaurant.image on the main page). */
+export function spotImage(spot: Spot): string | undefined {
+  return spot.localPhotos[0]
+    ? `${SITE_URL}/uploads/${spot.localPhotos[0].filename}`
+    : spot.photo ? `${SITE_URL}/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
+}
+
+/** The Restaurant node for the main /r/[slug] page. */
+export function restaurantLdMain(spot: Spot, reviews: ReaderReviews): object {
+  const img = spotImage(spot);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Restaurant',
+    '@id': `${SITE_URL}/r/${spot.slug}#restaurant`,
+    name: spot.name,
+    url: spot.website || undefined,
+    mainEntityOfPage: `${SITE_URL}/r/${spot.slug}`,
+    servesCuisine: spot.cuisines.length ? spot.cuisines : undefined,
+    priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
+    telephone: spot.phone || undefined,
+    image: img ? [img] : undefined,
+    menu: spot.menuData ? `${SITE_URL}/r/${spot.slug}/menu` : (spot.menuUrl || undefined),
+    hasMenu: spot.menuData ? `${SITE_URL}/r/${spot.slug}/menu` : undefined,
+    address: addrOf(spot),
+    ...facilitiesLd(spot),
+    ...readerRatingLd(reviews),
+  };
+}
+
+/** Home > Food > {name} breadcrumb for the main page. */
+export function breadcrumbLdMain(spot: Spot): object {
+  return {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Food', item: `${SITE_URL}/food` },
+      { '@type': 'ListItem', position: 3, name: spot.name, item: `${SITE_URL}/r/${spot.slug}` },
+    ],
+  };
+}
+
+/** The minimal event shape the Event JSON-LD needs (a subset of what getEventsForSpot returns). */
+export type SpotEventLd = { title: string; description: string | null; label: string; startDate: string | null; endDate: string | null; url: string | null };
+
+/** One Event node per event with a real startDate (Google requires it). */
+export function eventsLd(spot: Spot, events: SpotEventLd[]): object[] {
+  const street = spot.addressLine.split(',').map((s) => s.trim())[0];
+  const evImage = spot.headerPhoto ? `${SITE_URL}${spot.headerPhoto.url}?w=1200`
+    : spot.photo ? `${SITE_URL}/img?n=${encodeURIComponent(spot.photo)}&w=1200`
+      : spot.localPhotos[0] ? `${SITE_URL}${spot.localPhotos[0].url}?w=1200` : null;
+  return events.filter((e) => e.startDate).map((e) => ({
+    '@context': 'https://schema.org', '@type': 'Event', name: e.title,
+    description: e.description || `${e.label} at ${spot.name}, ${street} in Leander, TX.`,
+    startDate: e.startDate,
+    ...(e.endDate ? { endDate: e.endDate } : {}),
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    ...(evImage ? { image: [evImage] } : {}),
+    location: { '@type': 'Place', name: spot.name, address: addrOf(spot) },
+    performer: { '@type': 'PerformingGroup', name: spot.name },
+    organizer: { '@type': 'Organization', name: spot.name, url: `${SITE_URL}/r/${spot.slug}` },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: e.url || `${SITE_URL}/r/${spot.slug}`, validFrom: e.startDate },
+    url: e.url || `${SITE_URL}/r/${spot.slug}`,
+  }));
+}
+
+// "14" -> 14; "14.50" -> 14.5; "3/5/8" or "" -> null (no offer emitted; the printed string is kept).
+export function parseMenuPrice(p?: string): number | null {
+  if (!p) return null;
+  const m = p.trim().match(/^\$?(\d+(?:\.\d{1,2})?)$/);
+  return m ? Number(m[1]) : null;
+}
+
+/** The Restaurant node for the /r/[slug]/menu page, with the full hasMenu tree. */
+export function restaurantLdMenu(spot: Spot): object {
+  const m = spot.menuData;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Restaurant',
+    '@id': `${SITE_URL}/r/${spot.slug}#restaurant`,
+    name: spot.name,
+    url: spot.website || undefined,
+    mainEntityOfPage: `${SITE_URL}/r/${spot.slug}/menu`,
+    servesCuisine: spot.cuisines.length ? spot.cuisines : undefined,
+    priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
+    telephone: spot.phone || undefined,
+    image: spot.menus[0] ? [`${SITE_URL}${spot.menus[0].url}`] : undefined,
+    address: addrOf(spot),
+    ...facilitiesLd(spot),
+    menu: `${SITE_URL}/r/${spot.slug}/menu`,
+    hasMenu: m ? {
+      '@type': 'Menu',
+      '@id': `${SITE_URL}/r/${spot.slug}/menu#menu`,
+      name: `${spot.name} Menu`,
+      url: `${SITE_URL}/r/${spot.slug}/menu`,
+      inLanguage: 'en',
+      ...(m.extracted ? { dateModified: m.extracted } : {}),
+      hasMenuSection: m.sections.map((s) => ({
+        '@type': 'MenuSection',
+        name: s.name,
+        description: s.note || undefined,
+        hasMenuItem: s.items.map((it) => {
+          const price = parseMenuPrice(it.price);
+          return {
+            '@type': 'MenuItem',
+            name: it.name,
+            description: it.desc || (price == null && it.price ? `Price ${it.price}` : undefined),
+            ...(price != null ? { offers: { '@type': 'Offer', price, priceCurrency: 'USD' } } : {}),
+          };
+        }),
+      })),
+    } : undefined,
+  };
+}
+
+/** Home > {name} > Menu breadcrumb for the menu page. */
+export function breadcrumbLdMenu(spot: Spot): object {
+  return {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: spot.name, item: `${SITE_URL}/r/${spot.slug}` },
+      { '@type': 'ListItem', position: 3, name: 'Menu', item: `${SITE_URL}/r/${spot.slug}/menu` },
+    ],
+  };
+}
+
+/**
+ * Social-card copy (OpenGraph / Twitter). Kept next to the SERP snippet on purpose: the two jobs
+ * are different (search sells the click with a verdict, social sells the share with the hook), and
+ * having both here lets the SEO desk show them side by side and diff them.
+ */
+export function ogMain(spot: Spot, description: string): { title: string; description: string; type: 'article'; image?: string } {
+  return { title: `${spot.name} · The Leander Local Guide`, description: spot.hook || description, type: 'article', image: spotImage(spot) };
+}
+export function ogMenu(spot: Spot, description: string): { title: string; description: string; type: 'article'; image?: string; twitter: { card: 'summary_large_image'; title: string; description: string } } {
+  return {
+    title: `${spot.name} Menu · Leander, TX · The Leander Local Guide`,
+    description,
+    type: 'article',
+    image: spot.menus[0] ? `${SITE_URL}${spot.menus[0].url}` : undefined,
+    twitter: { card: 'summary_large_image', title: `${spot.name} Menu with Prices`, description },
   };
 }

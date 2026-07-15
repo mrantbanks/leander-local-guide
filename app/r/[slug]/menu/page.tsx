@@ -4,7 +4,7 @@ import { getSpot } from '@/lib/spots';
 import MenuViewer from '@/components/MenuViewer';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
-import { menuSnippet, facilitiesLd } from '@/lib/seo';
+import { menuSnippet, ogMenu, restaurantLdMenu, breadcrumbLdMenu } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // The menu page: every dish and price as crawlable text + Menu structured data.
@@ -16,14 +16,6 @@ export async function generateStaticParams() {
   return [];
 }
 
-const SITE = 'https://leanderlocalguide.com';
-
-// "14" -> 14; "14.50" -> 14.5; "3/5/8" or "" -> null (no offer emitted, desc keeps the printed string)
-function parsePrice(p?: string): number | null {
-  if (!p) return null;
-  const m = p.trim().match(/^\$?(\d+(?:\.\d{1,2})?)$/);
-  return m ? Number(m[1]) : null;
-}
 const showPrice = (p?: string) => p ? (/^\d/.test(p.trim()) ? `$${p.trim()}` : p.trim()) : null;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -36,13 +28,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // searchers are really asking "what should I order here?", and that is the one question we
   // answer better than anyone, so the snippet leads with The Order.
   const { title, description } = menuSnippet(spot, items, m.sections.map((s) => s.name));
-  const img = spot.menus[0] ? `${SITE}${spot.menus[0].url}` : undefined;
+  const og = ogMenu(spot, description);
   return {
     title: { absolute: title },
     description,
     alternates: { canonical: `/r/${slug}/menu` },
-    openGraph: { title: `${spot.name} Menu · Leander, TX · The Leander Local Guide`, description, type: 'article', images: img ? [img] : undefined },
-    twitter: { card: 'summary_large_image', title: `${spot.name} Menu with Prices`, description },
+    openGraph: { title: og.title, description: og.description, type: og.type, images: og.image ? [og.image] : undefined },
+    twitter: og.twitter,
   };
 }
 
@@ -52,59 +44,12 @@ export default async function MenuPage({ params }: { params: Promise<{ slug: str
   if (!spot || !spot.menuData) notFound();
   const m = spot.menuData;
   const itemCount = m.sections.reduce((a, s) => a + s.items.length, 0);
-  const addrParts = spot.addressLine.split(',').map((s) => s.trim());
-  const zip = (spot.addressLine.match(/TX (\d{5})/) || [])[1];
   const picked = m.extracted ? new Date(m.extracted + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Restaurant',
-    '@id': `${SITE}/r/${slug}#restaurant`,
-    name: spot.name,
-    url: spot.website || undefined,
-    mainEntityOfPage: `${SITE}/r/${slug}/menu`,
-    servesCuisine: spot.cuisines.length ? spot.cuisines : undefined,
-    priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
-    telephone: spot.phone || undefined,
-    image: spot.menus[0] ? [`${SITE}${spot.menus[0].url}`] : undefined,
-    address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
-    // Hours, reservations, dogs, patio. Same facts, same markup, on both pages.
-    ...facilitiesLd(spot),
-    // `menu` (a plain URL) is the ONLY menu property Google actually documents, on LocalBusiness:
-    // "for food establishments, the fully-qualified URL of the menu". The rich hasMenu tree below
-    // is valid schema.org and good for AI answer engines, but Google Search has no menu rich
-    // result and will not render it. Emit both: the URL is the part Google reads.
-    menu: `${SITE}/r/${slug}/menu`,
-    hasMenu: {
-      '@type': 'Menu',
-      '@id': `${SITE}/r/${slug}/menu#menu`,
-      name: `${spot.name} Menu`,
-      url: `${SITE}/r/${slug}/menu`,
-      inLanguage: 'en',
-      ...(m.extracted ? { dateModified: m.extracted } : {}),
-      hasMenuSection: m.sections.map((s) => ({
-        '@type': 'MenuSection',
-        name: s.name,
-        description: s.note || undefined,
-        hasMenuItem: s.items.map((it) => {
-          const price = parsePrice(it.price);
-          return {
-            '@type': 'MenuItem',
-            name: it.name,
-            description: it.desc || (price == null && it.price ? `Price ${it.price}` : undefined),
-            ...(price != null ? { offers: { '@type': 'Offer', price, priceCurrency: 'USD' } } : {}),
-          };
-        }),
-      })),
-    },
-  };
-  const crumbLd = {
-    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
-      { '@type': 'ListItem', position: 2, name: spot.name, item: `${SITE}/r/${slug}` },
-      { '@type': 'ListItem', position: 3, name: 'Menu', item: `${SITE}/r/${slug}/menu` },
-    ],
-  };
+  // Built by the shared builders in lib/seo.ts so the admin SEO desk previews exactly this. The
+  // `menu` URL is the only menu property Google documents; the rich hasMenu tree is for AI engines.
+  const jsonLd = restaurantLdMenu(spot);
+  const crumbLd = breadcrumbLdMenu(spot);
 
   return (
     <main>

@@ -15,7 +15,7 @@ import PhotoContribute from '@/components/PhotoContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
-import { snippetFor, faqLd, readerRatingLd, facilitiesLd } from '@/lib/seo';
+import { snippetFor, faqLd, ogMain, restaurantLdMain, breadcrumbLdMain, eventsLd } from '@/lib/seo';
 import { ownershipOf, OWNERSHIP_LABEL, WARNING_FACILITIES } from '@/lib/tags';
 import type { Metadata } from 'next';
 
@@ -35,14 +35,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const img = spot.localPhotos[0]
     ? `/uploads/${spot.localPhotos[0].filename}`
     : spot.photo ? `/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
+  // Social cards keep the editorial voice; only the search snippet is optimised for the SERP.
+  const og = ogMain(spot, description);
   return {
     // `absolute` bypasses the root template ("%s · The Leander Local Guide"): the snippet already
     // carries the brand, and the template would push the title past what Google renders.
     title: { absolute: title },
     description,
     alternates: { canonical: `/r/${slug}` },
-    // Social cards keep the editorial voice; only the search snippet is optimised for the SERP.
-    openGraph: { title: `${spot.name} · The Leander Local Guide`, description: spot.hook || description, type: 'article', images: img ? [img] : undefined },
+    openGraph: { title: og.title, description: og.description, type: og.type, images: img ? [img] : undefined },
   };
 }
 
@@ -60,68 +61,17 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${spot.name} ${spot.addressLine}`)}&output=embed`;
   const reviewParas = (spot.review || '').split(/\n\n+/).filter(Boolean);
 
-  const addrParts = spot.addressLine.split(',').map((s) => s.trim());
-  const zip = (spot.addressLine.match(/TX (\d{5})/) || [])[1];
-  const ogImg = spot.localPhotos[0]
-    ? `https://leanderlocalguide.com/uploads/${spot.localPhotos[0].filename}`
-    : spot.photo ? `https://leanderlocalguide.com/img?n=${encodeURIComponent(spot.photo)}&w=1200` : undefined;
   const updated = spot.updatedAt ? new Date(spot.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
-  // Stars come from readers, never from our verdict. readerRatingLd() is the only function allowed
-  // to emit a rating, and it takes reader reviews and nothing else, so a verdict physically cannot
-  // get in. See the long note on it in lib/seo.ts for the Google rule this enforces.
-  const ratingLd = readerRatingLd(reviews);
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Restaurant',
-    '@id': `https://leanderlocalguide.com/r/${slug}#restaurant`,
-    name: spot.name,
-    url: spot.website || undefined,
-    mainEntityOfPage: `https://leanderlocalguide.com/r/${slug}`,
-    servesCuisine: spot.cuisines.length ? spot.cuisines : undefined,
-    priceRange: spot.priceTier ? '$'.repeat(spot.priceTier) : undefined,
-    telephone: spot.phone || undefined,
-    image: ogImg ? [ogImg] : undefined,
-    // `menu` is the property Google documents on LocalBusiness (a fully-qualified menu URL).
-    // Prefer our own transcribed menu page when we have one, since that is a real, crawlable menu;
-    // otherwise point at the restaurant's own. hasMenu stays for schema completeness.
-    menu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : (spot.menuUrl || undefined),
-    hasMenu: spot.menuData ? `https://leanderlocalguide.com/r/${slug}/menu` : undefined,
-    address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' },
-    // Hours, reservations, dogs, patio, and the rest. We render all of this on the page and none of
-    // it was reaching the markup. openingHoursSpecification in particular is a documented property
-    // that Google actually reads for local results.
-    ...facilitiesLd(spot),
-    // Reader-submitted ratings only, and only once three exist. See the note above ratingLd.
-    ...ratingLd,
-  };
+  // Every JSON-LD block is built by the shared builders in lib/seo.ts, so the admin SEO desk
+  // (/admin/seo) can preview byte-for-byte what ships here. Stars still come only from readers:
+  // restaurantLdMain() calls readerRatingLd() internally, which takes reader reviews and nothing
+  // else, so a verdict physically cannot become a rating. See the long note in lib/seo.ts.
+  const jsonLd = restaurantLdMain(spot, reviews);
   const faqLdJson = faqLd(spot, `https://leanderlocalguide.com/r/${slug}`);
-  const crumbLd = {
-    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://leanderlocalguide.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Food', item: 'https://leanderlocalguide.com/food' },
-      { '@type': 'ListItem', position: 3, name: spot.name, item: `https://leanderlocalguide.com/r/${slug}` },
-    ],
-  };
-  const SITE = 'https://leanderlocalguide.com';
-  const evImage = spot.headerPhoto ? `${SITE}${spot.headerPhoto.url}?w=1200`
-    : spot.photo ? `${SITE}/img?n=${encodeURIComponent(spot.photo)}&w=1200`
-      : spot.localPhotos[0] ? `${SITE}${spot.localPhotos[0].url}?w=1200` : null;
-  // Only emit Event structured data for events with a real next date (Google requires startDate).
-  const eventLd = events.filter((e) => e.startDate).map((e) => ({
-    '@context': 'https://schema.org', '@type': 'Event', name: e.title,
-    description: e.description || `${e.label} at ${spot.name}, ${addrParts[0]} in Leander, TX.`,
-    startDate: e.startDate,
-    ...(e.endDate ? { endDate: e.endDate } : {}),
-    eventStatus: 'https://schema.org/EventScheduled',
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    ...(evImage ? { image: [evImage] } : {}),
-    location: { '@type': 'Place', name: spot.name, address: { '@type': 'PostalAddress', streetAddress: addrParts[0], addressLocality: 'Leander', addressRegion: 'TX', postalCode: zip, addressCountry: 'US' } },
-    performer: { '@type': 'PerformingGroup', name: spot.name },
-    organizer: { '@type': 'Organization', name: spot.name, url: `${SITE}/r/${slug}` },
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: e.url || `${SITE}/r/${slug}`, validFrom: e.startDate },
-    url: e.url || `${SITE}/r/${slug}`,
-  }));
+  const crumbLd = breadcrumbLdMain(spot);
+  // Only events with a real next date become Event structured data (Google requires startDate).
+  const eventLd = eventsLd(spot, events);
 
   return (
     <main>
