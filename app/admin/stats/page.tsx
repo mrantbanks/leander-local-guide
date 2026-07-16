@@ -36,6 +36,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   const delta = (now: number, before?: number) => (prev && before !== undefined ? now - before : null);
 
   const verdicts = s.worthIt + s.itsFine + s.skipIt;
+  const prevVerdicts = prev ? prev.worthIt + prev.itsFine + prev.skipIt : undefined;
 
   return (
     <main className="max-w-5xl mx-auto px-5 py-8">
@@ -43,6 +44,11 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         <div>
           <h1 className="font-display font-black text-3xl text-ink">The Numbers</h1>
           <p className="font-ui text-sm text-ink-soft mt-1">{range}</p>
+          {prev && (
+            <p className="font-stamp uppercase tracking-[0.06em] text-xs text-ink-soft mt-1">
+              <span className="text-chile">▲</span> / ▼ is the change vs the previous {WINDOWS.find((w) => w.key === win)?.label.replace(/^Last /, '')}
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {WINDOWS.map((w) => (
@@ -83,7 +89,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
             <StatTile label="Stamps pulled" value={s.pulls} delta={delta(s.pulls, prev?.pulls)} href={`/admin/stats/pulls?win=${win}`} />
-            <StatTile label="Distinct people" value={s.pullers} sub="one device, however many pulls" href={`/admin/stats/pulls?win=${win}`} />
+            <StatTile label="Distinct people" value={s.pullers} delta={delta(s.pullers, prev?.pullers)} sub="one device, however many pulls" href={`/admin/stats/pulls?win=${win}`} />
             <StatTile label="Stamped at a counter" value={s.stamped} accent zeroText="none yet" delta={delta(s.stamped, prev?.stamped)} href={`/admin/stats/stamped?win=${win}`} />
             <StatTile label="Perks live" value={s.perksLive} sub={s.guidePerks > 0 ? `${s.guidePerks} from the Guide` : undefined} zeroText="none live" href={`/admin/stats/perks?win=${win}`} />
           </div>
@@ -103,11 +109,11 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         One-tap signals from the spot pages. Full history: these have always been recorded, we had just never read them.
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-8">
-        <StatTile label="Worth it" value={s.worthIt} accent zeroText="none" href={`/admin/stats/worth-it?win=${win}`} />
-        <StatTile label="It's fine" value={s.itsFine} zeroText="none" href={`/admin/stats/its-fine?win=${win}`} />
-        <StatTile label="Skip it" value={s.skipIt} zeroText="none" href={`/admin/stats/skip-it?win=${win}`} />
-        <StatTile label="Been here" value={s.beenHere} zeroText="none" href={`/admin/stats/been-here?win=${win}`} />
-        <StatTile label="Want to go" value={s.wantToGo} zeroText="none" href={`/admin/stats/want-to-go?win=${win}`} />
+        <StatTile label="Worth it" value={s.worthIt} accent delta={delta(s.worthIt, prev?.worthIt)} zeroText="none" href={`/admin/stats/worth-it?win=${win}`} />
+        <StatTile label="It's fine" value={s.itsFine} delta={delta(s.itsFine, prev?.itsFine)} zeroText="none" href={`/admin/stats/its-fine?win=${win}`} />
+        <StatTile label="Skip it" value={s.skipIt} delta={delta(s.skipIt, prev?.skipIt)} zeroText="none" href={`/admin/stats/skip-it?win=${win}`} />
+        <StatTile label="Been here" value={s.beenHere} delta={delta(s.beenHere, prev?.beenHere)} zeroText="none" href={`/admin/stats/been-here?win=${win}`} />
+        <StatTile label="Want to go" value={s.wantToGo} delta={delta(s.wantToGo, prev?.wantToGo)} zeroText="none" href={`/admin/stats/want-to-go?win=${win}`} />
         <StatTile
           label="Locals who tapped"
           value={s.tappers}
@@ -127,15 +133,16 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
             because {s.photosFromAnthony} photos of your own is a well-stocked guide, not a community.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatTile label="Reviews" value={s.reviews} accent zeroText="none" href={`/admin/stats/reviews?win=${win}`} />
-            <StatTile label="Photos from locals" value={s.photosFromLocals} accent zeroText="none yet" href={`/admin/stats/photos-user?win=${win}`} />
-            <StatTile label="Tips" value={s.tips} zeroText="none" href={`/admin/stats/tips?win=${win}`} />
-            <StatTile label="Owner claims" value={s.claims} zeroText="none" href={`/admin/stats/claims?win=${win}`} />
+            <StatTile label="Reviews" value={s.reviews} accent delta={delta(s.reviews, prev?.reviews)} zeroText="none" href={`/admin/stats/reviews?win=${win}`} />
+            <StatTile label="Photos from locals" value={s.photosFromLocals} accent delta={delta(s.photosFromLocals, prev?.photosFromLocals)} zeroText="none yet" href={`/admin/stats/photos-user?win=${win}`} />
+            <StatTile label="Tips" value={s.tips} delta={delta(s.tips, prev?.tips)} zeroText="none" href={`/admin/stats/tips?win=${win}`} />
+            <StatTile label="Owner claims" value={s.claims} delta={delta(s.claims, prev?.claims)} zeroText="none" href={`/admin/stats/claims?win=${win}`} />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
             <StatTile
               label="Anthony's photos"
               value={s.photosFromAnthony}
+              delta={delta(s.photosFromAnthony, prev?.photosFromAnthony)}
               sub="yours, not theirs"
               zeroText="none"
               href={`/admin/stats/photos-anthony?win=${win}`}
@@ -153,9 +160,9 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
           <h2 className="font-stamp uppercase tracking-[0.12em] text-sm text-ink mb-3">The business</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <StatTile label="Verified owners" value={s.verifiedOwners} accent zeroText="none yet" href={`/admin/stats/claims?win=all`} />
-            <StatTile label="Subscribers" value={s.confirmedSubs} sub={s.subscribers > s.confirmedSubs ? `${s.subscribers - s.confirmedSubs} unconfirmed` : undefined} zeroText="none" href={`/admin/stats/subscribers?win=${win}`} />
-            <StatTile label="Spots added" value={s.spotsAdded} zeroText="none" href={`/admin/stats/spots?win=${win}`} />
-            <StatTile label="Verdict votes" value={verdicts} zeroText="none" />
+            <StatTile label="Subscribers" value={s.confirmedSubs} delta={delta(s.confirmedSubs, prev?.confirmedSubs)} sub={s.subscribers > s.confirmedSubs ? `${s.subscribers - s.confirmedSubs} unconfirmed` : undefined} zeroText="none" href={`/admin/stats/subscribers?win=${win}`} />
+            <StatTile label="Spots added" value={s.spotsAdded} delta={delta(s.spotsAdded, prev?.spotsAdded)} zeroText="none" href={`/admin/stats/spots?win=${win}`} />
+            <StatTile label="Verdict votes" value={verdicts} delta={delta(verdicts, prevVerdicts)} zeroText="none" />
           </div>
         </div>
       </div>

@@ -38,16 +38,17 @@ export const TZ = 'America/Chicago';
  * Bounds are absolute instants, so no timezone maths is needed to filter. Timezone only matters if
  * we ever bucket into named days, which nothing here does.
  */
-export type Win = '7d' | '28d' | '90d' | 'all';
+export type Win = '1d' | '7d' | '28d' | '90d' | 'all';
 
 export const WINDOWS: { key: Win; label: string }[] = [
+  { key: '1d', label: 'Last 24 hours' },
   { key: '7d', label: 'Last 7 days' },
   { key: '28d', label: 'Last 28 days' },
   { key: '90d', label: 'Last 90 days' },
   { key: 'all', label: 'All time' },
 ];
 
-const DAYS: Record<Win, number | null> = { '7d': 7, '28d': 28, '90d': 90, all: null };
+const DAYS: Record<Win, number | null> = { '1d': 1, '7d': 7, '28d': 28, '90d': 90, all: null };
 
 export type Bounds = { from: Date | null; to: Date; prev: { from: Date; to: Date } | null };
 
@@ -94,7 +95,15 @@ const ZERO_SITE: SiteStats = {
 };
 
 export async function siteStats(win: Win): Promise<SiteStats> {
-  const b = windowOf(win);
+  return statsForBounds(windowOf(win));
+}
+
+/**
+ * The full site stats for one window's bounds. Both the current window and its previous, equal-length
+ * window run through here, so a delta compares like with like and there is no second, drifting query.
+ * `from` is null only for all-time (the SQL below accepts that); the previous window always has both.
+ */
+async function statsForBounds(b: { from: Date | null; to: Date }): Promise<SiteStats> {
   const [sig, stamp, contrib, biz] = await Promise.all([
     pool.query(
       `select
@@ -147,21 +156,19 @@ export async function siteStats(win: Win): Promise<SiteStats> {
   };
 }
 
-/** The previous, equal-length window. Same function, different bounds: no separate delta code path. */
+/**
+ * The previous, equal-length window, fully computed so EVERY tile can show a change, not just a few.
+ * Same query as the current window (statsForBounds), different bounds: one code path, no drift.
+ * Null for all-time, which has no "previous period" to compare against.
+ *
+ * The snapshot fields (perks live, verified owners) are current-state counts with no date filter, so
+ * their "previous" value equals today's and the delta is a meaningless 0. The page simply does not
+ * pass a delta to those tiles.
+ */
 export async function siteStatsPrev(win: Win): Promise<SiteStats | null> {
   const b = windowOf(win);
   if (!b.prev) return null;
-  const saved = b.prev;
-  const [sig, stamp] = await Promise.all([
-    pool.query(
-      `select count(*)::int as total, count(distinct anon_id)::int as tappers
-       from place_signals where created_at >= $1 and created_at < $2`, [saved.from, saved.to]),
-    pool.query(
-      `select count(*) filter (where event_type='pull')::int as pulls,
-              count(*) filter (where event_type='redeem')::int as stamped
-       from passport_stamp_events where occurred_at >= $1 and occurred_at < $2`, [saved.from, saved.to]),
-  ]);
-  return { ...ZERO_SITE, signalTotal: sig.rows[0].total, tappers: sig.rows[0].tappers, pulls: stamp.rows[0].pulls, stamped: stamp.rows[0].stamped };
+  return statsForBounds(b.prev);
 }
 
 // ── the spots people are actually engaging with ──────────────────────────────────────────────────
