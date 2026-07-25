@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
-
 // Workers ping this every ~60s so the admin panel can show who's connected.
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const b = await req.json().catch(() => null);
   if (!b || !b.worker_id) return NextResponse.json({ error: 'bad request' }, { status: 400 });
   await pool.query(

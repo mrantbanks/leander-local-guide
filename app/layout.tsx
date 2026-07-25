@@ -3,6 +3,7 @@ import Providers from '@/components/Providers';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import { fraunces, hanken, caveat, bebas } from './fonts';
+import { ldJson } from '@/lib/seo';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -57,7 +58,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${fraunces.variable} ${hanken.variable} ${caveat.variable} ${bebas.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(siteLd) }} />
         <Navbar />
         <Providers>{children}</Providers>
         {/* Google Analytics (GA4) */}

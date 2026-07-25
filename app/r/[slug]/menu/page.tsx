@@ -4,7 +4,7 @@ import { getSpot } from '@/lib/spots';
 import MenuViewer from '@/components/MenuViewer';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
-import { menuSnippet, ogMenu, restaurantLdMenu, breadcrumbLdMenu } from '@/lib/seo';
+import { menuSnippet, ogMenu, restaurantLdMenu, breadcrumbLdMenu, ldJson } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 // The menu page: every dish and price as crawlable text + Menu structured data.
@@ -53,8 +53,8 @@ export default async function MenuPage({ params }: { params: Promise<{ slug: str
 
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(crumbLd) }} />
 
       <header className="border-b-2 border-ink">
         <div className="max-w-4xl mx-auto px-5 pt-8 pb-6">

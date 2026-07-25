@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { scrapeHappyHours } from '@/lib/scrapeHappyHours';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30; // returns fast; the scrape continues in the running server
-
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret') || new URL(req.url).searchParams.get('s');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
 
 async function kickoff() {
   // overlap guard: don't start if one is already running
@@ -24,10 +20,10 @@ async function kickoff() {
 }
 
 export async function GET(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   return NextResponse.json(await kickoff());
 }
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   return NextResponse.json(await kickoff());
 }

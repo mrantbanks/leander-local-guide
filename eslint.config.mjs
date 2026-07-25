@@ -68,6 +68,14 @@ const HOUSE_RULES = {
         "Do not write reviewRating by hand. Use readerRatingLd(reviews) from @/lib/seo, which only ever rates reader-submitted reviews.",
     },
   ],
+  noRawJsonInScript: [
+    {
+      selector:
+        "Property[key.name='__html'] > CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
+      message:
+        "Do not put JSON.stringify() straight into __html. It does not escape '<', so a '</script>' inside any string (reader reviews go in our JSON-LD) closes the script element and executes. Use ldJson() from @/lib/seo.",
+    },
+  ],
 };
 
 const eslintConfig = defineConfig([
@@ -90,6 +98,7 @@ const eslintConfig = defineConfig([
         ...HOUSE_RULES.noHandWrittenRatings,
         ...HOUSE_RULES.noIsoWeek,
         ...HOUSE_RULES.noLocalClock,
+        ...HOUSE_RULES.noRawJsonInScript,
       ],
     },
   },

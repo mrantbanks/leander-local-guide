@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { revalidateSpot } from '@/lib/revalidate';
 import { pool } from '@/lib/db';
 import { screenSubmission } from '@/lib/moderate';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,13 +11,8 @@ export const dynamic = 'force-dynamic';
 // GET claims pending reviews/tips; POST records the worker's verdict. The hard guardrail is
 // re-applied on approve (defense in depth), so a worker can never publish spam/links/profanity.
 
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
-
 export async function GET(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const claim = async (tbl: 'reviews' | 'tips', starsCol: string) => (await pool.query(
     `with c as (
         select s.id from ${tbl} s
@@ -34,7 +30,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const b = await req.json().catch(() => null);
   if (!b || !b.id || (b.kind !== 'review' && b.kind !== 'tip') || !b.decision) return NextResponse.json({ error: 'bad request' }, { status: 400 });
   const tbl = b.kind === 'review' ? 'reviews' : 'tips';

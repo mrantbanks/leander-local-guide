@@ -3,6 +3,7 @@ import { pool } from '@/lib/db';
 import { getProvider } from '@/lib/ai/router';
 import { screenSubmission } from '@/lib/moderate';
 import { revalidateSpot } from '@/lib/revalidate';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +18,6 @@ export const dynamic = 'force-dynamic';
 //   - review/tip moderation -> task_type 'llm',      job id = 'review:<id>' / 'tip:<id>'
 // The kinded id is what lets the callback tell them apart: review ids and event ids come from
 // different sequences and DO collide, so a bare id would be ambiguous.
-
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -46,7 +42,7 @@ Rules:
 - Always prefer filling in the real day/time from the site over leaving it blank.`;
 
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   const caps: string[] = Array.isArray(b.capabilities) ? b.capabilities : [];
   const limit = Math.min(Math.max(parseInt(String(b.max_jobs || 1), 10) || 1, 1), 5);

@@ -3,13 +3,11 @@ import { pool } from '@/lib/db';
 import { sendEmail } from '@/lib/email/send';
 import { stepEmail, STEP_DAYS, STEPS } from '@/lib/email/autoresponder';
 import { wrap } from '@/lib/email/templates';
+import { emailTickAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-email-secret') || req.nextUrl.searchParams.get('s') || '';
-  return !!process.env.EMAIL_TICK_SECRET && s === process.env.EMAIL_TICK_SECRET;
-}
+const authed = emailTickAuthed;
 
 export async function POST(req: NextRequest) { return run(req); }
 export async function GET(req: NextRequest) { return run(req); }

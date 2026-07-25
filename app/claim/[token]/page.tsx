@@ -31,7 +31,7 @@ export default async function ClaimPage({ params }: { params: Promise<{ token: s
       <h1 className="font-display font-black text-3xl text-ink leading-tight">Make {t.name} yours.</h1>
       <p className="font-hand text-xl text-oxblood mt-1 mb-5">You&apos;re already in the guide. This just hands you the keys.</p>
       {email ? (
-        <ClaimConfirm tokenId={t.id} name={t.name} email={email} />
+        <ClaimConfirm secret={{ kind: 'token', value: token }} name={t.name} email={email} />
       ) : (
         <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/claim/${token}` }); }}>
           <button className="font-stamp uppercase tracking-[0.1em] text-base bg-ink text-paper px-6 py-3 rounded-sm hover:bg-oxblood">

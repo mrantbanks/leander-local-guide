@@ -10,6 +10,8 @@ import { isVerifiedOwner } from '@/lib/spots';
 import { consumeClaim, saveOwnerContent, canManage, type OwnerContent } from '@/lib/owner';
 import { createSpecial, createGuideSpecial, removeSpecial, specialOwnerSlug, type SpecialInput, type GuideSpecialInput } from '@/lib/specials';
 import { revalidateSpot, revalidateSpotByPlaceId, revalidateSpotByRow } from '@/lib/revalidate';
+import { rateLimit, clientIp } from '@/lib/ratelimit';
+import { safeUrl } from '@/lib/urls';
 import { AMENITY_TAGS, MEAL_TAGS, FACILITY_TAGS, CHAIN_STATUS, ownershipOf } from '@/lib/tags';
 import { validateEvent, type EventInput } from '@/lib/eventInput';
 import { EVENT_TYPES } from '@/lib/eventLabels';
@@ -45,6 +47,18 @@ export async function recordSignal(
   const anon = await anonId();
   const col = type === 'verdict' ? COUNTER[verdict || ''] : COUNTER[type];
   if (!col) return null;
+
+  // The per-device dedupe below is an honesty mechanism, not a security one: the llg_anon cookie
+  // belongs to the caller, so anybody willing to drop it can vote again, and these counters decide
+  // the Hidden Gems board and the "63 locals weighed in" line. Cap the origin as well, so stuffing
+  // the ballot costs more than a loop. A real household behind one NAT will not notice 60/hour.
+  if (!rateLimit(`signal:${await clientIp()}`, 60, 60 * 60 * 1000).ok) {
+    const { rows } = await pool.query(
+      `select worth_it_ct, its_fine_ct, skip_it_ct, been_here_ct, want_to_go_ct from restaurants where id = $1`,
+      [placeId]
+    );
+    return rows[0] || null; // show them the real tally; just don't count this tap
+  }
   const ins = await pool.query(
     `insert into place_signals (place_id, signal_type, verdict, anon_id) values ($1,$2,$3,$4)
      on conflict (place_id, signal_type, coalesce(user_id::text, anon_id::text)) do nothing`,
@@ -499,11 +513,40 @@ export async function rejectEvent(id: number) {
 }
 
 // ---- Owner claim + management (any signed-in user; ownership checked per-place) ----
-export async function claimRestaurant(tokenId: number): Promise<{ ok: boolean; slug?: string; reason?: string }> {
+/**
+ * Take ownership of a listing by presenting the secret from the printed sheet.
+ *
+ * It takes the SECRET, never a row id. A server action is a public HTTP endpoint whose id ships in
+ * a static chunk anybody can download, so "the client already proved it had a valid link by getting
+ * this far" is not a thing that is true. The only proof is the secret itself, and it is re-checked
+ * here on every call.
+ *
+ * Rate limited because the printed code is deliberately short (LLG-XXXX, four characters from a
+ * 31-letter alphabet is about 900k combinations) so that somebody can read it down a phone line.
+ * That is a fine trade for a code you have to type, and a terrible one for a code you can guess a
+ * thousand times a second, so the guessing is what we take away.
+ */
+export async function claimRestaurant(
+  secret: { kind: 'token' | 'code'; value: string }
+): Promise<{ ok: boolean; slug?: string; reason?: string }> {
   const session = await auth();
   const email = session?.user?.email;
   if (!email) return { ok: false, reason: 'Please sign in first.' };
-  const res = await consumeClaim(tokenId, email);
+
+  if (secret?.kind !== 'token' && secret?.kind !== 'code') return { ok: false, reason: 'Bad claim link.' };
+  const value = String(secret.value ?? '').trim().slice(0, 200);
+  if (!value) return { ok: false, reason: 'Bad claim link.' };
+
+  // Both the account and the origin are capped: one attacker with one Google account cannot grind,
+  // and one host cycling throwaway accounts cannot either.
+  const ip = await clientIp();
+  const perEmail = rateLimit(`claim:e:${email.toLowerCase()}`, 10, 60 * 60 * 1000);
+  const perIp = rateLimit(`claim:i:${ip}`, 20, 60 * 60 * 1000);
+  if (!perEmail.ok || !perIp.ok) {
+    return { ok: false, reason: 'Too many attempts. Try again in a little while.' };
+  }
+
+  const res = await consumeClaim({ kind: secret.kind, value }, email);
   if (res.ok && res.slug) revalidateSpot(res.slug);
   return res;
 }
@@ -513,8 +556,19 @@ export async function saveOwnerEdits(slug: string, patch: OwnerContent): Promise
   if (!email) return { ok: false, error: 'Not authorized' };
   // Only ever writes owner_content. Never touches editorial (Anthony's) or attributes (admin's).
   const safe: OwnerContent = {};
-  for (const k of ['phone', 'website', 'menuUrl', 'orderUrl', 'happyHour', 'blurb'] as const) {
+  for (const k of ['phone', 'happyHour', 'blurb'] as const) {
     if (k in patch) safe[k] = clean(patch[k] as string) ?? undefined;
+  }
+  // The three link fields render as an href on the public page, and owner_content wins over the
+  // Google value (lib/spots.ts), so a stranger who claimed a listing controls where "Website" on
+  // that page points. Scheme-check them the way the admin editor always has.
+  for (const k of ['website', 'menuUrl', 'orderUrl'] as const) {
+    if (!(k in patch)) continue;
+    const raw = clean(patch[k] as string);
+    if (raw === null) { safe[k] = undefined; continue; } // cleared on purpose
+    const url = safeUrl(raw);
+    if (!url) return { ok: false, error: `That ${k === 'website' ? 'website' : 'link'} does not look like a web address.` };
+    safe[k] = url;
   }
   if (Array.isArray(patch.hours) && patch.hours.length === 7) {
     safe.hours = patch.hours.map((d) => (d && d.open && d.close) ? { open: String(d.open), close: String(d.close) } : null);

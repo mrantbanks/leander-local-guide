@@ -15,7 +15,7 @@ import PhotoContribute from '@/components/PhotoContribute';
 import ReviewContribute from '@/components/ReviewContribute';
 import ClaimContribute from '@/components/ClaimContribute';
 import Subscribe from '@/components/Subscribe';
-import { snippetFor, faqLd, ogMain, restaurantLdMain, breadcrumbLdMain, eventsLd } from '@/lib/seo';
+import { snippetFor, faqLd, ogMain, restaurantLdMain, breadcrumbLdMain, eventsLd, ldJson } from '@/lib/seo';
 import { ownershipOf, OWNERSHIP_LABEL, WARNING_FACILITIES } from '@/lib/tags';
 import type { Metadata } from 'next';
 
@@ -75,10 +75,10 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
 
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
-      {faqLdJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLdJson) }} />}
-      {eventLd.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventLd) }} />}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(crumbLd) }} />
+      {faqLdJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(faqLdJson) }} />}
+      {eventLd.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(eventLd) }} />}
       {/* Hero */}
       <header className="border-b-2 border-ink">
         <div className="max-w-5xl mx-auto px-5 pt-8 pb-6">

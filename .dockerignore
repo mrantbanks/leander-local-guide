@@ -3,6 +3,11 @@ node_modules
 out
 .git
 *.log
+# Never let a local env file into the build context. It would not reach the final image (the run
+# stage copies only public/ and the standalone build) but it would sit in a build layer.
+.env
+.env.*
+*.pem
 DESIGN.md
 PLAN.md
 data/leander-places-raw.json

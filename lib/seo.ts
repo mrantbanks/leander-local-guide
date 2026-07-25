@@ -334,6 +334,31 @@ export function facilitiesLd(spot: Spot): object {
   return out;
 }
 
+/**
+ * Serialize a JSON-LD object for injection into a <script type="application/ld+json"> block.
+ *
+ * EVERY ld+json script on this site must go through here. JSON.stringify does not escape `<`, and
+ * an HTML parser reading a <script> body does not care that it is looking at JSON: the first
+ * `</script` it sees ends the element. Reader reviews go into this document (reviewBody, and the
+ * author name), reader reviews are typed by the public, and the spam guardrail in lib/moderate.ts
+ * screens for links and abuse rather than for markup. So a review reading
+ *
+ *     Great tacos </script><img src=x onerror=...>
+ *
+ * would close the script and run, on a public restaurant page, for every visitor. Escaping `<` to
+ * its < form is still valid JSON and still parses to the identical string, so Google reads
+ * exactly what it read before.
+ *
+ * U+2028 and U+2029 are escaped for the same class of reason: legal in JSON, fatal as raw
+ * JavaScript line terminators if this ever lands in a non-JSON script context.
+ */
+export function ldJson(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 /** What getReviews() in lib/spots.ts returns. The ONLY thing allowed to become a star rating. */
 export type ReaderReviews = {
   avg: number | null;

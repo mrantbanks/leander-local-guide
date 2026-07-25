@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { eventRequiresTime } from '@/lib/validate';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
-
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
 
 // GET: events needing verification — pending ones, plus AI-scraped approved ones
 // not re-confirmed in 7 days. Each item carries the venue site so the worker can research.
 export async function GET(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   // Atomically CLAIM up to 15 events (FOR UPDATE SKIP LOCKED) so two workers never
   // grab the same one: lock+stamp worker_checked_at in one statement, then return them.
   const { rows } = await pool.query(`
@@ -44,7 +40,7 @@ export async function GET(req: NextRequest) {
 
 // POST: a worker verdict. { id, decision: 'approve'|'reject'|'unsure', reason, days_of_week?, start_time? }
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const b = await req.json().catch(() => null);
   if (!b || !b.id || !b.decision) return NextResponse.json({ error: 'bad request' }, { status: 400 });
   const id = parseInt(String(b.id), 10);

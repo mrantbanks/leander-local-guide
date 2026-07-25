@@ -1,5 +1,6 @@
 import { auth, signIn } from '@/auth';
 import { resolveCode } from '@/lib/owner';
+import { rateLimit, clientIp } from '@/lib/ratelimit';
 import ClaimConfirm from '@/components/ClaimConfirm';
 
 export const dynamic = 'force-dynamic';
@@ -33,8 +34,14 @@ export default async function ClaimByCode({ searchParams }: { searchParams: Prom
     );
   }
 
+  // Looking a code up is itself a guess. Without this, the page is a free oracle: grind LLG-XXXX
+  // until one returns a restaurant name, THEN go and claim it. The limit belongs on the lookup, not
+  // only on the consume.
+  const lookupErr = <Shell><h1 className="font-display font-black text-2xl text-ink">That code didn&apos;t work.</h1><p className="font-ui text-sm text-ink-soft mt-2">Check the spelling, or ask for a fresh sheet.</p></Shell>;
+  if (!rateLimit(`claim-lookup:${await clientIp()}`, 20, 60 * 60 * 1000).ok) return lookupErr;
+
   const t = await resolveCode(code);
-  if (!t) return <Shell><h1 className="font-display font-black text-2xl text-ink">That code didn&apos;t work.</h1><p className="font-ui text-sm text-ink-soft mt-2">Check the spelling, or ask for a fresh sheet.</p></Shell>;
+  if (!t) return lookupErr;
   if (t.status !== 'printed') return <Shell><h1 className="font-display font-black text-2xl text-ink">This listing is already claimed.</h1></Shell>;
 
   const session = await auth();
@@ -44,7 +51,7 @@ export default async function ClaimByCode({ searchParams }: { searchParams: Prom
       <h1 className="font-display font-black text-3xl text-ink leading-tight">Make {t.name} yours.</h1>
       <p className="font-hand text-xl text-oxblood mt-1 mb-5">You&apos;re already in the guide. This just hands you the keys.</p>
       {email ? (
-        <ClaimConfirm tokenId={t.id} name={t.name} email={email} />
+        <ClaimConfirm secret={{ kind: 'code', value: code }} name={t.name} email={email} />
       ) : (
         <form action={async () => { 'use server'; await signIn('google', { redirectTo: `/claim?code=${encodeURIComponent(code)}` }); }}>
           <button className="font-stamp uppercase tracking-[0.1em] text-base bg-ink text-paper px-6 py-3 rounded-sm hover:bg-oxblood">Sign in with Google to claim</button>

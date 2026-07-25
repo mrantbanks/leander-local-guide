@@ -44,15 +44,39 @@ async function resolveBy(where: string, val: string): Promise<ClaimToken | null>
 export const resolveToken = (raw: string) => resolveBy('t.token_hash', hashToken(raw));
 export const resolveCode = (code: string) => resolveBy('upper(t.code)', code.trim().toUpperCase());
 
-// Atomically consume a token and record the verified claim. Returns the slug on success.
-export async function consumeClaim(tokenId: number, email: string): Promise<{ ok: boolean; slug?: string; reason?: string }> {
+/**
+ * Which secret the claimant actually presented. There is no third variant, and in particular
+ * there is no "by id": the row id is a bigserial and therefore public knowledge, so anything that
+ * consumes a claim MUST be holding either the QR token or the printed code.
+ */
+export type ClaimSecret = { kind: 'token'; value: string } | { kind: 'code'; value: string };
+
+/**
+ * Atomically consume a token and record the verified claim. Returns the slug on success.
+ *
+ * The secret is matched INSIDE the updating statement, not resolved to an id beforehand. That is
+ * the whole point of the shape: this used to take a bare `tokenId` straight off the wire, so any
+ * signed-in account could walk id=1,2,3... and claim every unclaimed listing in the guide without
+ * ever holding a sheet of paper. Resolving first and then updating by id would fix the disclosure
+ * but leave a check-then-act gap; matching on the hash in the UPDATE closes both at once.
+ */
+export async function consumeClaim(secret: ClaimSecret, email: string): Promise<{ ok: boolean; slug?: string; reason?: string }> {
+  const dead = { ok: false, reason: 'This link is no longer active. Ask for a fresh one.' };
+  const raw = (secret?.value ?? '').trim();
+  if (!raw) return dead;
+
+  // Fixed column names picked by a literal ternary, never interpolated from input.
+  const match = secret.kind === 'token' ? 'token_hash = $1' : 'upper(code) = $1';
+  const val = secret.kind === 'token' ? hashToken(raw) : raw.toUpperCase();
+
   const client = await pool.connect();
   try {
     await client.query('begin');
     const upd = await client.query(
       `update owner_claim_tokens set status='claimed', claimed_by=$2, claimed_at=now()
-       where id=$1 and status='printed' and expires_at > now() returning place_id`, [tokenId, email]);
-    if (upd.rowCount === 0) { await client.query('rollback'); return { ok: false, reason: 'This link is no longer active. Ask for a fresh one.' }; }
+       where ${match} and status='printed' and expires_at > now() returning id, place_id`, [val, email]);
+    if (upd.rowCount === 0) { await client.query('rollback'); return dead; }
+    const tokenId = upd.rows[0].id;
     const placeId = upd.rows[0].place_id;
     await client.query(
       `insert into claims (place_id, user_email, role, status, verified_via, token_id)

@@ -3,6 +3,7 @@ import { pool } from '@/lib/db';
 import { eventRequiresTime } from '@/lib/validate';
 import { screenSubmission } from '@/lib/moderate';
 import { revalidateSpot } from '@/lib/revalidate';
+import { workerAuthed } from '@/lib/secretAuth';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,13 +12,8 @@ export const dynamic = 'force-dynamic';
 // untrusted — the same guardrails as the legacy verdict endpoint apply here.
 // Idempotent per job: re-applying the same verdict repeats the same update.
 
-function authed(req: NextRequest): boolean {
-  const s = req.headers.get('x-worker-secret');
-  return !!process.env.WORKER_SECRET && s === process.env.WORKER_SECRET;
-}
-
 export async function POST(req: NextRequest) {
-  if (!authed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!workerAuthed(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const b = await req.json().catch(() => null);
   if (!b || !b.job_id || !b.status) return NextResponse.json({ error: 'bad request' }, { status: 400 });
 

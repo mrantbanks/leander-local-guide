@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllSpots } from '@/lib/spots';
 import { getBoard, rankScore } from '@/lib/boards';
+import { ldJson } from '@/lib/seo';
 import VerdictStamp from '@/components/VerdictStamp';
 import SiteFooter from '@/components/SiteFooter';
 import Icon from '@/components/Icon';
@@ -47,8 +48,8 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
 
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(itemListLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(crumbLd) }} />
       <header className="border-b-2 border-ink">
         <div className="max-w-4xl mx-auto px-5 pt-8 pb-5">
           <Link href="/best" className="inline-flex items-center gap-1 font-stamp uppercase tracking-[0.1em] text-xs text-ink-soft hover:text-chile transition-colors mb-4">← All rankings</Link>
