@@ -11,16 +11,15 @@ const nextConfig: NextConfig = {
   /**
    * Security headers.
    *
-   * Split deliberately into two groups, because a Content-Security-Policy that blocks the map or
-   * the Turnstile widget is worse than the one it replaces: the site is live, and a broken
-   * checkout-equivalent (nobody can leave a review) is a real outage.
+   * The resource policy is ENFORCED. It shipped Report-Only first, and before flipping it every
+   * sub-resource the live pages actually pull was enumerated (script/link/img/iframe/form across
+   * the homepage, map, passport, boards, a spot page and the claim page) plus the maplibre style
+   * document, which turned up one host nothing in this repo references: Cloudflare injects its
+   * analytics beacon from static.cloudflareinsights.com at the edge, so it has to be allowed here
+   * or the edge breaks its own script.
    *
-   *  - The headers below are ENFORCED. None of them can break rendering: they restrict framing,
-   *    base-tag injection, plugins, form targets, and referrer leakage, none of which this site uses
-   *    in a way that would trip them.
-   *  - The full resource policy is REPORT-ONLY (see cspReportOnly). Load the site with devtools open,
-   *    confirm the console is quiet across the map page, a spot page, and a review submission, then
-   *    rename the header to 'Content-Security-Policy' to enforce it.
+   * Anything still missed reports to /api/csp-report rather than failing silently, so a violation
+   * shows up in `docker logs llg-web` instead of in somebody's console three weeks later.
    *
    * Note on script-src: it needs 'unsafe-inline' because Next.js inlines its hydration bootstrap and
    * GA4 inlines its init, and the nonce alternative is incompatible with the ISR caching on /r/[slug]
@@ -30,23 +29,16 @@ const nextConfig: NextConfig = {
    * ldJson() (lib/seo.ts).
    */
   async headers() {
-    const connect = [
-      "'self'",
-      'https://tiles.openfreemap.org',
-      'https://challenges.cloudflare.com',
-      'https://www.googletagmanager.com',
-      'https://www.google-analytics.com',
-      'https://region1.google-analytics.com',
-    ].join(' ');
-
-    const cspReportOnly = [
+    const csp = [
       "default-src 'self'",
       // 'unsafe-inline' is load-bearing, see the note above.
-      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com",
+      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com https://static.cloudflareinsights.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://tiles.openfreemap.org https://www.googletagmanager.com https://www.google-analytics.com",
       "font-src 'self' data:",
-      `connect-src ${connect}`,
+      // next/font/google self-hosts at build time, so fonts are 'self'. The map's tiles, sprites and
+      // glyph ranges are all fetched from tiles.openfreemap.org.
+      "connect-src 'self' https://tiles.openfreemap.org https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://static.cloudflareinsights.com https://cloudflareinsights.com",
       // Turnstile renders in an iframe; the "Where" panel embeds a Google map.
       "frame-src https://challenges.cloudflare.com https://www.google.com",
       // maplibre-gl spins its tile workers up from a blob URL.
@@ -55,6 +47,8 @@ const nextConfig: NextConfig = {
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
+      'report-uri /api/csp-report',
+      'report-to csp-endpoint',
     ].join('; ');
 
     return [
@@ -66,11 +60,8 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), payment=(), usb=(), interest-cohort=()' },
-          {
-            key: 'Content-Security-Policy',
-            value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'",
-          },
-          { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
+          { key: 'Reporting-Endpoints', value: 'csp-endpoint="/api/csp-report"' },
+          { key: 'Content-Security-Policy', value: csp },
         ],
       },
     ];
