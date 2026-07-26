@@ -21,6 +21,20 @@ async function rotateFlip(src: string, deg: number, flipH: boolean, flipV: boole
   ctx.drawImage(img, -w / 2, -h / 2);
   return cv.toDataURL('image/png');
 }
+// Get the working image as a Blob to upload. A data: URL is decoded right here instead of being
+// round-tripped through fetch(): fetching a data: URL counts as a connect-src request, and the CSP
+// allows 'self' and a short list of hosts — not data:. That fetch is blocked before it leaves the
+// page and rejects as a bare "Failed to fetch", which is what the save button used to report.
+// Everything else the editor loads is same-origin (/uploads/… or /img?…), so it can just be fetched.
+async function urlToBlob(url: string): Promise<Blob> {
+  if (!url.startsWith('data:')) return (await fetch(url)).blob();
+  const comma = url.indexOf(',');
+  const mime = url.slice(5, comma).split(';')[0] || 'image/jpeg';
+  const bin = atob(url.slice(comma + 1));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
 
 export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { slug: string; src: string; photoId?: number; onSaved: (saved: { id: number; filename: string; replaced: boolean }) => void; onClose: () => void }) {
   const [work, setWork] = useState(src);
@@ -89,7 +103,7 @@ export default function PhotoEditor({ slug, src, photoId, onSaved, onClose }: { 
     setBusy('save'); setErr('');
     try {
       const base = await bakeCurrent();
-      const blob = await (await fetch(base)).blob();
+      const blob = await urlToBlob(base);
       const fd = new FormData(); fd.append('slug', slug); fd.append('files', new File([blob], 'edit.jpg', { type: blob.type || 'image/jpeg' }));
       if (replace && photoId) fd.append('replaceId', String(photoId));
       const r = await fetch('/api/admin/photos', { method: 'POST', body: fd });
