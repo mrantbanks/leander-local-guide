@@ -14,8 +14,15 @@ const extOf = (t: string) => (t === 'image/png' ? 'png' : t === 'image/webp' ? '
 
 // Admin-only: multi-upload new photos, OR (with replaceId) swap one existing photo in place.
 export async function POST(req: NextRequest) {
+  // One greppable line per attempt. When the photo editor stopped saving, the only evidence on the
+  // box was the absence of a file: no log said whether the request had arrived, been rejected, or
+  // died mid-write. `docker logs llg-web | grep '\[photos\]'` now answers that in one command.
+  const t0 = Date.now();
   const session = await auth();
-  if (!(session?.user as { isAdmin?: boolean; email?: string } | undefined)?.isAdmin) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (!(session?.user as { isAdmin?: boolean; email?: string } | undefined)?.isAdmin) {
+    console.warn(`[photos] rejected: not an admin (signed in: ${!!session?.user})`);
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
   const email = (session!.user as { email?: string }).email!;
   const fd = await req.formData();
   const slug = String(fd.get('slug') || '');
@@ -26,18 +33,26 @@ export async function POST(req: NextRequest) {
 
   const files = fd.getAll('files').filter((f): f is File => f instanceof File);
   const saved: { id: number; filename: string; url: string }[] = [];
+  const desc = `slug=${slug} replaceId=${replaceId || 0} files=${files.length} bytes=${files.reduce((n, f) => n + f.size, 0)} types=${files.map((f) => f.type).join(',') || '-'}`;
   try {
     // Overwrite an existing photo in place: same row (keeps sort/main + caption), new file, old file deleted.
     if (replaceId) {
       const file = files[0];
-      if (!file || !file.type.startsWith('image/')) return NextResponse.json({ error: 'No image to save' }, { status: 400 });
+      if (!file || !file.type.startsWith('image/')) {
+        console.warn(`[photos] rejected: no image in the upload — ${desc}`);
+        return NextResponse.json({ error: 'No image to save' }, { status: 400 });
+      }
       const old = await pool.query('select filename from photos where id = $1 and place_id = $2', [replaceId, placeId]);
-      if (!old.rows[0]) return NextResponse.json({ error: 'photo not found' }, { status: 404 });
+      if (!old.rows[0]) {
+        console.warn(`[photos] rejected: photo ${replaceId} is not on ${slug} — ${desc}`);
+        return NextResponse.json({ error: 'photo not found' }, { status: 404 });
+      }
       const fn = `${randomUUID()}.${extOf(file.type)}`;
       await putUpload(fn, Buffer.from(await file.arrayBuffer()), file.type);
       await pool.query('update photos set filename = $2 where id = $1', [replaceId, fn]);
       await deleteUpload(old.rows[0].filename);
       revalidateSpot(slug);
+      console.log(`[photos] replaced ${replaceId} -> ${fn} in ${Date.now() - t0}ms — ${desc}`);
       return NextResponse.json({ saved: [{ id: replaceId, filename: fn, url: uploadUrl(fn) }], replaced: true });
     }
     for (const file of files.slice(0, 24)) {
@@ -56,7 +71,9 @@ export async function POST(req: NextRequest) {
       void autoCaption(ins.rows[0].id as number, placeId, buf, file.type);
     }
   } catch (e) {
+    console.error(`[photos] FAILED after ${Date.now() - t0}ms — ${desc} — ${(e as Error).name}: ${(e as Error).message}`);
     return NextResponse.json({ error: `Storage error: ${(e as Error).name} — ${(e as Error).message}`, saved }, { status: 500 });
   }
+  console.log(`[photos] saved ${saved.length} in ${Date.now() - t0}ms — ${desc}`);
   return NextResponse.json({ saved });
 }

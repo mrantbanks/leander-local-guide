@@ -12,6 +12,7 @@ export default function PhotoStudio({ slug, initial, googlePhoto }: { slug: stri
   const [editing, setEditing] = useState<{ src: string; id: number } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
+  const [note, setNote] = useState('');
   const [capBusy, setCapBusy] = useState(0);
   const [bulkCap, setBulkCap] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -75,6 +76,7 @@ export default function PhotoStudio({ slug, initial, googlePhoto }: { slug: stri
         <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => upload(e.target.files)} />
         <p className="font-ui text-xs text-ink-soft mt-2">Upload one or many. Then edit any photo: crop, rotate, color, or AI magic-edit.</p>
         {err && <p className="font-ui text-sm text-oxblood mt-2 bg-paper border border-oxblood rounded-sm px-3 py-2">{err}</p>}
+        {note && <p role="status" className="font-ui text-sm text-ink mt-2 bg-paper border border-ink rounded-sm px-3 py-2">{note}</p>}
       </div>
 
       {photos.length === 0 ? (
@@ -126,6 +128,10 @@ export default function PhotoStudio({ slug, initial, googlePhoto }: { slug: stri
         onSaved={(saved) => {
           setEditing(null);
           setPhotos((p) => saved.replaced ? p.map((x) => x.id === saved.id ? { ...x, filename: saved.filename } : x) : [{ id: saved.id, filename: saved.filename }, ...p]);
+          // Say it landed. The editor just closing is the same thing the editor does when you hit
+          // cancel, so a successful save was indistinguishable from nothing having happened.
+          setNote(saved.replaced ? '✓ Photo replaced — the new version is live.' : '✓ Saved as a new photo — it is live.');
+          setTimeout(() => setNote(''), 6000);
           router.refresh();
         }} />}
     </div>
