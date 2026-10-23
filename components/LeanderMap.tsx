@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapPin } from '@/lib/spots';
@@ -56,6 +56,19 @@ export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins
   const userMarker = useRef<maplibregl.Marker | null>(null);
   const ready = useRef(false);
 
+  // keep refs fresh for event handlers. Written in a layout effect, not during render (React 19
+  // rule): layout effects run before the passive effects below and before any map event fires.
+  const pinsRef = useRef(pins);
+  const userLocRef = useRef(userLoc);
+  const openSlugRef = useRef(openSlug);
+  const emphasisRef = useRef(emphasis);
+  useLayoutEffect(() => {
+    pinsRef.current = pins;
+    userLocRef.current = userLoc;
+    openSlugRef.current = openSlug;
+    emphasisRef.current = emphasis;
+  });
+
   // init once
   useEffect(() => {
     if (!ref.current || map.current) return;
@@ -105,12 +118,6 @@ export default function LeanderMap({ pins, userLoc, openSlug, emphasis }: { pins
     return () => { m.remove(); map.current = null; ready.current = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // keep refs fresh for event handlers
-  const pinsRef = useRef(pins); pinsRef.current = pins;
-  const userLocRef = useRef(userLoc); userLocRef.current = userLoc;
-  const openSlugRef = useRef(openSlug); openSlugRef.current = openSlug;
-  const emphasisRef = useRef(emphasis); emphasisRef.current = emphasis;
 
   // update markers when filtered pins change
   useEffect(() => {
